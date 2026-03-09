@@ -1,4 +1,4 @@
-import { createSignal, Show } from "solid-js";
+import { createEffect, createSignal, Show } from "solid-js";
 import { AuthProvider, useAuth } from "./worker/context/AuthContext"
 import { WorkerProvider } from "./worker/context/WorkerContext"
 
@@ -11,6 +11,10 @@ function PApp (_props: { children ?: any }) {
   function handleLogin () {
     login(username(), password());
   }
+
+  createEffect(() => {
+    console.log(whoami())
+  })
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { createContext, createSignal, onCleanup, onMount, useContext, type ParentComponent } from "solid-js";
 import { useWorkerContext, type WorkerContextValue } from "./WorkerContext";
 import type { WorkerOutgoing } from "../types/WorkerOutgoing";
-import { type WhoAmI } from "../types/data/WhoAmI";
+import { areWhoAmIEqual, type WhoAmI } from "../types/data/WhoAmI";
 
 interface AuthContextValue {
   whoami : () => WhoAmI,
@@ -12,6 +12,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue>();
 
 const STORAGE_SESSION_ITEM = "session_id";
+const STORAGE_WHOAMI_ITEM  = "whoami";
 
 function loadSession (workerContext: WorkerContextValue) {
   let currentSession: string | undefined | null = localStorage.getItem(STORAGE_SESSION_ITEM)
@@ -28,7 +29,24 @@ export const AuthProvider: ParentComponent = (props) => {
   const workerContext = useWorkerContext();
   onMount(() => loadSession(workerContext));
 
-  const [whoami, setWhoAmI] = createSignal<WhoAmI>({ is_authenticated: false });
+  function loadWhoAmI (): WhoAmI {
+    const content = localStorage.getItem(STORAGE_WHOAMI_ITEM)
+    if (content === null) {
+      return { is_authenticated: false };
+    }
+
+    return JSON.parse(content) as WhoAmI;
+  }
+
+  const [whoami, setWhoAmIRaw] = createSignal<WhoAmI>(
+    loadWhoAmI(),
+    { equals: areWhoAmIEqual }
+  );
+  function setWhoAmI (content: WhoAmI) {
+    localStorage.setItem(STORAGE_WHOAMI_ITEM, JSON.stringify(content))
+    
+    setWhoAmIRaw(content);
+  }
 
   const context: AuthContextValue = {
     whoami : whoami,
