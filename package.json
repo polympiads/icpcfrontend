@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "normalize.css": "^8.0.1",
     "solid-js": "^1.9.10"
   },
   "devDependencies": {
