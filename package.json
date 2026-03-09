@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "dayjs": "^1.11.19",
     "normalize.css": "^8.0.1",
     "solid-js": "^1.9.10"
   },

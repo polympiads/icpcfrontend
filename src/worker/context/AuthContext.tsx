@@ -4,9 +4,10 @@ import type { WorkerOutgoing } from "../types/WorkerOutgoing";
 import { areWhoAmIEqual, type WhoAmI } from "../types/data/WhoAmI";
 
 interface AuthContextValue {
-  whoami : () => WhoAmI,
-  login  : (username: string, password: string) => Promise<string | undefined>;
-  logout : () => void;
+  whoami  : () => WhoAmI,
+  session : () => string | undefined,
+  login   : (username: string, password: string) => Promise<string | undefined>;
+  logout  : () => void;
 };
 
 const AuthContext = createContext<AuthContextValue>();
@@ -14,14 +15,16 @@ const AuthContext = createContext<AuthContextValue>();
 const STORAGE_SESSION_ITEM = "session_id";
 const STORAGE_WHOAMI_ITEM  = "whoami";
 
-function loadSession (workerContext: WorkerContextValue) {
+function getSession () {
   let currentSession: string | undefined | null = localStorage.getItem(STORAGE_SESSION_ITEM)
   if (currentSession === null)
     currentSession = undefined;
-  
+  return currentSession;
+}
+function loadSession (workerContext: WorkerContextValue) {
   workerContext.send({
     "type": "LOGIN_INIT",
-    "session_id": currentSession
+    "session_id": getSession()
   })
 }
 
@@ -38,18 +41,24 @@ export const AuthProvider: ParentComponent = (props) => {
     return JSON.parse(content) as WhoAmI;
   }
 
+  const [session, setSession] = createSignal<string | undefined>(
+    getSession(),
+    { equals: (x1, x2) => x1 == x2 }
+  );
   const [whoami, setWhoAmIRaw] = createSignal<WhoAmI>(
     loadWhoAmI(),
     { equals: areWhoAmIEqual }
   );
-  function setWhoAmI (content: WhoAmI) {
+  function setWhoAmI (content: WhoAmI, session_id: string | undefined) {
     localStorage.setItem(STORAGE_WHOAMI_ITEM, JSON.stringify(content))
     
+    setSession(session_id);
     setWhoAmIRaw(content);
   }
 
   const context: AuthContextValue = {
-    whoami : whoami,
+    whoami  : whoami,
+    session : session,
     login : async (username: string, password: string) => {
       const promise = workerContext.send({
         "type": "LOGIN",
@@ -84,7 +93,7 @@ export const AuthProvider: ParentComponent = (props) => {
           localStorage.setItem(STORAGE_SESSION_ITEM, msg.session_id);
         }
       } else if (msg.type == "WHOAMI") {
-        setWhoAmI(msg.content);
+        setWhoAmI(msg.content, msg.session);
       }
     })
   })

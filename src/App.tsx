@@ -1,6 +1,7 @@
-import { createEffect, createSignal, Show } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import { AuthProvider, useAuth } from "./worker/context/AuthContext"
 import { WorkerProvider } from "./worker/context/WorkerContext"
+import { useContests } from "./worker/hooks/useContests";
 
 function PApp (_props: { children ?: any }) {
   const { whoami, login, logout } = useAuth();
@@ -12,9 +13,7 @@ function PApp (_props: { children ?: any }) {
     login(username(), password());
   }
 
-  createEffect(() => {
-    console.log(whoami())
-  })
+  const contests = useContests();
 
   return (
     <>
@@ -41,6 +40,11 @@ function PApp (_props: { children ?: any }) {
           onClick={handleLogin}
         >Login</button>
       </Show>
+      <ul>
+        <For each={contests()}>
+          {(contest) => <li>{contest.formal_name}</li>}
+        </For>
+      </ul>
     </>
   )
 }

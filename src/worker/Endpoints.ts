@@ -5,3 +5,6 @@ export function loginEndpoint () {
 export function whoamiEndpoint () {
   return "whoami/"
 }
+export function contestEndpoint () {
+  return "contests/"
+}

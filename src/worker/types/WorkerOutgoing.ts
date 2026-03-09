@@ -17,6 +17,7 @@ export type WhoAmIResult = {
   type: "WHOAMI";
 
   content: WhoAmI;
+  session: string | undefined;
 };
 
 export type WorkerOutgoing = LoginResult | StoreSession | WhoAmIResult;

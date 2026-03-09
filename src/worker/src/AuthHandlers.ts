@@ -32,7 +32,8 @@ export async function initHandler (_answer: Answer, broadcast: Broadcast, messag
   
   broadcast({
     "type": "WHOAMI",
-    "content": session_whoami
+    "content": session_whoami,
+    "session": session_id
   })
 }
 export async function loginHandler (answer: Answer, broadcast: Broadcast, message: AuthLogin) {
@@ -76,7 +77,8 @@ export async function loginHandler (answer: Answer, broadcast: Broadcast, messag
 
   broadcast({
     "type": "WHOAMI",
-    "content": session_whoami
+    "content": session_whoami,
+    "session": session_id
   })
 }
 export async function logoutHandler (_answer: Answer, broadcast: Broadcast, _message: AuthLogout) {
@@ -90,6 +92,7 @@ export async function logoutHandler (_answer: Answer, broadcast: Broadcast, _mes
   
   broadcast({
     "type": "WHOAMI",
-    "content": session_whoami
+    "content": session_whoami,
+    "session": session_id
   })
 }
