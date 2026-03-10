@@ -2,9 +2,9 @@ import { feedEndpoint } from "../Endpoints";
 import type { EventFeed } from "../types/data/EventFeed";
 import type { CloseFeed, ListenToFeed } from "../types/WorkerIncoming";
 import type { FullWorkerOutgoing, WorkerOutgoing } from "../types/WorkerOutgoing";
-import { getSessionId } from "./AuthHandlers";
 import params from "./entry.worker";
 import { NDJsonReader } from "./NDJsonReader";
+import { SessionDB } from "./SessionDB";
 
 function outcomingMessageFromFeed (feed: string, hash: string, feedObject: EventFeed) {
   const message: WorkerOutgoing = {
@@ -68,7 +68,7 @@ class FeedGroup {
       }
 
       if (this.reader) {
-        this.reader.shouldStop = true;
+        this.reader.close();
         this.reader = undefined;
       }
       this.localSessionId = sessionId;
@@ -108,6 +108,8 @@ class FeedGroup {
         return ;
       }
 
+      this.reader?.close();
+      this.reader = undefined;
       callback();
     }, timeout);
   }
@@ -145,11 +147,11 @@ class FeedGroup {
 
 const groups: Map<string, FeedGroup> = new Map();
 
-export function listenHandler (port: MessagePort, message: ListenToFeed) {
+export async function listenHandler (port: MessagePort, message: ListenToFeed) {
   if (!groups.has(message.feed)) {
     groups.set(
       message.feed,
-      new FeedGroup(message.feed, getSessionId())
+      new FeedGroup(message.feed, (await SessionDB.getSessionInformation()).sessionId)
     );
   }
   

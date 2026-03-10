@@ -56,7 +56,7 @@ function PApp (_props: { children ?: any }) {
 function App() {
   return (
     <>
-      <WorkerProvider apiHostname="http://127.0.0.1:5173/api/">
+      <WorkerProvider apiHostname="http://localhost/api/">
         <AuthProvider>
           <FeedProvider contestId="1">
             <PApp></PApp>

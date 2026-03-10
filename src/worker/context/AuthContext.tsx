@@ -16,15 +16,18 @@ const STORAGE_SESSION_ITEM = "session_id";
 const STORAGE_WHOAMI_ITEM  = "whoami";
 
 function getSession () {
-  let currentSession: string | undefined | null = localStorage.getItem(STORAGE_SESSION_ITEM)
-  if (currentSession === null)
-    currentSession = undefined;
-  return currentSession;
+  let currentSession: string | null = localStorage.getItem(STORAGE_SESSION_ITEM)
+
+  let trueSession: string | undefined = undefined;
+  if (currentSession !== null) {
+    trueSession = currentSession;
+  }
+
+  return trueSession;
 }
 function loadSession (workerContext: WorkerContextValue) {
   workerContext.send({
-    "type": "LOGIN_INIT",
-    "session_id": getSession()
+    "type": "LOGIN_INIT"
   })
 }
 
@@ -51,6 +54,10 @@ export const AuthProvider: ParentComponent = (props) => {
   );
   function setWhoAmI (content: WhoAmI, session_id: string | undefined) {
     localStorage.setItem(STORAGE_WHOAMI_ITEM, JSON.stringify(content))
+    
+    if (session_id !== undefined) {
+      localStorage.setItem(STORAGE_SESSION_ITEM, session_id)
+    } else localStorage.removeItem(STORAGE_SESSION_ITEM);
     
     setSession(session_id);
     setWhoAmIRaw(content);
@@ -86,13 +93,7 @@ export const AuthProvider: ParentComponent = (props) => {
   let unsubscribe: () => void = () => {};
   onMount (() => {
     unsubscribe = workerContext.subscribe((msg: WorkerOutgoing) => {
-      if (msg.type == "LOGIN_STORE") {
-        if (msg.session_id === undefined) {
-          localStorage.removeItem(STORAGE_SESSION_ITEM);
-        } else {
-          localStorage.setItem(STORAGE_SESSION_ITEM, msg.session_id);
-        }
-      } else if (msg.type == "WHOAMI") {
+      if (msg.type == "WHOAMI") {
         setWhoAmI(msg.content, msg.session);
       }
     })

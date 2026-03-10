@@ -8,12 +8,6 @@ export type LoginResult = {
   message: string;
 };
 
-export type StoreSession = {
-  type: "LOGIN_STORE";
-
-  session_id: string | undefined;
-};
-
 export type WhoAmIResult = {
   type: "WHOAMI";
 
@@ -35,7 +29,7 @@ export type ResetFeed = {
   handlerHash: string;
 }
 
-export type WorkerOutgoing = LoginResult | StoreSession | WhoAmIResult | FeedContent | ResetFeed;
+export type WorkerOutgoing = LoginResult | WhoAmIResult | FeedContent | ResetFeed;
 
 export type FullWorkerOutgoing = {
   answerTo : string;

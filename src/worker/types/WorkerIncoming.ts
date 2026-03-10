@@ -12,8 +12,6 @@ export type AuthLogout = {
 
 export type AuthInit = {
   type: "LOGIN_INIT";
-
-  session_id: string | undefined;
 };
 
 export type ListenToFeed = {
