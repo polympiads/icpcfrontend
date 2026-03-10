@@ -8,3 +8,6 @@ export function whoamiEndpoint () {
 export function contestEndpoint () {
   return "contests/"
 }
+export function feedEndpoint (feed: string) {
+  return `contests/${feed}/eventfeed/`
+}

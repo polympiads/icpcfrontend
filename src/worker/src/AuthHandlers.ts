@@ -2,8 +2,9 @@
 import { loginEndpoint, whoamiEndpoint } from "../Endpoints";
 import type { WhoAmI } from "../types/data/WhoAmI";
 import type { AuthInit, AuthLogin, AuthLogout } from "../types/WorkerIncoming";
-import type { Answer, Broadcast } from "./entry.worker";
+import type { Answer, Broadcast, Send } from "./entry.worker";
 import params from "./entry.worker";
+import { setSessionIDOnGroups } from "./FeedHandlers";
 
 let session_id: string | undefined = undefined;
 let session_whoami : WhoAmI = { is_authenticated: false };
@@ -11,12 +12,22 @@ let session_whoami : WhoAmI = { is_authenticated: false };
 export function getSessionId () {
   return session_id;
 }
-export function getSessionWhoAmI () {
-  return session_whoami;
-}
 
-export async function initHandler (_answer: Answer, broadcast: Broadcast, message: AuthInit) {
-  if (session_id !== undefined) return ;
+export async function initHandler (_answer: Answer, broadcast: Broadcast, send: Send, message: AuthInit) {
+  if (session_id !== undefined) {
+    send({
+      "type": "LOGIN_STORE",
+      "session_id": session_id
+    })
+
+    send({
+      "type": "WHOAMI",
+      "content": session_whoami,
+      "session": session_id
+    })
+
+    return ;
+  }
   
   if (message.session_id) {
     const whoami_resp = await fetch(
@@ -35,6 +46,8 @@ export async function initHandler (_answer: Answer, broadcast: Broadcast, messag
     "content": session_whoami,
     "session": session_id
   })
+  
+  setSessionIDOnGroups(session_id);
 }
 export async function loginHandler (answer: Answer, broadcast: Broadcast, message: AuthLogin) {
   const url = new URL( loginEndpoint(), params.apiHostname );
@@ -80,6 +93,8 @@ export async function loginHandler (answer: Answer, broadcast: Broadcast, messag
     "content": session_whoami,
     "session": session_id
   })
+
+  setSessionIDOnGroups(session_id);
 }
 export async function logoutHandler (_answer: Answer, broadcast: Broadcast, _message: AuthLogout) {
   session_id = undefined;
@@ -95,4 +110,6 @@ export async function logoutHandler (_answer: Answer, broadcast: Broadcast, _mes
     "content": session_whoami,
     "session": session_id
   })
+
+  setSessionIDOnGroups(session_id);
 }

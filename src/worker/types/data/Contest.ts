@@ -19,6 +19,15 @@ export interface Contest {
   penalty_time : duration.Duration;
 }
 
+export interface ContestState {
+    started        : dayjs.Dayjs | null
+    ended          : dayjs.Dayjs | null
+    frozen         : dayjs.Dayjs | null
+    thawed         : dayjs.Dayjs | null
+    finalized      : dayjs.Dayjs | null
+    end_of_updates : dayjs.Dayjs | null
+};
+
 export interface ContestJson {
   id: string;
 
@@ -36,6 +45,15 @@ export interface ContestJson {
   penalty_time : string;
 }
 
+export interface ContestStateJson {
+    started        : string | null
+    ended          : string | null
+    frozen         : string | null
+    thawed         : string | null
+    finalized      : string | null
+    end_of_updates : string | null
+};
+
 export function parseContest (contest: ContestJson) {
   const result: Contest = {
     id: contest.id,
@@ -51,6 +69,24 @@ export function parseContest (contest: ContestJson) {
     scoreboard_type        : contest.scoreboard_type,
     
     penalty_time : parseReltime(contest.penalty_time)
+  };
+
+  return result;
+}
+
+export function parseContestState (contestState: ContestStateJson) {
+  function parseTimeOrNull (time: string | null) {
+    if (time === null) return time;
+    return parseTime(time);
+  }
+  
+  const result : ContestState = {
+    started        : parseTimeOrNull(contestState.started),
+    ended          : parseTimeOrNull(contestState.ended),
+    frozen         : parseTimeOrNull(contestState.frozen),
+    thawed         : parseTimeOrNull(contestState.thawed),
+    finalized      : parseTimeOrNull(contestState.finalized),
+    end_of_updates : parseTimeOrNull(contestState.end_of_updates)
   };
 
   return result;

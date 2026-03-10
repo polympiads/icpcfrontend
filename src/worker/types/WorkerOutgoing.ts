@@ -1,3 +1,4 @@
+import type { EventFeed } from "./data/EventFeed";
 import type { WhoAmI } from "./data/WhoAmI";
 
 export type LoginResult = {
@@ -20,7 +21,21 @@ export type WhoAmIResult = {
   session: string | undefined;
 };
 
-export type WorkerOutgoing = LoginResult | StoreSession | WhoAmIResult;
+export type FeedContent = {
+  type: "FEED_CONTENT";
+
+  content: EventFeed;
+  feed: string;
+  handlerHash: string;
+}
+export type ResetFeed = {
+  type: "RESET_FEED";
+
+  feed: string;
+  handlerHash: string;
+}
+
+export type WorkerOutgoing = LoginResult | StoreSession | WhoAmIResult | FeedContent | ResetFeed;
 
 export type FullWorkerOutgoing = {
   answerTo : string;

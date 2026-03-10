@@ -2,6 +2,7 @@ import { createSignal, For, Show } from "solid-js";
 import { AuthProvider, useAuth } from "./worker/context/AuthContext"
 import { WorkerProvider } from "./worker/context/WorkerContext"
 import { useContests } from "./worker/hooks/useContests";
+import { FeedProvider, useFeed } from "./worker/context/FeedContext";
 
 function PApp (_props: { children ?: any }) {
   const { whoami, login, logout } = useAuth();
@@ -14,6 +15,8 @@ function PApp (_props: { children ?: any }) {
   }
 
   const contests = useContests();
+
+  const feed = useFeed();
 
   return (
     <>
@@ -45,6 +48,7 @@ function PApp (_props: { children ?: any }) {
           {(contest) => <li>{contest.formal_name}</li>}
         </For>
       </ul>
+      <>{JSON.stringify(feed)}</>
     </>
   )
 }
@@ -54,7 +58,9 @@ function App() {
     <>
       <WorkerProvider apiHostname="http://127.0.0.1:5173/api/">
         <AuthProvider>
-          <PApp></PApp>
+          <FeedProvider contestId="1">
+            <PApp></PApp>
+          </FeedProvider>
         </AuthProvider>
       </WorkerProvider>
     </>
