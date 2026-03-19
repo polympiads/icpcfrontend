@@ -1,0 +1,37 @@
+name: Build Frontend for VDI
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Build
+        run: bun run build
+      
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: ${{ github.event_name == 'push' }}
+        with:
+          publish_branch: vdi
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist/
+          force_orphan: true
