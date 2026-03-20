@@ -5,6 +5,7 @@ import type { FullWorkerOutgoing, WorkerOutgoing } from "../types/WorkerOutgoing
 import params from "./entry.worker";
 import { NDJsonReader } from "./NDJsonReader";
 import { SessionDB } from "./SessionDB";
+import { v4 as uuidv4 } from "uuid";
 
 function outcomingMessageFromFeed (feed: string, hash: string, feedObject: EventFeed) {
   const message: WorkerOutgoing = {
@@ -98,7 +99,7 @@ class FeedGroup {
       return ;
     }
 
-    const hash = crypto.randomUUID();
+    const hash = uuidv4();
 
     this.deletionHash = hash;
 

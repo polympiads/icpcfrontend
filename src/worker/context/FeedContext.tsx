@@ -8,6 +8,7 @@ import type { JudgementType } from "../types/data/JudgementTypes";
 import type { Account, Team } from "../types/data/Users";
 import type { Problem } from "../types/data/Problems";
 import type { Submission } from "../types/data/Submission";
+import { v4 as uuidv4 } from "uuid";
 
 interface FeedContextValue {
   // Contest Information
@@ -50,10 +51,10 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
   const [feed, setFeed] = createStore<FeedContextValue>(defaultFeed());
 
   let unsubscribe: () => void = () => {};
-  let listen_hash: string = crypto.randomUUID();
+  let listen_hash: string = uuidv4();
   let listen_feed: string = props.contestId;
   onMount(() => {
-    listen_hash = crypto.randomUUID();
+    listen_hash = uuidv4();
 
     unsubscribe = workerContext.subscribe((message: WorkerOutgoing) => {
       if (message.type == "FEED_CONTENT") {

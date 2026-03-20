@@ -5,6 +5,7 @@ import type { WorkerIncoming } from "../types/WorkerIncoming";
 import SharedWorkerFactory from "../src/entry.worker.ts?sharedworker";
 import type { FullWorkerOutgoing, WorkerOutgoing } from "../types/WorkerOutgoing";
 import type { WorkerParams } from "../types/WorkerParams";
+import { v4 as uuidv4 } from "uuid";
 
 export interface WorkerContextValue {
   apiHostname : string;
@@ -62,7 +63,7 @@ export const WorkerProvider = (props: {
     },
 
     send : (message: WorkerIncoming) => {
-      const uuid = crypto.randomUUID();
+      const uuid = uuidv4();
       message["hash"] = uuid;
 
       const promise = new Promise<WorkerOutgoing | undefined>((resolve, _reject) => {
