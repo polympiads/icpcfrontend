@@ -81,23 +81,33 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
             setFeed("teams", message.content.data.id, message.content.data);
             break ;
           case "submission":
-            setFeed("submissions", message.content.data.id, message.content.data);
+            const submission_payload: {[key: string]: Submission} = {};  
+            submission_payload[message.content.data.id] = message.content.data as Submission;
+            setFeed("submissions", submission_payload);
             break ;
           case "submission-state":
-            setFeed("submissions", message.content.data.submission_id, "status", message.content.data.status);
+            const submission_state_payload: { [key: string]: Submission } = {};
+            submission_state_payload[message.content.data.submission_id] = { ...feed.submissions[message.content.data.submission_id] };
+            submission_state_payload[message.content.data.submission_id].status = message.content.data.status;
+            setFeed("submissions", submission_state_payload);
             break ;
           case "judgements":
-            setFeed("submissions", message.content.data.submission_id, "judgement_type_id", message.content.data.judgement_type_id);
+            const submission_judgement_payload: { [key: string]: Submission } = {};
+            submission_judgement_payload[message.content.data.submission_id] = { ...feed.submissions[message.content.data.submission_id] };
+            submission_judgement_payload[message.content.data.submission_id].judgement_type_id = message.content.data.judgement_type_id;
+            setFeed("submissions", submission_judgement_payload);
             break ;
           case "problems":
-            setFeed("problems", message.content.data.id, message.content.data);
+            const problem_payload: { [key: string]: Problem } = {};
+            problem_payload[message.content.data.id] = message.content.data;
+            setFeed("problems", problem_payload);
             break ;
         }
       } else if (message.type == "RESET_FEED") {
         if (message.feed !== listen_feed) return ;
         if (message.handlerHash !== listen_hash) return ;
 
-        setFeed(defaultFeed());
+        setFeed(reconcile(defaultFeed()));
       }
     });
 

@@ -107,6 +107,15 @@ export const AuthProvider: ParentComponent = (props) => {
   );
 };
 
+export function headerFromSession (sessionId: string | undefined) {
+  const headers: { [key: string]: string }
+    = sessionId !== undefined
+    ? { "X-Session-ID" : sessionId }
+    : {};
+
+  return headers;
+}
+
 export function useAuth () {
   const ctx = useContext(AuthContext);
   

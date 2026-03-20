@@ -56,9 +56,17 @@ export const WorkerProvider = (props: {
     port?.close();
   })
 
+  if (!props.apiHostname.endsWith("/")) {
+    throw new Error("Api Hostname should end with '/'.")
+  }
+
   const context: WorkerContextValue = {
     apiHostname: props.apiHostname,
     apiEndpoint: (path: string) => {
+      if (path.startsWith("/")) {
+        path = path.substring(1);
+      }
+
       return new URL(props.apiHostname + path);
     },
 
