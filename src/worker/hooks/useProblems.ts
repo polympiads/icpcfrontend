@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createResource, onCleanup } from "solid-js";
+import { createMemo, createResource, onCleanup } from "solid-js";
 import { useFeed } from "../context/FeedContext";
 import { headerFromSession, useAuth } from "../context/AuthContext";
 import { useWorkerContext } from "../context/WorkerContext";
