@@ -1,0 +1,17 @@
+@keyframes entryEnterAnimation {
+    0% {
+        left: 2rem;
+        opacity: 0;
+        height: 0px;
+    }
+    100% {
+        left: 0;
+        opacity: 1;
+        height: 3rem;
+    }
+}
+
+.entryEnterAnimation {
+    position: relative;
+    animation: entryEnterAnimation 0.1s linear forwards;
+}

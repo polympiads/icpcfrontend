@@ -1,0 +1,13 @@
+FROM oven/bun:alpine as installer
+
+WORKDIR /app
+COPY ./pdfslick ./pdfslick
+COPY package.json ./
+RUN bun install
+
+COPY index.html index.html
+COPY ./public ./public
+COPY ./src ./src
+COPY ./vite.config.ts ./vite.config.ts
+
+CMD [ "bun", "run", "dev", "--host" ]

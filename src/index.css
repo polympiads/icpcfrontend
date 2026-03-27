@@ -1,0 +1,205 @@
+@import "tailwindcss";
+@plugin "@kobalte/tailwindcss";
+
+body,
+#root {
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+}
+
+button {
+    overflow: hidden;
+}
+
+@theme inline {
+    --spacing-ui-popup-h: var(--kb-popper-content-available-height);
+    --spacing-ui-popup-w: var(--kb-popper-content-available-width);
+}
+
+@theme {
+    --animate-pulse-2x: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    --animate-pulse-1\/4: pulse-1-4 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+    @keyframes pulse-1-4 {
+        50% {
+            opacity: 0.25;
+        }
+    }
+
+    @keyframes popover-enter {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes popover-exit {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+    }
+
+    --animate-popover-enter: popover-enter 0.15s ease-out forwards;
+    --animate-popover-exit: popover-exit 0.12s ease-in forwards;
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
+    }
+
+    --animate-fade-in: fadeIn 0.1s linear forwards;
+    --animate-fade-out: fadeOut 0.1s linear forwards;
+
+    @keyframes dot-bounce {
+        0% {
+            transform: translateY(0px);
+        }
+        16% {
+            transform: translateY(-16px);
+        }
+        33% {
+            transform: translateY(0px);
+        }
+    }
+
+    --animate-three-dot-bounce: dot-bounce 1s linear infinite;
+
+    @keyframes wave-left {
+        from {
+            transform: translateX(100%);
+        }
+        to {
+            transform: translateX(-100%);
+        }
+    }
+
+    --animate-wave: wave-left 1s linear infinite;
+
+    @keyframes enter-up {
+        from {
+            top: -100%;
+        }
+        to {
+            top: 0%;
+        }
+    }
+
+    @keyframes exit-down {
+        from {
+            top: 0%;
+        }
+        to {
+            top: 100%;
+        }
+    }
+
+    --animate-time-exit-down: exit-down 75ms linear forwards;
+    --animate-time-enter-up: enter-up 75ms linear forwards;
+
+    @keyframes viewZoomInEnter {
+        from {
+            opacity: 0;
+            transform: scale(90%);
+        }
+        to {
+            opacity: 1;
+            transform: scale(100%);
+        }
+    }
+    @keyframes viewZoomInExit {
+        from {
+            opacity: 1;
+            transform: scale(100%);
+        }
+        to {
+            opacity: 0;
+            transform: scale(90%);
+        }
+    }
+
+    @keyframes viewZoomOutEnter {
+        from {
+            opacity: 0;
+            transform: scale(110%);
+        }
+        to {
+            opacity: 1;
+            transform: scale(100%);
+        }
+    }
+    @keyframes viewZoomOutExit {
+        from {
+            opacity: 1;
+            transform: scale(100%);
+        }
+        to {
+            opacity: 0;
+            transform: scale(110%);
+        }
+    }
+
+    --animate-view-zoom-in-enter: viewZoomInEnter 0.2s ease-out forwards;
+    --animate-view-zoom-in-exit: viewZoomInExit 0.2s ease-in forwards;
+    --animate-view-zoom-out-enter: viewZoomOutEnter 0.2s ease-in forwards;
+    --animate-view-zoom-out-exit: viewZoomOutExit 0.2s ease-out forwards;
+
+    /* style.css */
+    --animate-slide-up: slideUp 100ms  ease-out;
+    --animate-slide-down: slideDown 100ms ease-out;
+
+    @keyframes slideDown {
+        from {
+            height: 0;
+        }
+        to {
+            height: var(--kb-accordion-content-height);
+        }
+    }
+    @keyframes slideUp {
+        from {
+            height: var(--kb-accordion-content-height);
+        }
+        to {
+            height: 0;
+        }
+    }
+}
+
+@utility animation-delay-* {
+    animation-delay: calc(--value(integer) * 1ms);
+}
+
+@utility w-full-round-* {
+    width: round(down, 100%, --spacing(--value(integer)));
+}
+
+@utility h-fit-round-* {
+    height: round(down, fit-content, --spacing(--value(integer)));
+}
+
+.popover-content {
+    transform-origin: var(--kb-popover-content-transform-origin);
+}

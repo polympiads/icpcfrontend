@@ -1,0 +1,33 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    expose:
+      - 5173
+    develop:
+      watch:
+        - action: rebuild
+          path: ./pdfslick
+          target: /app/pdfslick
+          initial_sync: true
+        - action: sync
+          path: ./src
+          target: /app/src
+          initial_sync: true
+        - action: sync
+          path: ./index.html
+          target: /app/index.html
+          initial_sync: true
+        - action: rebuild
+          path: ./package.json
+          target: /app/package.json
+          initial_sync: true
+        - action: sync+restart
+          path: ./vite.config.ts
+          target: /app/vite.config.ts
+          initial_sync: true
+          
+  
+       
+      

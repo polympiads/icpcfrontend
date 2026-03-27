@@ -38,6 +38,10 @@ export const WorkerProvider = (props: {
     port = worker.port;
   
     port.onmessage = (event: MessageEvent<FullWorkerOutgoing>) => {
+<<<<<<< HEAD
+=======
+      console.log(event.data)
+>>>>>>> 32d8477 (initial commit)
       if (event.data.answerTo !== undefined) {
         const resolve = pendingCallbacks.get(event.data.answerTo);
         if (resolve) {

@@ -1,0 +1,28 @@
+@keyframes topDownEnter {
+    0% {
+        opacity: 0;
+        top: -100%
+    }
+    100% {
+        opacity: 1;
+        top: 0%;
+    }
+}
+
+@keyframes topDownExit {
+    0% {
+        opacity: 1;
+        top: 0%
+    }
+    100% {
+        opacity: 0;
+        top: 100%;
+    }
+}
+
+.topDownEnter {
+    animation: topDownEnter 0.1s linear forwards;
+}
+.topDownExit {
+    animation: topDownExit 0.1s linear forwards;
+}

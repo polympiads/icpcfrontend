@@ -13,6 +13,10 @@ dist-ssr
 *.local
 
 # Editor directories and files
+<<<<<<< HEAD
+=======
+.vscode/*
+>>>>>>> 32d8477 (initial commit)
 !.vscode/extensions.json
 .idea
 .DS_Store

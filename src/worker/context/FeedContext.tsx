@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 import { createContext, createSignal, onCleanup, onMount, useContext, type JSX } from "solid-js";
 import { parseContest, parseContestState, type Contest, type ContestState } from "../types/data/Contest";
+=======
+import { createContext, onCleanup, onMount, useContext, type JSX } from "solid-js";
+import { parseContest, parseContestState, type Contest, type ContestState } from "../types/data/Contest";
+import { createStore, reconcile } from "solid-js/store";
+>>>>>>> 32d8477 (initial commit)
 import { useWorkerContext } from "./WorkerContext";
 import type { WorkerOutgoing } from "../types/WorkerOutgoing";
 import type { Language } from "../types/data/Language";
@@ -27,7 +33,11 @@ interface FeedContextValue {
   submissions: { [key: string]: Submission };
 };
 
+<<<<<<< HEAD
 const FeedContext = createContext<() => FeedContextValue>();
+=======
+const FeedContext = createContext<FeedContextValue>();
+>>>>>>> 32d8477 (initial commit)
 
 function defaultFeed (): FeedContextValue {
   return {
@@ -44,6 +54,7 @@ function defaultFeed (): FeedContextValue {
     submissions: {}
   }
 }
+<<<<<<< HEAD
 
 export function copyFeed (feed: FeedContextValue) {
   return {
@@ -67,6 +78,12 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
   const workerContext = useWorkerContext();
 
   const [feed, setFeed] = createSignal<FeedContextValue>(defaultFeed());
+=======
+export function FeedProvider (props: { children ?: JSX.Element, contestId: string }) {
+  const workerContext = useWorkerContext();
+
+  const [feed, setFeed] = createStore<FeedContextValue>(defaultFeed());
+>>>>>>> 32d8477 (initial commit)
 
   let unsubscribe: () => void = () => {};
   let listen_hash: string = uuidv4();
@@ -79,6 +96,7 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
         if (message.feed !== listen_feed) return ;
         if (message.handlerHash !== listen_hash) return ;
 
+<<<<<<< HEAD
         const newFeed = copyFeed(feed());
 
         switch (message.content.type) {
@@ -117,11 +135,59 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
         }
 
         setFeed(newFeed);
+=======
+        switch (message.content.type) {
+          case "contests":
+            setFeed("contest", reconcile( parseContest(message.content.data) ));
+            break;
+          case "state":
+            setFeed("contestState", reconcile( parseContestState(message.content.data) ));
+            break;
+          case "languages":
+            setFeed("languages", message.content.data.id, message.content.data);
+            break;
+          case "judgement-types":
+            setFeed("judgementTypes", message.content.data.id, message.content.data);
+            break;
+          case "accounts":
+            setFeed("accounts", message.content.data.id, message.content.data);
+            break ;
+          case "teams":
+            setFeed("teams", message.content.data.id, message.content.data);
+            break ;
+          case "submission":
+            const submission_payload: {[key: string]: Submission} = {};  
+            submission_payload[message.content.data.id] = message.content.data as Submission;
+            setFeed("submissions", submission_payload);
+            break ;
+          case "submission-state":
+            const submission_state_payload: { [key: string]: Submission } = {};
+            submission_state_payload[message.content.data.submission_id] = { ...feed.submissions[message.content.data.submission_id] };
+            submission_state_payload[message.content.data.submission_id].status = message.content.data.status;
+            setFeed("submissions", submission_state_payload);
+            break ;
+          case "judgements":
+            const submission_judgement_payload: { [key: string]: Submission } = {};
+            submission_judgement_payload[message.content.data.submission_id] = { ...feed.submissions[message.content.data.submission_id] };
+            submission_judgement_payload[message.content.data.submission_id].judgement_type_id = message.content.data.judgement_type_id;
+            setFeed("submissions", submission_judgement_payload);
+            break ;
+          case "problems":
+            const problem_payload: { [key: string]: Problem } = {};
+            problem_payload[message.content.data.id] = message.content.data;
+            setFeed("problems", problem_payload);
+            break ;
+        }
+>>>>>>> 32d8477 (initial commit)
       } else if (message.type == "RESET_FEED") {
         if (message.feed !== listen_feed) return ;
         if (message.handlerHash !== listen_hash) return ;
 
+<<<<<<< HEAD
         setFeed(defaultFeed());
+=======
+        setFeed(reconcile(defaultFeed()));
+>>>>>>> 32d8477 (initial commit)
       }
     });
 

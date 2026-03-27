@@ -1,0 +1,77 @@
+{
+  "name": "@pdfslick/core",
+  "version": "3.1.0",
+  "source": "./index.ts",
+  "main": "dist/umd/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "description": "PDFSlick — view and interact with PDF documents in your React and SolidJS apps.",
+  "author": {
+    "name": "Vancho Stojkov",
+    "email": "vancho@stojkov.me",
+    "url": "https://stojkov.me"
+  },
+  "homepage": "https://pdfslick.dev",
+  "bugs": {
+    "url": "https://github.com/pdfslick/pdfslick/issues"
+  },
+  "keywords": [
+    "pdfslick",
+    "pdf slick",
+    "view pdf",
+    "interact pdf",
+    "pdf react",
+    "pdf solidjs",
+    "pdf solid",
+    "pdf.js"
+  ],
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pdfslick/pdfslick.git",
+    "directory": "packages/core"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"**/*.ts*\"",
+    "dev": "concurrently \"rollup --config node:@pdfslick/rollup-config --watch\" \"npm run css-watch\"",
+    "devdev": "rollup --config node:@pdfslick/rollup-config && npm run css",
+    "build": "rollup --config node:@pdfslick/rollup-config --environment NODE_ENV:production && npm run css",
+    "css": "cat ../../node_modules/pdfjs-dist/web/pdf_viewer.css ./styles/pdf_viewer.css | postcss -o dist/pdf_viewer.css",
+    "css-watch": "npm run css",
+    "css-js": "node combine-css.js",
+    "css-watch-js": "npm run css -- --watch"
+  },
+  "dependencies": {
+    "pdfjs-dist": "^5.4.394",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@pdfslick/rollup-config": "0.0.0",
+    "autoprefixer": "^10.4.22",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.1",
+    "eslint-config-custom": "0.0.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "postcss-inline-svg": "^6.0.0",
+    "postcss-url": "^10.1.3",
+    "tsconfig": "0.0.0",
+    "typescript": "5.9.3"
+  },
+  "publishConfig": {
+    "provenance": true
+  },
+  "rollup": {
+    "globals": {
+      "zustand": "zustand",
+      "pdfjs-dist": "pdfjsLib"
+    },
+    "name": "PDFSlickCore"
+  }
+}
