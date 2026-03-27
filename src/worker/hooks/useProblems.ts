@@ -32,7 +32,7 @@ export function useStatement (problemId: string) {
   //  console.log("NEW PROBLEM: ", problem())
   //})
 
-  const [statementBlob] = createResource(
+  const [statementBuffer] = createResource(
     () => { return { problem: problem(), session: auth.session() } },
     async ({ problem, session }) => {
       //console.log(problem, session)
@@ -42,36 +42,36 @@ export function useStatement (problemId: string) {
 
       //console.log("THE PROBLEM: ", problem)
       const response = await fetch(apiEndpoint(problem.statement[0].href), { headers: headerFromSession(session) })
-      const blob = await response.blob();
+      const blob = (await response.blob()).arrayBuffer();
       //console.log("RECEIVED BLOB: ", blob)
       return blob;
     }
   );
 
-  const [pdfUrl] = createResource<string | undefined, { blob: Blob | undefined }>(
-    () => {
-      return { blob: statementBlob() }
-    },
-    ({ blob }, { value: prevURL }) => {
-      if (prevURL) {
-        URL.revokeObjectURL(prevURL);
-      }
+  // const [pdfUrl] = createResource<string | undefined, { blob: Blob | undefined }>(
+  //   () => {
+  //     return { blob: statementBlob() }
+  //   },
+  //   ({ blob }, { value: prevURL }) => {
+  //     if (prevURL) {
+  //       URL.revokeObjectURL(prevURL);
+  //     }
 
-      //console.log("CREATE NEW URL");
-      if (blob === undefined) {
-        return undefined;
-      }
+  //     //console.log("CREATE NEW URL");
+  //     if (blob === undefined) {
+  //       return undefined;
+  //     }
 
-      return URL.createObjectURL(blob);
-    }
-  )
+  //     return URL.createObjectURL(blob);
+  //   }
+  // )
 
-  onCleanup(() => {
-    const finalUrl = pdfUrl();
-    if (finalUrl) {
-      URL.revokeObjectURL(finalUrl);
-    }
-  });
+  // onCleanup(() => {
+  //   const finalUrl = pdfUrl();
+  //   if (finalUrl) {
+  //     URL.revokeObjectURL(finalUrl);
+  //   }
+  // });
 
-  return pdfUrl;
+  return statementBuffer;
 }
