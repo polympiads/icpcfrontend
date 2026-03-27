@@ -71,7 +71,7 @@ export function SubmissionEntries(
   const sortedSubmissions = createMemo(() =>
     sortRecordValues(props.submissions(), (v) => Number(v.id), "desc"),
   );
-  console.log(sortedSubmissions());
+  //console.log(sortedSubmissions());
 
   const finalStyle = clsx(
     "overflow-x-hidden p-3 *:not-last:mb-3 overflow-auto grow",

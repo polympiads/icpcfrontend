@@ -66,7 +66,7 @@ import pdfjsworker from "pdfjs-dist/build/pdf.worker.min.mjs?url"
 import './styles/pdf_viewer.css'
 import 'pdfjs-dist/web/pdf_viewer.css'
 
-console.log(pdfjsworker)
+//console.log(pdfjsworker)
 
 GlobalWorkerOptions.workerSrc = pdfjsworker;
 

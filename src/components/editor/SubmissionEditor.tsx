@@ -21,7 +21,7 @@ export function SubmissionEditor(props: {
       setLanguage(undefined)
     }
   })
-  createEffect(() => console.log(language()))
+  //createEffect(() => console.log(language()))
 
   const [code, setCode] = createSignal("");
   const [isSumbitting, setSubmitting] = createSignal(false);

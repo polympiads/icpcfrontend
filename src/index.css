@@ -13,6 +13,12 @@ button {
     overflow: hidden;
 }
 
+:root {
+    color-scheme: light;
+    background-color: #ffffff;
+    color: #0f172a;
+}
+
 @theme inline {
     --spacing-ui-popup-h: var(--kb-popper-content-available-height);
     --spacing-ui-popup-w: var(--kb-popper-content-available-width);
