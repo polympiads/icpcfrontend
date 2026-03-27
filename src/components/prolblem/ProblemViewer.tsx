@@ -1,6 +1,5 @@
 import { createEffect } from "solid-js";
 import { useStatement } from "../../worker/hooks/useProblems";
-import { BasePdfViewer } from "../thirdparty/pdfslick/PdfViewer";
 import { PdfViewer } from "../thirdparty/pdfslick/components/PdfViewer";
 import { LoadingAnimation } from "../animations/LoadingAnimation";
 import { BaseTransition } from "../base/BaseTransition";
