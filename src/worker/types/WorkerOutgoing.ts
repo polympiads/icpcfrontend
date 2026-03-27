@@ -18,7 +18,7 @@ export type WhoAmIResult = {
 export type FeedContent = {
   type: "FEED_CONTENT";
 
-  content: EventFeed;
+  content: EventFeed[];
   feed: string;
   handlerHash: string;
 }

@@ -7,7 +7,7 @@ import { NDJsonReader } from "./NDJsonReader";
 import { SessionDB } from "./SessionDB";
 import { v4 as uuidv4 } from "uuid";
 
-function outcomingMessageFromFeed (feed: string, hash: string, feedObject: EventFeed) {
+function outcomingMessageFromFeed (feed: string, hash: string, feedObject: EventFeed[]) {
   const message: WorkerOutgoing = {
     "type": "FEED_CONTENT",
     "feed": feed,
@@ -73,7 +73,7 @@ class FeedGroup {
         this.reader = undefined;
       }
       this.localSessionId = sessionId;
-      this.reader = new NDJsonReader((feed: EventFeed) => {
+      this.reader = new NDJsonReader((feed: EventFeed[]) => {
         this.onEventFeed(feed);
       })
 
@@ -115,8 +115,8 @@ class FeedGroup {
     }, timeout);
   }
 
-  onEventFeed (eventFeed: EventFeed) {
-    this.feedCache.push(eventFeed);
+  onEventFeed (eventFeed: EventFeed[]) {
+    this.feedCache.push(...eventFeed);
     const toRemove: string[] = []
     for (let [hash, port] of this.listeners) {
       try {
@@ -132,12 +132,10 @@ class FeedGroup {
   }
   addListener (hash: string, port: MessagePort) {
     try {
-      for (let object of this.feedCache) {
-        port.postMessage(
-          outcomingMessageFromFeed(this.feed, hash, object)
-        );
-      }
-
+      port.postMessage(
+          outcomingMessageFromFeed(this.feed, hash, this.feedCache)
+      );
+    
       this.listeners.set(hash, port);
     } catch (exception) {}
   }

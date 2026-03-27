@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [solid(), tailwindcss()],
   server: {
     host: '0.0.0.0',
-    port: 80,
+    port: 5173,
     allowedHosts: [ "host.docker.internal", "localhost" ]
   },
 })

@@ -81,39 +81,41 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
 
         const newFeed = copyFeed(feed());
 
-        switch (message.content.type) {
-          case "contests":
-            newFeed.contest = parseContest(message.content.data);
-            break;
-          case "state":
-            newFeed.contestState = parseContestState(message.content.data);
-            break;
-          case "languages":
-            newFeed.languages[message.content.data.id] = message.content.data;
-            break;
-          case "judgement-types":
-            newFeed.judgementTypes[message.content.data.id] = message.content.data;
-            break;
-          case "accounts":
-            newFeed.accounts[message.content.data.id] = message.content.data;
-            break ;
-          case "teams":
-            newFeed.teams[message.content.data.id] = message.content.data;
-            break ;
-          case "submission":
-            newFeed.submissions[message.content.data.id] = message.content.data as Submission;
-            break ;
-          case "submission-state":
-            newFeed.submissions[message.content.data.submission_id] = {...newFeed.submissions[message.content.data.submission_id]};
-            newFeed.submissions[message.content.data.submission_id].status = message.content.data.status;
-            break ;
-          case "judgements":
-            newFeed.submissions[message.content.data.submission_id] = {...newFeed.submissions[message.content.data.submission_id]};
-            newFeed.submissions[message.content.data.submission_id].judgement_type_id = message.content.data.judgement_type_id;
-            break ;
-          case "problems":
-            newFeed.problems[message.content.data.id] = message.content.data;
-            break ;
+        for (let content of message.content) {
+          switch (content.type) {
+            case "contests":
+              newFeed.contest = parseContest(content.data);
+              break;
+            case "state":
+              newFeed.contestState = parseContestState(content.data);
+              break;
+            case "languages":
+              newFeed.languages[content.data.id] = content.data;
+              break;
+            case "judgement-types":
+              newFeed.judgementTypes[content.data.id] = content.data;
+              break;
+            case "accounts":
+              newFeed.accounts[content.data.id] = content.data;
+              break ;
+            case "teams":
+              newFeed.teams[content.data.id] = content.data;
+              break ;
+            case "submission":
+              newFeed.submissions[content.data.id] = content.data as Submission;
+              break ;
+            case "submission-state":
+              newFeed.submissions[content.data.submission_id] = {...newFeed.submissions[content.data.submission_id]};
+              newFeed.submissions[content.data.submission_id].status = content.data.status;
+              break ;
+            case "judgements":
+              newFeed.submissions[content.data.submission_id] = {...newFeed.submissions[content.data.submission_id]};
+              newFeed.submissions[content.data.submission_id].judgement_type_id = content.data.judgement_type_id;
+              break ;
+            case "problems":
+              newFeed.problems[content.data.id] = content.data;
+              break ;
+          }
         }
 
         setFeed(newFeed);

@@ -3,18 +3,24 @@ export class NDJsonReader<T> {
     internalBuffer : string[];
     lastToken      : string | undefined;
 
-    callback: (x: T) => void;
+    callback: (x: T[]) => void;
     shouldStop: boolean = false;
 
     reader: ReadableStreamDefaultReader | undefined;
+    toCommit: T[];
 
-    constructor (callback: (x: T) => void) {
+    constructor (callback: (x: T[]) => void) {
         this.internalBuffer = [];
+        this.toCommit = [];
         this.lastToken      = undefined;
 
         this.callback = callback;
     }
 
+    commit () {
+        this.callback(this.toCommit)
+        this.toCommit = [];
+    }
     pushInternalBuffer () {
         const result = this.internalBuffer.join("");
 
@@ -26,7 +32,7 @@ export class NDJsonReader<T> {
           this.lastToken = json.token;
         }
 
-        this.callback(json);
+        this.toCommit.push(json);
 
         this.internalBuffer = [];
     }
@@ -81,6 +87,7 @@ export class NDJsonReader<T> {
                   const nextDelimiter = buffer.indexOf('\n', currentIndex);
                   if (nextDelimiter === -1) {
                       this.internalBuffer.push(buffer.substring(currentIndex));
+                      this.commit();
                       break ;
                   }
 
