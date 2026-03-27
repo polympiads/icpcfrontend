@@ -21,7 +21,7 @@ function ImageRoot<T extends ValidComponent = "span">(props: BaseImageProps<T>) 
   const [status, setStatus] = createSignal<ImageStatus>("idle")
   const propsMerged = mergeProps(props, { onLoadingStatusChange: setStatus })
   
-  createEffect(() => console.log(`[${name}] ${status()}`))
+  //createEffect(() => console.log(`[${name}] ${status()}`))
   
   return (
     <>

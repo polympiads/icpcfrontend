@@ -17,9 +17,9 @@ type Variant = "user" | "team" | "none"
 
 function UserInfo(props: { account_id: string | undefined }) {
   const accounts = useAccounts()
-  createEffect(()=> console.log(accounts()))
+  //createEffect(()=> console.log(accounts()))
   const account = createMemo(() => props.account_id ? accounts()[props.account_id!] : undefined)
-  createEffect(() => console.log(account()))
+  //createEffect(() => console.log(account()))
   
   return (
     <>
@@ -57,7 +57,7 @@ export function SubmissionEntry(props: { index: number, submission: Submission, 
   const judgment = createMemo(() => props.submission.judgement_type_id ? judgments()[props.submission.judgement_type_id] : undefined)
   
   const status = createMemo(() => computeStatus(props.submission, judgment()))
-  createEffect(() => console.log(status()))
+  //createEffect(() => console.log(status()))
   
   return (
     <>

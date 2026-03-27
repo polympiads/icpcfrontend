@@ -30,7 +30,7 @@ export function usePdfContext() {
   return context
 }
 
-export function PdfViewerRoot(props: { pdfSource: Accessor<string | undefined>, isSourceLoading: Accessor<boolean> } & ComponentProps<"div"> & ParentProps) {
+export function PdfViewerRoot(props: { pdfSource: Accessor<ArrayBuffer | undefined>, isSourceLoading: Accessor<boolean> } & ComponentProps<"div"> & ParentProps) {
   const contextValue = usePDFSlick(props.pdfSource)
   
   const [local, others] = splitProps(props, ["class"])

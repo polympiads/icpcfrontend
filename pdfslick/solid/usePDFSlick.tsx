@@ -104,16 +104,16 @@ export const usePDFSlick: TUsePDFSlick = (url, options) => {
     const instance = pdfSlick();
     const urlValue = url();
     
-    console.log(instance, urlValue)
+    //console.log(instance, urlValue)
     
     if (!instance || !urlValue) return;
   
     setIsDocumentLoaded(false);
     setError(null);
   
-    console.log("Loading document")
+    //console.log("Loading document")
     instance.loadDocument(urlValue, options).then(() => {
-      console.log("Done")
+      //console.log("Done")
       setIsDocumentLoaded(true);
     });
   });

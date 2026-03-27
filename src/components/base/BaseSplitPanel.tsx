@@ -63,7 +63,7 @@ export function BaseSplitPanel(
   });
 
   onCleanup(() => {
-    console.log("destroy")
+    //console.log("destroy")
     resolvedChildrenDivs.length = 0;
   });
   onTransitionAfterExit(() => {

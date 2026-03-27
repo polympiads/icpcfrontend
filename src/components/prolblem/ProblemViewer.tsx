@@ -13,21 +13,20 @@ export function ProblemViewer(props: { problemId: string }) {
   const statement = useStatement(props.problemId);
 
   const [reactivePulse, setReactivePulse] = createSignal(false);
-  const [statementValue, setStatementValue] = createSignal(
-    new String(statement()),
-  );
+  const [statementValue, setStatementValue] = createSignal(statement());
   createEffect(() => {
     reactivePulse();
-    setStatementValue(new String(statement()?.toString()));
+    setStatementValue(statement());
   });
 
   function tryReload() {
+    setStatementValue();
     setReactivePulse((v) => !v);
   }
 
   return (
     <PdfViewer
-      pdfSource={() => statementValue().toString()}
+      pdfSource={() => statementValue()}
       isSourceLoading={() => statement.state == "pending"}
       class="relative w-full h-full inset-0 pdfSlick flex flex-col"
     >
@@ -38,7 +37,12 @@ export function ProblemViewer(props: { problemId: string }) {
         <PdfViewer.Toolbar.Splitter />
         <PdfViewer.Toolbar.PageSelector />
       </PdfViewer.Toolbar>
-      <div class="flex-1 relative h-full [&_.canvasWrapper]:shadow-md [&_.canvasWrapper]:outline [&_.canvasWrapper]:outline-black/10 [&_.viewerContainer]:z-0" aria-hidden={ usePdfContext().error() != null || !usePdfContext().isDocumentLoaded() }>
+      <div
+        class="flex-1 relative h-full [&_.canvasWrapper]:shadow-md [&_.canvasWrapper]:outline [&_.canvasWrapper]:outline-black/10 [&_.viewerContainer]:z-0"
+        aria-hidden={
+          usePdfContext().error() != null || !usePdfContext().isDocumentLoaded()
+        }
+      >
         <PdfViewer.Thumbsbar />
         <PdfViewer.Viewer />
       </div>
