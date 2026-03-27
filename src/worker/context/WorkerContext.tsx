@@ -38,7 +38,6 @@ export const WorkerProvider = (props: {
     port = worker.port;
   
     port.onmessage = (event: MessageEvent<FullWorkerOutgoing>) => {
-      console.log(event.data)
       if (event.data.answerTo !== undefined) {
         const resolve = pendingCallbacks.get(event.data.answerTo);
         if (resolve) {

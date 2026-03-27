@@ -1,4 +1,4 @@
-import { createEffect, createSignal, For, Show } from "solid-js";
+import { createEffect, createMemo, createSignal, For, Show } from "solid-js";
 import { AuthProvider, useAuth } from "./worker/context/AuthContext"
 import { WorkerProvider } from "./worker/context/WorkerContext"
 import { useContests } from "./worker/hooks/useContests";
@@ -70,10 +70,12 @@ function PApp (_props: { children ?: any }) {
   const feed = useFeed();
 
   const problems = useProblems();
-  const entries = () => Object.values( problems() ).sort((a, b) => Number(a.id) - Number(b.id))
+  const entries = createMemo(() => Object.values( problems() ).sort((a, b) => Number(a.id) - Number(b.id)))
 
   const submissions = useSubmissions();
-  const submissions_entries = () => Object.values( submissions() ).sort((a, b) => Number(a.id) - Number(b.id))
+  const submissions_entries = createMemo(() => {
+    return Object.values( submissions() ).sort((a, b) => Number(a.id) - Number(b.id))
+  });
 
   return (
     <>

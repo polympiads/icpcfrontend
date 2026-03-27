@@ -1,6 +1,5 @@
-import { createContext, onCleanup, onMount, useContext, type JSX } from "solid-js";
+import { createContext, createSignal, onCleanup, onMount, useContext, type JSX } from "solid-js";
 import { parseContest, parseContestState, type Contest, type ContestState } from "../types/data/Contest";
-import { createStore, reconcile } from "solid-js/store";
 import { useWorkerContext } from "./WorkerContext";
 import type { WorkerOutgoing } from "../types/WorkerOutgoing";
 import type { Language } from "../types/data/Language";
@@ -28,7 +27,7 @@ interface FeedContextValue {
   submissions: { [key: string]: Submission };
 };
 
-const FeedContext = createContext<FeedContextValue>();
+const FeedContext = createContext<() => FeedContextValue>();
 
 function defaultFeed (): FeedContextValue {
   return {
@@ -45,10 +44,29 @@ function defaultFeed (): FeedContextValue {
     submissions: {}
   }
 }
+
+export function copyFeed (feed: FeedContextValue) {
+  return {
+    contest : feed.contest,
+    contestState : feed.contestState,
+
+    // Static Information
+    languages:      { ...feed.languages },
+    judgementTypes: { ...feed.judgementTypes },
+
+    // Users Information
+    accounts:    { ...feed.accounts },
+    teams:       { ...feed.teams },
+
+    // Contest content
+    problems:    { ...feed.problems },
+    submissions: { ...feed.submissions }
+  }
+}
 export function FeedProvider (props: { children ?: JSX.Element, contestId: string }) {
   const workerContext = useWorkerContext();
 
-  const [feed, setFeed] = createStore<FeedContextValue>(defaultFeed());
+  const [feed, setFeed] = createSignal<FeedContextValue>(defaultFeed());
 
   let unsubscribe: () => void = () => {};
   let listen_hash: string = uuidv4();
@@ -61,53 +79,49 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
         if (message.feed !== listen_feed) return ;
         if (message.handlerHash !== listen_hash) return ;
 
+        const newFeed = copyFeed(feed());
+
         switch (message.content.type) {
           case "contests":
-            setFeed("contest", reconcile( parseContest(message.content.data) ));
+            newFeed.contest = parseContest(message.content.data);
             break;
           case "state":
-            setFeed("contestState", reconcile( parseContestState(message.content.data) ));
+            newFeed.contestState = parseContestState(message.content.data);
             break;
           case "languages":
-            setFeed("languages", message.content.data.id, message.content.data);
+            newFeed.languages[message.content.data.id] = message.content.data;
             break;
           case "judgement-types":
-            setFeed("judgementTypes", message.content.data.id, message.content.data);
+            newFeed.judgementTypes[message.content.data.id] = message.content.data;
             break;
           case "accounts":
-            setFeed("accounts", message.content.data.id, message.content.data);
+            newFeed.accounts[message.content.data.id] = message.content.data;
             break ;
           case "teams":
-            setFeed("teams", message.content.data.id, message.content.data);
+            newFeed.teams[message.content.data.id] = message.content.data;
             break ;
           case "submission":
-            const submission_payload: {[key: string]: Submission} = {};  
-            submission_payload[message.content.data.id] = message.content.data as Submission;
-            setFeed("submissions", submission_payload);
+            newFeed.submissions[message.content.data.id] = message.content.data as Submission;
             break ;
           case "submission-state":
-            const submission_state_payload: { [key: string]: Submission } = {};
-            submission_state_payload[message.content.data.submission_id] = { ...feed.submissions[message.content.data.submission_id] };
-            submission_state_payload[message.content.data.submission_id].status = message.content.data.status;
-            setFeed("submissions", submission_state_payload);
+            newFeed.submissions[message.content.data.submission_id] = {...newFeed.submissions[message.content.data.submission_id]};
+            newFeed.submissions[message.content.data.submission_id].status = message.content.data.status;
             break ;
           case "judgements":
-            const submission_judgement_payload: { [key: string]: Submission } = {};
-            submission_judgement_payload[message.content.data.submission_id] = { ...feed.submissions[message.content.data.submission_id] };
-            submission_judgement_payload[message.content.data.submission_id].judgement_type_id = message.content.data.judgement_type_id;
-            setFeed("submissions", submission_judgement_payload);
+            newFeed.submissions[message.content.data.submission_id] = {...newFeed.submissions[message.content.data.submission_id]};
+            newFeed.submissions[message.content.data.submission_id].judgement_type_id = message.content.data.judgement_type_id;
             break ;
           case "problems":
-            const problem_payload: { [key: string]: Problem } = {};
-            problem_payload[message.content.data.id] = message.content.data;
-            setFeed("problems", problem_payload);
+            newFeed.problems[message.content.data.id] = message.content.data;
             break ;
         }
+
+        setFeed(newFeed);
       } else if (message.type == "RESET_FEED") {
         if (message.feed !== listen_feed) return ;
         if (message.handlerHash !== listen_hash) return ;
 
-        setFeed(reconcile(defaultFeed()));
+        setFeed(defaultFeed());
       }
     });
 

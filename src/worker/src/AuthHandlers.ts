@@ -24,7 +24,7 @@ export async function loginHandler (answer: Answer, broadcast: Broadcast, messag
   const response = await fetch(url);
 
   const json = await response.json();
-  console.log("LOGIN HANDLER", message, json)
+  //console.log("LOGIN HANDLER", message, json)
 
   if (response.status !== 200) {
     answer({
