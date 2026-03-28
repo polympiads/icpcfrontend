@@ -5,6 +5,7 @@ interface WhoAmI_NoAuth {
 interface WhoAmI_Auth {
   is_authenticated : true;
 
+  id : string;
   username : string;
   is_staff : boolean;
 

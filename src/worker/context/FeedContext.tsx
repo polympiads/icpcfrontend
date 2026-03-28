@@ -8,6 +8,8 @@ import type { Account, Team } from "../types/data/Users";
 import type { Problem } from "../types/data/Problems";
 import type { Submission } from "../types/data/Submission";
 import { v4 as uuidv4 } from "uuid";
+import type { Print } from "../types/data/Print";
+import type { Balloon } from "../types/data/Balloons";
 
 interface FeedContextValue {
   // Contest Information
@@ -25,6 +27,9 @@ interface FeedContextValue {
   // Contest content
   problems:    { [key: string]: Problem };
   submissions: { [key: string]: Submission };
+
+  prints : { [key: string]: Print };
+  balloons: { [key: string]: Balloon };
 };
 
 const FeedContext = createContext<() => FeedContextValue>();
@@ -41,7 +46,10 @@ function defaultFeed (): FeedContextValue {
     teams:    {},
 
     problems:    {},
-    submissions: {}
+    submissions: {},
+
+    prints: {},
+    balloons: {}
   }
 }
 
@@ -60,7 +68,10 @@ export function copyFeed (feed: FeedContextValue) {
 
     // Contest content
     problems:    { ...feed.problems },
-    submissions: { ...feed.submissions }
+    submissions: { ...feed.submissions },
+
+    prints: { ...feed.prints },
+    balloons: { ...feed.balloons }
   }
 }
 export function FeedProvider (props: { children ?: JSX.Element, contestId: string }) {
@@ -114,6 +125,12 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
               break ;
             case "problems":
               newFeed.problems[content.data.id] = content.data;
+              break ;
+            case "prints":
+              newFeed.prints[content.data.id] = content.data;
+              break ;
+            case "balloons":
+              newFeed.balloons[content.data.id] = content.data;
               break ;
           }
         }

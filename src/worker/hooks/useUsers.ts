@@ -1,6 +1,7 @@
 import { createMemo } from "solid-js";
 import { useFeed } from "../context/FeedContext";
-import { accountDictsEquals, accountEquals, teamDictsEquals, teamEquals } from "../types/data/Users";
+import { accountDictsEquals, accountEquals, teamDictsEquals, teamEquals, type Account } from "../types/data/Users";
+import { useAuth } from "../context/AuthContext";
 
 export function useTeams () {
   const feed = useFeed();
@@ -38,4 +39,21 @@ export function useAccount (accountId: string) {
   }, undefined, {
     equals: accountEquals
   });
+}
+
+export function useMyAccount () {
+  const { whoami } = useAuth();
+  const feed = useFeed();
+  
+  return createMemo<Account | undefined>(() => {
+    const _whoami = whoami();
+    console.log("I AM", _whoami)
+    if (!_whoami.is_authenticated) {
+      return undefined;
+    }
+
+    console.log("ALL ACCOUNTS", feed().accounts)
+
+    return feed().accounts[_whoami.id];
+  }, undefined, { equals: accountEquals });
 }

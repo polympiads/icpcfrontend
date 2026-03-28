@@ -8,7 +8,7 @@ import type { Contest } from "../worker/types/data/Contest"
 import { UserInfoWidget } from "../widgets/UserInfoWidget"
 import { AppDefaultLayout } from "../components/layout/AppDefaultLayout"
 import { A } from "@solidjs/router" 
-import { CONTEST_URL } from "../utils/Urls"
+import { PRINTS_URL } from "../utils/Urls"
 
 export function ContestSelectionView() {
   const { is_authenticated, user_info } = useUserLoginContext()
@@ -42,7 +42,7 @@ export function ContestSelectionView() {
             <AutoAnimate class="flex flex-wrap h-fit-round-60">
               <For each={contests()}>
                 {(contest, _) => (
-                  <A href={ CONTEST_URL(contest.id) }>
+                  <A href={ /* CONTEST_URL(contest.id) */ PRINTS_URL(contest.id) }>
                     <div class="w-80 h-60 will-change-transform transform-gpu">
                       <div class="w-full h-full p-2">
                         <ContestSelectionCard contest={contest} />

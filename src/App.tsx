@@ -6,8 +6,9 @@ import { InContestView } from "./views/InContestView";
 import { BaseTransition } from "./components/base/BaseTransition";
 import { BaseRoute, BaseRouter } from "./components/base/BaseRoute";
 import { API_URL } from "./utils/Constants";
-import { CONTEST_URL_PATTERN, ROOT, SUBMISSION_URL_PATTERN } from "./utils/Urls";
+import { CONTEST_URL_PATTERN, PRINTS_URL_PATTERN, ROOT, SUBMISSION_URL_PATTERN } from "./utils/Urls";
 import { SubmissionView } from "./views/SubmissionView";
+import { PrintsView } from "./views/prints";
 
 function AppContext(props: ParentProps) {
   return (
@@ -48,6 +49,10 @@ function App() {
         
         <BaseRoute path={ SUBMISSION_URL_PATTERN } matchFilters={filters}>
           <SubmissionView />
+        </BaseRoute>
+        
+        <BaseRoute path={ PRINTS_URL_PATTERN } matchFilters={filters}>
+          <PrintsView />
         </BaseRoute>
       </BaseRouter>
     </AppContext>
