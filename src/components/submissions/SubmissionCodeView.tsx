@@ -17,8 +17,9 @@ import { Switch } from "solid-js";
 import { FaSolidWarning } from "solid-icons/fa";
 
 import "./SubmissionEntries.css";
-import { languageIdToPrismLanguage } from "../editor/Languages";
+import { languageIdToPrismLanguage } from "../languages/Languages";
 import { createEffect } from "solid-js";
+import { AppEditor } from "../editor/AppEditor";
 
 export function SubmissionCodeView(props: { submission: Submission }) {
   const { session } = useUserLoginContext()
@@ -51,22 +52,20 @@ export function SubmissionCodeView(props: { submission: Submission }) {
           {(state) => (
             <Switch>
             <Match when={state == "ready"}>
-              <div class="relative w-full max-h-60 overflow-auto">
-                <div class="absolute right-0 z-10 p-2 gap-2 flex flex-row-reverse">
-                  <CopyButton valueToCopy={() => code()} />
-                  <A href={ SUBMISSION_URL(contest()!.id, props.submission.id) } target="_blank" rel="noopener noreferrer" >
-                    <AppButton spacing="tiny" variant="white">
-                      <OcLinkexternal2 size="1rem" />{" "}
-                    </AppButton>
-                  </A>
-                </div>
-                <div class="relative w-full z-0">
-                  <BaseEditor
-                    code={ code()! }
-                    readonly
-                    language={ languageIdToPrismLanguage( props.submission.language_id ) }
-                  />
-                </div>
+              <div class="relative w-full max-h-60 overflow-hidden">
+                <AppEditor code={ code() } language={ props.submission.language_id } readonly>
+                  <div class="absolute right-0 z-10 p-2 gap-2 flex flex-row-reverse">
+                    <CopyButton />
+                    <A href={ SUBMISSION_URL(contest()!.id, props.submission.id) } target="_blank" rel="noopener noreferrer" >
+                      <AppButton spacing="tiny" variant="white">
+                        <OcLinkexternal2 size="1rem" />{" "}
+                      </AppButton>
+                    </A>
+                  </div>
+                  <div class="relative w-full z-0 max-h-60 overflow-auto">
+                    <AppEditor.Editor />
+                  </div>
+                </AppEditor>
               </div>
               </Match>
               <Match when={state == "pending" || state == "refreshing" || state == "unresolved"}>

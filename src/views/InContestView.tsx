@@ -1,7 +1,7 @@
 import { AppPanel, AppSplitPanel } from "../components/AppSplitPanel";
 import { BasePortalRoot } from "../components/base/BasePortal";
 import { useParams } from "../components/base/BaseRoute";
-import { SubmissionEditor } from "../components/editor/SubmissionEditor";
+import { SubmissionEditor } from "../components/submissions/SubmissionEditor";
 import { AppDefaultLayout } from "../components/layout/AppDefaultLayout";
 import { SubmissionEntries } from "../components/submissions/SubmissionEntries";
 import { UserInfoWidget } from "../widgets/UserInfoWidget";

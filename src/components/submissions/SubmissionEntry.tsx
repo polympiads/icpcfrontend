@@ -1,5 +1,5 @@
 import { createMemo, Show, type Accessor } from "solid-js";
-import { LanguageIcon } from "../editor/LanguageIcon";
+import { LanguageIcon } from "../languages/LanguageIcon";
 import { ProblemItem } from "./ProblemEntry";
 import { BaseSwitch } from "../base/BaseSwitch";
 import "./SubmissionEntry.css"
