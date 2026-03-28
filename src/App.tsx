@@ -6,9 +6,10 @@ import { InContestView } from "./views/InContestView";
 import { BaseTransition } from "./components/base/BaseTransition";
 import { BaseRoute, BaseRouter } from "./components/base/BaseRoute";
 import { API_URL } from "./utils/Constants";
-import { CONTEST_URL_PATTERN, PRINTS_URL_PATTERN, ROOT, SUBMISSION_URL_PATTERN } from "./utils/Urls";
+import { CONTEST_URL_PATTERN, PRINT_URL_PATTERN, PRINTS_URL_PATTERN, ROOT, SUBMISSION_URL_PATTERN } from "./utils/Urls";
 import { SubmissionView } from "./views/SubmissionView";
 import { PrintsView } from "./views/prints";
+import { PrintView } from "./views/prints/print";
 
 function AppContext(props: ParentProps) {
   return (
@@ -23,6 +24,7 @@ function AppContext(props: ParentProps) {
 const filters = {
   id: /^\d+$/,
   submission_id: /^\d+$/,
+  print_id: /^\d+$/
 };
 
 function App() {
@@ -53,6 +55,10 @@ function App() {
         
         <BaseRoute path={ PRINTS_URL_PATTERN } matchFilters={filters}>
           <PrintsView />
+        </BaseRoute>
+        
+        <BaseRoute path={ PRINT_URL_PATTERN } matchFilters={filters}>
+          <PrintView />
         </BaseRoute>
       </BaseRouter>
     </AppContext>

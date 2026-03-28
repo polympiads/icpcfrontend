@@ -8,12 +8,17 @@ import { AppDefaultLayout } from "../../components/layout/AppDefaultLayout";
 import { PrintEditor } from "../../components/editor/PrintEditor";
 import { postPrint } from "../../utils/Print";
 import { usePrint, usePrints } from "../../worker/hooks/usePrints";
+import { A } from "@solidjs/router";
+import { PRINT_URL } from "../../utils/Urls";
 
 function PrintComponent (props: {printId: string}) {
   const print = usePrint(props.printId);
+  const params = useParams();
   
   return <>
-    <div>Print #{props.printId} received from {print().owner_id}, status {print().status}.</div>
+    <A href={ PRINT_URL(params.id!, props.printId) }>
+      <div>Print #{props.printId} received from {print().owner_id}, status {print().status}.</div>
+    </A>
   </>
 }
 

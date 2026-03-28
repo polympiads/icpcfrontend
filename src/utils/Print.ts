@@ -1,6 +1,6 @@
 
 import { BASE_URL } from "./Constants";
-import { API_ROOT, PRINTS_URL } from "./Urls";
+import { API_ROOT, PRINT_DONE_URL, PRINTS_URL } from "./Urls";
 
 export async function postPrint(contest_id: string, code: string, session: string) {
   const url = new URL(API_ROOT + PRINTS_URL(contest_id), BASE_URL)
@@ -12,6 +12,17 @@ export async function postPrint(contest_id: string, code: string, session: strin
   return await fetch(url.toString(), {
     method: "POST",
     body: formData,
+    headers: {
+      'X-Session-Id': session
+    }
+  })
+}
+
+export async function markPrintAsDone (contest_id: string, print_id: string, session: string) {
+  const url = new URL(API_ROOT + PRINT_DONE_URL(contest_id, print_id), BASE_URL)
+  
+  return await fetch(url.toString(), {
+    method: "POST",
     headers: {
       'X-Session-Id': session
     }

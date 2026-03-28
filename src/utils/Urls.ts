@@ -13,6 +13,9 @@ export const PRINTS_URL = (contestId: string) =>
 export const PRINT_URL = (contestId: string, printId: string) =>
   PRINTS_URL(contestId) + printId + "/"
 
+export const PRINT_DONE_URL = (contestId: string, printId: string) =>
+  PRINT_URL(contestId, printId) + "done/"
+
 export const SUBMISSIONS_URL = (contestId: string) =>
   CONTEST_URL(contestId) + "submissions/"
 export const SUBMISSION_URL = (contestId: string, submissionId: string) =>
