@@ -1,0 +1,1881 @@
+1		
+POLYMPIADS020
+19	1394	
+13
+1 try
+14
+1 try
+14
+1 try
+35
+1 try
+35
+1 try
+35
+1 try
+49
+1 try
+50
+1 try
+50
+1 try
+62
+1 try
+63
+1 try
+63
+1 try
+105
+2 tries
+119
+1 try
+85
+1 try
+85
+1 try
+129
+1 try
+165
+2 tries
+183
+1 try
+2		
+POLYMPIADS008
+19	1574	
+6
+1 try
+12
+1 try
+56
+1 try
+65
+1 try
+72
+2 tries
+72
+1 try
+41
+1 try
+41
+1 try
+42
+1 try
+29
+1 try
+29
+1 try
+23
+1 try
+92
+2 tries
+177
+1 try
+80
+1 try
+104
+2 tries
+118
+2 tries
+197
+3 tries
+198
+1 try
+3		
+POLYMPIADS072
+19	1735	
+5
+1 try
+20
+1 try
+20
+1 try
+36
+1 try
+128
+1 try
+ 
+6 tries
+50
+1 try
+50
+1 try
+50
+1 try
+10
+1 try
+48
+1 try
+32
+1 try
+158
+1 try
+226
+1 try
+65
+1 try
+64
+1 try
+123
+1 try
+189
+1 try
+202
+2 tries
+219
+2 tries
+4		
+POLYMPIADS017
+19	1771	
+16
+1 try
+16
+1 try
+16
+1 try
+22
+1 try
+208
+2 tries
+224
+4 tries
+49
+1 try
+49
+1 try
+49
+1 try
+30
+1 try
+30
+1 try
+72
+3 tries
+136
+1 try
+ 
+1 try
+ 
+1 try
+121
+2 tries
+ 
+1 try
+ 
+1 try
+69
+1 try
+69
+1 try
+ 
+1 try
+145
+2 tries
+145
+1 try
+145
+1 try
+ 
+1 try
+5		
+POLYMPIADS006
+19	2053	
+12
+1 try
+12
+1 try
+13
+1 try
+50
+1 try
+51
+1 try
+51
+1 try
+150
+1 try
+151
+1 try
+151
+1 try
+67
+1 try
+67
+1 try
+68
+2 tries
+74
+1 try
+210
+1 try
+192
+2 tries
+193
+1 try
+164
+1 try
+164
+1 try
+173
+1 try
+6		
+POLYMPIADS039
+19	2229	
+60
+1 try
+61
+1 try
+61
+1 try
+233
+1 try
+234
+1 try
+233
+2 tries
+76
+1 try
+76
+1 try
+77
+2 tries
+52
+1 try
+52
+1 try
+87
+3 tries
+167
+1 try
+174
+1 try
+144
+1 try
+144
+1 try
+72
+1 try
+73
+1 try
+73
+1 try
+7		
+POLYMPIADS060
+18	1364	
+7
+1 try
+19
+1 try
+18
+1 try
+11
+1 try
+102
+1 try
+183
+2 tries
+27
+1 try
+27
+1 try
+48
+1 try
+37
+1 try
+36
+1 try
+56
+1 try
+42
+2 tries
+65
+1 try
+64
+1 try
+157
+1 try
+157
+1 try
+228
+3 tries
+ 
+3 tries
+8		
+POLYMPIADS064
+18	1873	
+6
+1 try
+17
+1 try
+18
+1 try
+164
+1 try
+217
+7 tries
+217
+1 try
+50
+1 try
+50
+1 try
+51
+1 try
+28
+1 try
+28
+1 try
+29
+1 try
+188
+1 try
+204
+1 try
+221
+1 try
+75
+1 try
+75
+1 try
+115
+1 try
+ 
+2 tries
+9		
+POLYMPIADS010
+18	1919	
+14
+1 try
+14
+1 try
+13
+1 try
+190
+1 try
+190
+1 try
+44
+1 try
+44
+1 try
+43
+1 try
+58
+1 try
+59
+1 try
+60
+4 tries
+128
+1 try
+136
+2 tries
+ 
+1 try
+224
+4 tries
+ 
+1 try
+ 
+1 try
+151
+1 try
+152
+1 try
+116
+1 try
+123
+2 tries
+ 
+2 tries
+10		
+POLYMPIADS044
+18	2042	
+23
+1 try
+22
+1 try
+22
+1 try
+9
+1 try
+74
+1 try
+75
+1 try
+115
+1 try
+115
+1 try
+116
+1 try
+90
+1 try
+89
+1 try
+88
+1 try
+203
+1 try
+128
+1 try
+180
+2 tries
+194
+2 tries
+226
+1 try
+233
+1 try
+11		
+POLYMPIADS024
+18	2443	
+9
+1 try
+17
+1 try
+17
+1 try
+224
+1 try
+229
+2 tries
+229
+1 try
+183
+1 try
+184
+1 try
+236
+1 try
+35
+1 try
+35
+1 try
+34
+1 try
+140
+2 tries
+92
+1 try
+92
+1 try
+202
+2 tries
+202
+1 try
+203
+2 tries
+12		
+POLYMPIADS98
+17	1357	
+10
+1 try
+10
+1 try
+7
+1 try
+34
+1 try
+34
+1 try
+34
+1 try
+36
+1 try
+36
+1 try
+87
+3 tries
+86
+2 tries
+84
+1 try
+195
+1 try
+221
+2 tries
+221
+1 try
+60
+1 try
+61
+1 try
+61
+1 try
+13		
+POLYMPIADS033
+17	1736	
+20
+1 try
+20
+1 try
+20
+3 tries
+183
+1 try
+213
+1 try
+213
+4 tries
+34
+1 try
+34
+1 try
+33
+1 try
+57
+1 try
+56
+1 try
+54
+1 try
+102
+3 tries
+85
+1 try
+85
+1 try
+231
+2 tries
+96
+3 tries
+ 
+1 try
+ 
+2 tries
+14		
+POLYMPIADS043
+17	1812	
+10
+1 try
+10
+1 try
+10
+1 try
+179
+1 try
+205
+2 tries
+205
+1 try
+94
+1 try
+95
+1 try
+96
+2 tries
+32
+1 try
+33
+1 try
+33
+1 try
+122
+1 try
+66
+1 try
+66
+1 try
+198
+1 try
+238
+5 tries
+ 
+1 try
+15		
+POLYMPIADS032
+17	1858	
+12
+1 try
+22
+1 try
+25
+1 try
+85
+1 try
+83
+1 try
+83
+1 try
+45
+1 try
+51
+2 tries
+124
+1 try
+94
+1 try
+94
+1 try
+95
+1 try
+152
+1 try
+183
+2 tries
+237
+2 tries
+206
+1 try
+207
+1 try
+16		
+POLYMPIADS97
+17	2136	
+9
+1 try
+19
+1 try
+19
+1 try
+123
+1 try
+149
+1 try
+149
+1 try
+149
+1 try
+51
+1 try
+51
+1 try
+52
+1 try
+205
+1 try
+59
+1 try
+183
+1 try
+197
+2 tries
+233
+1 try
+234
+1 try
+234
+1 try
+17		
+POLYMPIADS112
+15	1437	
+13
+1 try
+16
+2 tries
+16
+1 try
+173
+1 try
+54
+1 try
+55
+1 try
+55
+1 try
+65
+1 try
+66
+1 try
+66
+1 try
+81
+3 tries
+129
+1 try
+212
+3 tries
+168
+1 try
+168
+1 try
+ 
+3 tries
+18		
+POLYMPIADS071
+15	1535	
+13
+1 try
+22
+2 tries
+22
+1 try
+108
+1 try
+116
+2 tries
+117
+1 try
+87
+1 try
+88
+1 try
+88
+1 try
+25
+2 tries
+25
+1 try
+187
+5 tries
+50
+1 try
+ 
+6 tries
+223
+1 try
+224
+1 try
+ 
+2 tries
+19		
+POLYMPIADS018
+15	1963	
+20
+1 try
+70
+1 try
+73
+1 try
+15
+1 try
+226
+1 try
+226
+1 try
+185
+1 try
+186
+1 try
+238
+2 tries
+94
+1 try
+86
+1 try
+101
+3 tries
+65
+1 try
+159
+1 try
+159
+1 try
+20		
+POLYMPIADS005
+15	1965	
+20
+1 try
+20
+1 try
+19
+1 try
+173
+1 try
+213
+1 try
+213
+1 try
+70
+2 tries
+92
+1 try
+101
+4 tries
+128
+1 try
+129
+1 try
+129
+2 tries
+196
+1 try
+165
+3 tries
+157
+1 try
+21		
+POLYMPIADS003
+14	1059	
+7
+1 try
+26
+1 try
+26
+1 try
+12
+1 try
+51
+1 try
+52
+1 try
+52
+1 try
+68
+1 try
+68
+1 try
+69
+1 try
+170
+2 tries
+190
+1 try
+124
+1 try
+124
+1 try
+22		
+POLYMPIADS023
+14	1621	
+23
+1 try
+44
+3 tries
+44
+2 tries
+27
+1 try
+211
+1 try
+224
+7 tries
+ 
+7 tries
+78
+1 try
+78
+1 try
+79
+1 try
+32
+1 try
+185
+1 try
+ 
+7 tries
+138
+1 try
+139
+1 try
+139
+1 try
+23		
+POLYMPIADS065
+14	1825	
+19
+1 try
+31
+2 tries
+32
+2 tries
+135
+1 try
+50
+2 tries
+50
+1 try
+51
+1 try
+82
+2 tries
+118
+1 try
+ 
+9 tries
+ 
+1 try
+217
+3 tries
+219
+1 try
+233
+1 try
+234
+1 try
+234
+1 try
+24		
+POLYMPIADS022
+13	1604	
+14
+1 try
+14
+1 try
+14
+1 try
+ 
+3 tries
+ 
+1 try
+ 
+3 tries
+109
+1 try
+109
+1 try
+109
+1 try
+164
+1 try
+164
+1 try
+163
+1 try
+202
+2 tries
+142
+1 try
+142
+1 try
+238
+1 try
+25		
+POLYMPIADS050
+12	1088	
+15
+1 try
+22
+1 try
+23
+1 try
+35
+1 try
+70
+1 try
+71
+1 try
+71
+1 try
+89
+1 try
+106
+1 try
+106
+1 try
+176
+1 try
+204
+6 tries
+26		
+POLYMPIADS012
+12	1288	
+16
+2 tries
+26
+1 try
+27
+1 try
+229
+1 try
+204
+2 tries
+204
+1 try
+205
+1 try
+34
+1 try
+47
+1 try
+48
+1 try
+65
+2 tries
+123
+1 try
+ 
+3 tries
+27		
+POLYMPIADS041
+12	1314	
+16
+1 try
+27
+1 try
+29
+2 tries
+64
+1 try
+ 
+1 try
+50
+1 try
+50
+1 try
+ 
+2 tries
+149
+1 try
+149
+1 try
+83
+1 try
+210
+2 tries
+211
+2 tries
+216
+1 try
+28		
+POLYMPIADS029
+12	1428	
+22
+1 try
+28
+2 tries
+29
+1 try
+203
+1 try
+203
+1 try
+203
+1 try
+38
+1 try
+38
+1 try
+105
+3 tries
+232
+2 tries
+114
+1 try
+113
+2 tries
+29		
+POLYMPIADS076
+12	1474	
+16
+1 try
+207
+1 try
+207
+1 try
+10
+1 try
+ 
+4 tries
+47
+1 try
+67
+1 try
+119
+3 tries
+24
+1 try
+225
+1 try
+226
+1 try
+65
+3 tries
+161
+2 tries
+30		
+POLYMPIADS013
+12	1506	
+12
+2 tries
+21
+1 try
+23
+1 try
+49
+1 try
+223
+1 try
+223
+1 try
+ 
+1 try
+103
+3 tries
+126
+1 try
+128
+1 try
+147
+1 try
+195
+1 try
+196
+1 try
+31		
+POLYMPIADS026
+12	1978	
+99
+1 try
+99
+1 try
+109
+2 tries
+193
+1 try
+232
+1 try
+ 
+1 try
+81
+1 try
+82
+1 try
+82
+1 try
+238
+1 try
+ 
+1 try
+227
+4 tries
+228
+1 try
+228
+1 try
+32		
+POLYMPIADS001
+11	1042	
+37
+1 try
+38
+1 try
+38
+1 try
+83
+1 try
+147
+1 try
+147
+1 try
+148
+1 try
+67
+1 try
+67
+1 try
+72
+2 tries
+178
+1 try
+ 
+1 try
+33		
+POLYMPIADS002
+11	1384	
+14
+1 try
+31
+1 try
+32
+1 try
+8
+1 try
+180
+4 tries
+180
+1 try
+151
+1 try
+151
+1 try
+151
+1 try
+213
+1 try
+213
+1 try
+34		
+POLYMPIADS019
+10	974	
+35
+1 try
+36
+1 try
+35
+1 try
+68
+1 try
+202
+2 tries
+ 
+2 tries
+ 
+1 try
+57
+3 tries
+57
+1 try
+109
+3 tries
+128
+1 try
+127
+2 tries
+35		
+POLYMPIADS021
+10	1222	
+11
+1 try
+ 
+5 tries
+17
+1 try
+179
+2 tries
+104
+1 try
+190
+1 try
+217
+1 try
+90
+1 try
+112
+1 try
+ 
+3 tries
+123
+1 try
+159
+1 try
+36		
+POLYMPIADS040
+9	678	
+18
+1 try
+95
+1 try
+95
+2 tries
+36
+1 try
+192
+1 try
+ 
+1 try
+14
+1 try
+48
+1 try
+ 
+3 tries
+128
+1 try
+32
+1 try
+37		
+POLYMPIADS025
+9	893	
+7
+1 try
+53
+2 tries
+53
+1 try
+33
+2 tries
+ 
+2 tries
+170
+4 tries
+39
+1 try
+87
+1 try
+214
+2 tries
+117
+1 try
+ 
+1 try
+38		
+POLYMPIADS120
+9	947	
+45
+1 try
+45
+1 try
+46
+1 try
+16
+1 try
+67
+1 try
+ 
+3 tries
+165
+1 try
+166
+1 try
+166
+1 try
+231
+1 try
+39		
+POLYMPIADS037
+8	656	
+11
+2 tries
+38
+2 tries
+38
+1 try
+47
+1 try
+90
+1 try
+ 
+1 try
+105
+2 tries
+121
+1 try
+ 
+2 tries
+146
+1 try
+40		
+POLYMPIADS016
+8	832	
+56
+1 try
+55
+1 try
+55
+1 try
+ 
+1 try
+93
+2 tries
+94
+1 try
+96
+2 tries
+156
+1 try
+167
+2 tries
+41		
+POLYMPIADS103
+8	1154	
+67
+1 try
+67
+1 try
+69
+1 try
+89
+1 try
+193
+1 try
+194
+1 try
+206
+3 tries
+229
+1 try
+42		
+POLYMPIADS034
+7	619	
+16
+1 try
+28
+1 try
+34
+2 tries
+45
+1 try
+ 
+2 tries
+167
+1 try
+ 
+1 try
+ 
+1 try
+97
+1 try
+212
+1 try
+ 
+5 tries
+43		
+POLYMPIADS062
+7	702	
+18
+1 try
+34
+1 try
+ 
+1 try
+47
+1 try
+ 
+3 tries
+64
+1 try
+93
+1 try
+ 
+1 try
+236
+3 tries
+170
+1 try
+ 
+1 try
+44		
+POLYMPIADS007
+7	757	
+11
+1 try
+29
+2 tries
+ 
+1 try
+22
+1 try
+213
+2 tries
+ 
+1 try
+64
+3 tries
+ 
+2 tries
+142
+4 tries
+136
+1 try
+ 
+1 try
+45		
+POLYMPIADS028
+7	786	
+23
+1 try
+24
+1 try
+24
+1 try
+225
+2 tries
+183
+1 try
+ 
+3 tries
+143
+1 try
+144
+1 try
+ 
+6 tries
+46		
+POLYMPIADS011
+7	803	
+16
+2 tries
+34
+1 try
+ 
+1 try
+44
+1 try
+148
+1 try
+157
+2 tries
+ 
+2 tries
+166
+1 try
+198
+1 try
+ 
+1 try
+47		
+POLYMPIADS054
+7	862	
+71
+1 try
+43
+1 try
+ 
+1 try
+67
+1 try
+220
+3 tries
+ 
+1 try
+120
+1 try
+119
+1 try
+ 
+1 try
+182
+1 try
+ 
+1 try
+48		
+POLYMPIADS015
+7	876	
+16
+2 tries
+38
+2 tries
+46
+2 tries
+ 
+6 tries
+119
+2 tries
+140
+1 try
+172
+3 tries
+225
+1 try
+ 
+1 try
+POLYMPIADS119
+7	876	
+36
+1 try
+81
+1 try
+ 
+1 try
+71
+1 try
+225
+2 tries
+ 
+1 try
+131
+1 try
+136
+2 tries
+ 
+2 tries
+ 
+1 try
+156
+1 try
+ 
+1 try
+50		
+POLYMPIADS067
+7	1333	
+124
+7 tries
+200
+3 tries
+201
+2 tries
+68
+4 tries
+119
+1 try
+166
+1 try
+215
+1 try
+ 
+1 try
+51		
+POLYMPIADS056
+6	456	
+30
+2 tries
+ 
+2 tries
+30
+1 try
+50
+1 try
+60
+2 tries
+144
+1 try
+ 
+1 try
+ 
+2 tries
+102
+1 try
+52		
+POLYMPIADS057
+6	564	
+16
+1 try
+44
+2 tries
+46
+1 try
+59
+1 try
+ 
+3 tries
+127
+1 try
+ 
+1 try
+192
+4 tries
+53		
+POLYMPIADS030
+6	628	
+90
+1 try
+111
+2 tries
+112
+1 try
+122
+1 try
+38
+4 tries
+75
+1 try
+ 
+1 try
+54		
+POLYMPIADS027
+6	658	
+21
+2 tries
+77
+2 tries
+ 
+1 try
+85
+1 try
+122
+1 try
+ 
+2 tries
+ 
+1 try
+95
+1 try
+218
+1 try
+ 
+1 try
+55		
+POLYMPIADS031
+6	702	
+25
+4 tries
+51
+2 tries
+ 
+1 try
+88
+1 try
+ 
+3 tries
+174
+1 try
+173
+1 try
+ 
+3 tries
+111
+1 try
+ 
+3 tries
+56		
+POLYMPIADS068
+6	895	
+14
+1 try
+196
+2 tries
+197
+1 try
+38
+1 try
+ 
+1 try
+157
+3 tries
+233
+1 try
+ 
+1 try
+ 
+1 try
+57		
+POLYMPIADS055
+5	445	
+18
+3 tries
+56
+3 tries
+59
+1 try
+73
+1 try
+ 
+3 tries
+159
+1 try
+ 
+2 tries
+ 
+1 try
+58		
+POLYMPIADS073
+5	502	
+29
+2 tries
+50
+1 try
+50
+1 try
+148
+1 try
+185
+2 tries
+ 
+2 tries
+59		
+POLYMPIADS047
+5	543	
+9
+1 try
+17
+1 try
+ 
+3 tries
+234
+1 try
+ 
+4 tries
+143
+1 try
+140
+1 try
+ 
+3 tries
+ 
+1 try
+60		
+POLYMPIADS059
+5	576	
+13
+1 try
+107
+1 try
+ 
+1 try
+25
+1 try
+ 
+3 tries
+203
+6 tries
+128
+1 try
+ 
+1 try
+61		
+POLYMPIADS045
+4	309	
+27
+2 tries
+42
+1 try
+92
+2 tries
+ 
+1 try
+108
+1 try
+ 
+1 try
+ 
+1 try
+62		
+POLYMPIADS009
+4	840	
+40
+4 tries
+179
+2 tries
+ 
+1 try
+153
+8 tries
+228
+2 tries
+63		
+POLYMPIADS014
+3	296	
+17
+1 try
+ 
+1 try
+71
+1 try
+188
+2 tries
+64		
+POLYMPIADS052
+3	362	
+22
+3 tries
+ 
+6 tries
+ 
+1 try
+115
+1 try
+145
+3 tries
+ 
+1 try
+65		
+POLYMPIADS075
+3	493	
+85
+8 tries
+125
+1 try
+ 
+2 tries
+143
+1 try
+66		
+POLYMPIADS042
+3	519	
+112
+2 tries
+205
+3 tries
+ 
+1 try
+ 
+4 tries
+142
+1 try
+67		
+POLYMPIADS038
+2	298	
+88
+3 tries
+170
+1 try
+ 
+1 try
+ 
+3 tries
+68		
+POLYMPIADS102
+1	203	
+163
+3 tries

@@ -1,4 +1,7 @@
+import type dayjs from "dayjs";
 import { dictsEqual } from "./List";
+import type { Duration } from "dayjs/plugin/duration";
+import { parseReltime } from "./DeltaTime";
 
 export type SubmissionJson = {
   id : string;
@@ -8,6 +11,8 @@ export type SubmissionJson = {
 
   account_id ?: string;
   team_id    ?: string;
+
+  contest_time: string;
 };
 
 export type SubmissionStateJson = {
@@ -31,12 +36,26 @@ export type Submission = {
   team_id    ?: string;
 
   judgement_type_id ?: string; 
+
+  contest_time : Duration;
   
   status: "starting" | "compiling" | "running" | "finished" | "failed";
 };
 
 export function parseSubmission (submission: SubmissionJson): Submission {
-  return { ...submission, status: "starting" };
+  return {
+    id : submission.id,
+
+    language_id : submission.language_id,
+    problem_id  : submission.problem_id,
+
+    account_id : submission.account_id,
+    team_id    : submission.team_id,
+
+    status: "starting",
+
+    contest_time: parseReltime(submission.contest_time)
+   };
 }
 
 export function submissionEquals (

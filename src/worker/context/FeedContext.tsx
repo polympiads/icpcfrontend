@@ -6,10 +6,11 @@ import type { Language } from "../types/data/Language";
 import type { JudgementType } from "../types/data/JudgementTypes";
 import type { Account, Team } from "../types/data/Users";
 import type { Problem } from "../types/data/Problems";
-import type { Submission } from "../types/data/Submission";
+import { parseSubmission, type Submission } from "../types/data/Submission";
 import { v4 as uuidv4 } from "uuid";
 import type { Print } from "../types/data/Print";
 import type { Balloon } from "../types/data/Balloons";
+import type { EventFeed } from "../types/data/EventFeed";
 
 interface FeedContextValue {
   // Contest Information
@@ -32,7 +33,12 @@ interface FeedContextValue {
   balloons: { [key: string]: Balloon };
 };
 
+export type OnFeedInfo = (newFeed: EventFeed[] | undefined) => void;
+
 const FeedContext = createContext<() => FeedContextValue>();
+const NDJsonFeedContext = createContext<{
+  subscribe: (callback: OnFeedInfo) => (() => void)
+}>();
 
 function defaultFeed (): FeedContextValue {
   return {
@@ -79,6 +85,10 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
 
   const [feed, setFeed] = createSignal<FeedContextValue>(defaultFeed());
 
+  const listeners : Set<OnFeedInfo> = new Set();
+
+  const cachedFeed: EventFeed [] = [];
+
   let unsubscribe: () => void = () => {};
   let listen_hash: string = uuidv4();
   let listen_feed: string = props.contestId;
@@ -93,6 +103,8 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
         const newFeed = copyFeed(feed());
 
         for (let content of message.content) {
+          cachedFeed.push(content);
+
           switch (content.type) {
             case "contests":
               newFeed.contest = parseContest(content.data);
@@ -113,7 +125,7 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
               newFeed.teams[content.data.id] = content.data;
               break ;
             case "submission":
-              newFeed.submissions[content.data.id] = content.data as Submission;
+              newFeed.submissions[content.data.id] = parseSubmission(content.data);
               break ;
             case "submission-state":
               newFeed.submissions[content.data.submission_id] = {...newFeed.submissions[content.data.submission_id]};
@@ -136,11 +148,19 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
         }
 
         setFeed(newFeed);
+
+        for (let listener of listeners) {
+          listener(message.content);
+        }
       } else if (message.type == "RESET_FEED") {
         if (message.feed !== listen_feed) return ;
         if (message.handlerHash !== listen_hash) return ;
 
         setFeed(defaultFeed());
+
+        for (let listener of listeners) {
+          listener(undefined);
+        }
       }
     });
 
@@ -160,9 +180,18 @@ export function FeedProvider (props: { children ?: JSX.Element, contestId: strin
     unsubscribe()
   });
 
+  function subscribeToFeed (callback: OnFeedInfo) {
+    listeners.add(callback)
+    callback(cachedFeed)
+
+    return () => { listeners.delete(callback); }
+  }
+
   return (
     <FeedContext.Provider value={feed}>
-      { props.children }
+      <NDJsonFeedContext.Provider value={{ subscribe: subscribeToFeed }}>
+        { props.children }
+      </NDJsonFeedContext.Provider>
     </FeedContext.Provider>
   )
 }
@@ -172,6 +201,15 @@ export function useFeed () {
   
   if (!ctx) {
     throw new Error("useFeed should be used inside a FeedProvider");
+  }
+
+  return ctx;
+}
+export function useRawFeed () {
+  const ctx = useContext(NDJsonFeedContext);
+  
+  if (!ctx) {
+    throw new Error("useRawFeed should be used inside a FeedProvider");
   }
 
   return ctx;

@@ -20,71 +20,57 @@ export const REJECTED = new ScoreBoardColor("REJECTED")
 export const PENDING = new ScoreBoardColor("PENDING")
 export const NONE = new ScoreBoardColor("NONE")
 
+import duration from 'dayjs/plugin/duration';
+import type { JudgementJson, Submission } from './Submission';
+import type { JudgementType } from './JudgementTypes';
 
-export interface ScoreboardProblemInfo {
-  name: string,
-  title: string,
-  subtitle: string,
-  color: ScoreBoardColor
-}
+export interface ScoreboardCell {
+  submissions : { [key: string]: Submission };
+  judgements  : { [key: string]: JudgementType };
 
-export interface ScoreboardTeamInfo {
-  teamName: string,
-  position: number,
-  problem: ScoreboardProblemInfo[]
-}
+  
+};
 
+export interface ScoreboardGrid {
+  team_ids:    string[];
+  problem_ids: string[];
 
-export interface ScoreBoard {
-    [teamId: string] : ScoreboardTeamInfo
-}
+  submissions: { [key: string]: Submission };
+  cells: { [key: string]: ScoreboardCell };
+};
 
-export function equalScoreBoardColor(a: ScoreBoardColor, b: ScoreBoardColor): boolean {
-  return a === b || a.name === b.name;
-}
+export function cellUuid (grid: ScoreboardGrid, team_id: string, problem_id: string) {
+  const uuid = `${team_id}-${problem_id}`;
 
-export function equalScoreboardProblemInfo(a: ScoreboardProblemInfo, b: ScoreboardProblemInfo): boolean {
-  return a.name === b.name
-    && a.title === b.title
-    && a.subtitle === b.subtitle
-    && equalScoreBoardColor(a.color, b.color);
-}
-
-export function equalScoreboardTeamInfo(a: ScoreboardTeamInfo, b: ScoreboardTeamInfo): boolean {
-  if (a.position !== b.position || a.teamName !== b.teamName) {
-    return false;
-  }
-
-  if (a.problem.length !== b.problem.length) {
-    return false;
-  }
-
-  for (let i = 0; i < a.problem.length; i++) {
-    if (!equalScoreboardProblemInfo(a.problem[i], b.problem[i])) {
-      return false;
+  if (grid.cells[uuid] === undefined) {
+    grid.cells[uuid] = {
+      submissions: {},
+      judgements : {}
     }
   }
 
-  return true;
+  return uuid;
 }
 
-export function equalScoreBoard(a: ScoreBoard, b: ScoreBoard): boolean {
-  const aKeys = Object.keys(a).sort();
-  const bKeys = Object.keys(b).sort();
+export function refreshCell (cell: ScoreboardCell) {
+  const sortedSubmissions = Object.values(cell.submissions).sort((x1, x2) => Number(x1.id) - Number(x2.id))
 
-  if (aKeys.length !== bKeys.length) {
-    return false;
+  for (let submission of sortedSubmissions) {
+    if (submission.account_id )
   }
+}
 
-  for (let i = 0; i < aKeys.length; i++) {
-    if (aKeys[i] !== bKeys[i]) {
-      return false;
-    }
+export function pushSubmission (grid: ScoreboardGrid, submission: Submission) {
+  const cell = grid.cells[cellUuid(grid, submission.team_id!, submission.problem_id)];
 
-    if (!equalScoreboardTeamInfo(a[aKeys[i]], b[bKeys[i]])) {
-      return false;
-    }
-  }
+  cell.submissions[submission.id] = submission;
+  grid.submissions[submission.id] = submission;
+}
+export function pushJudgement (grid: ScoreboardGrid, submission_id: string, judgement: JudgementType) {
+  const submission = grid.submissions[submission_id];
 
-  return true;
+  const cell = grid.cells[cellUuid(grid, submission.team_id!, submission.problem_id)];
+  cell.judgements[submission_id] = judgement;
+
+  refreshCell(cell);
 }
