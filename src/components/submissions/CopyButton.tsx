@@ -1,9 +1,12 @@
-import { createSignal, onCleanup, type Accessor } from "solid-js"
+import { createSignal, onCleanup } from "solid-js"
 import { AppButton } from "../AppButton"
 import { BsCopy, BsExclamationTriangle } from "solid-icons/bs"
 import { Check } from "lucide-solid"
+import { useAppEditorContext } from "../editor/AppEditor"
 
-export function CopyButton(props: { valueToCopy: Accessor<string | undefined>, class?: string }) {
+export function CopyButton(props: { class?: string }) {
+  const { code } = useAppEditorContext()
+  
   const [copied, setCopied] = createSignal(false)
   const [error, setError] = createSignal(false)
 
@@ -15,7 +18,7 @@ export function CopyButton(props: { valueToCopy: Accessor<string | undefined>, c
   }
 
   async function copyOnClipboard() {
-    const value = props.valueToCopy()
+    const value = code()
     if (value === undefined) return
 
     // clear any existing timeout before setting a new one
