@@ -1,0 +1,17 @@
+{
+	"name": "lucide-vite-plugin",
+	"module": "index.ts",
+	"type": "module",
+	"private": true,
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"@babel/parser": "^7.29.2",
+		"magic-string": "^0.30.21",
+		"vite": "^8.0.3"
+	}
+}

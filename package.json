@@ -1,0 +1,31 @@
+{
+	"name": "vite-solid-tailwind-lucide-template",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"workspaces": [
+		"./packages/*"
+	],
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@tailwindcss/vite": "^4.2.2",
+		"dayjs": "^1.11.20",
+		"lucide-solid": "^1.7.0",
+		"normalize.css": "^8.0.1",
+		"solid-icons": "^1.2.0",
+		"solid-js": "^1.9.11",
+		"tailwindcss": "^4.2.2"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.10",
+		"@types/node": "^24.12.0",
+		"lucide-vite-plugin": "workspace:*",
+		"typescript": "~5.9.3",
+		"vite": "^8.0.1",
+		"vite-plugin-solid": "^2.11.11"
+	}
+}
