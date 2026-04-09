@@ -2,24 +2,27 @@ import type { Contest } from "./worker/types/data/Contest";
 import { useContests } from "./worker/hooks/useContests";
 import dayjs, { type Dayjs, duration } from "dayjs";
 import type { Duration } from "dayjs/plugin/duration";
-import { Hourglass } from "lucide-solid";
+import { Hourglass, RotateCw } from "lucide-solid";
 import { FaSolidFlagCheckered } from "solid-icons/fa";
 import { BsExclamationCircle, BsPauseCircle } from "solid-icons/bs";
 import { ErrorBoundary, For, Match, Suspense, Switch } from "solid-js";
 import { AiFillFileUnknown } from "solid-icons/ai";
 import { LoadingAnimation } from "./LoadingAnimation";
 import { A } from "@solidjs/router";
+import { Button } from "@kobalte/core/button";
 
 dayjs.extend(duration);
 
 export function ContestSelect() {
-	const contests = useContests();
+	const {contests, contestsActions} = useContests();
 
 	return (
 		<ErrorBoundary
 			fallback={
-				<div class="w-full h-full flex items-center justify-center">
-					<BsExclamationCircle size="5em" />
+				<div class="w-full h-full flex flex-col items-center justify-center">
+					<BsExclamationCircle size="3em" />
+					<div class="text-xl font-medium mb-3"> Something went wrong. </div>
+					<Button class="border border-black/10 p-2 rounded-md flex flex-row items-center hover:bg-gray-100" onClick={() => contestsActions.refetch()}> <RotateCw size="1em"/> <div class="ml-1">Retry</div></Button>
 				</div>
 			}
 		>

@@ -3,13 +3,18 @@ import { useAuth } from "../context/AuthContext";
 import { useWorkerContext } from "../context/WorkerContext";
 import { contestEndpoint } from "../Endpoints";
 import { parseContest, type Contest, type ContestJson } from "../types/data/Contest";
-import { createResource, type Resource } from "solid-js";
+import { createResource, type Resource, type ResourceActions } from "solid-js";
 
-export function useContests (): Resource<Contest[]> {
+type ContestValue = {
+  contests: Resource<Contest[]>,
+  contestsActions: ResourceActions<Contest[] | undefined, unknown>
+}
+
+export function useContests (): ContestValue {
   const { apiHostname } = useWorkerContext();
   const { session } = useAuth();
 
-  const [resource] = createResource(
+  const [resource, resourceActions] = createResource(
     () => ({
       sessionId: session()
     }),
@@ -29,5 +34,5 @@ export function useContests (): Resource<Contest[]> {
       return json.map(parseContest);
     })
 
-  return resource
+  return {contests: resource, contestsActions: resourceActions}
 }
