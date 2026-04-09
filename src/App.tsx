@@ -3,6 +3,7 @@ import { API_HOSTNAME } from "./constants";
 import { UserLoginWidget } from "./User";
 import { AuthProvider } from "./worker/context/AuthContext";
 import { WorkerProvider } from "./worker/context/WorkerContext";
+import { ContestSelect } from "./Contest";
 
 function App() {
 	return (
@@ -17,7 +18,7 @@ function App() {
 						<UserLoginWidget />
 					</div>
 					<div class="grow w-full overflow-hidden">
-
+						<ContestSelect />
 					</div>
 				</div>
 			</AuthProvider>

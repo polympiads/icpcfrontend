@@ -51,3 +51,8 @@ body,
 @utility animation-delay-* {
 	animation-delay: calc(--value(integer) * 1ms);
 }
+
+@utility column-auto-fit-* {
+	grid-template-columns: repeat(auto-fit, --spacing(--value(integer)))
+}
+

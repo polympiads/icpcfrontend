@@ -3,9 +3,9 @@ import { useAuth } from "../context/AuthContext";
 import { useWorkerContext } from "../context/WorkerContext";
 import { contestEndpoint } from "../Endpoints";
 import { parseContest, type Contest, type ContestJson } from "../types/data/Contest";
-import { createResource } from "solid-js";
+import { createResource, type Resource } from "solid-js";
 
-export function useContests (): () => Contest[] | undefined {
+export function useContests (): Resource<Contest[]> {
   const { apiHostname } = useWorkerContext();
   const { session } = useAuth();
 
@@ -18,7 +18,7 @@ export function useContests (): () => Contest[] | undefined {
         = sessionId !== undefined
         ? { "X-Session-ID" : sessionId }
         : {};
-      
+
       const response = await fetch(
         new URL( contestEndpoint(), apiHostname ),
         { headers : headers }
