@@ -1,5 +1,5 @@
 import { FaSolidMountain } from "solid-icons/fa";
-import { API_HOSTNAME, ROOT_URL } from "./constants";
+import { API_HOSTNAME, CONTEST_URL_PATTERN, ROOT_URL } from "./constants";
 import { UserLoginWidget } from "./User";
 import { AuthProvider } from "./worker/context/AuthContext";
 import { WorkerProvider } from "./worker/context/WorkerContext";
@@ -28,7 +28,10 @@ function App() {
 		<WorkerProvider apiHostname={API_HOSTNAME}>
 			<AuthProvider>
 				<Router>
-					<Route path={ROOT_URL} component={ContestSelectionPage}/>
+					<Route path="/" component={ContestSelectionPage}/>
+					<Route path="/contests/:id">
+
+					</Route>
 				</Router>
 			</AuthProvider>
 		</WorkerProvider>

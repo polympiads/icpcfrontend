@@ -9,7 +9,6 @@ import { ErrorBoundary, For, Match, Suspense, Switch } from "solid-js";
 import { AiFillFileUnknown } from "solid-icons/ai";
 import { LoadingAnimation } from "./LoadingAnimation";
 import { A } from "@solidjs/router";
-import { CONTEST_URL } from "./constants";
 
 dayjs.extend(duration);
 
@@ -87,7 +86,7 @@ function ContestSelectionCard(props: { contest: Contest }) {
 	}
 
 	return (
-		<A href={CONTEST_URL(props.contest.id)}>
+		<A href={`/contests/${props.contest.id}`}>
 			<div class="w-80 h-50 border border-black/10 rounded-md bg-white shadow-md flex flex-col cursor-pointer hover:scale-105 duration-75">
 				<div class="w-full grow flex items-center justify-center">
 					<AiFillFileUnknown size="3em" class="opacity-50" />
