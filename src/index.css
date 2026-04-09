@@ -1,1 +1,53 @@
 @import "tailwindcss";
+@plugin "@kobalte/tailwindcss";
+
+body,
+#root {
+	width: 100vw;
+	height: 100vh;
+}
+
+@theme inline {
+	--spacing-ui-popup-h: var(--kb-popper-content-available-height);
+	--spacing-ui-popup-w: var(--kb-popper-content-available-width);
+}
+
+@theme {
+	--animate-pulse-2x: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	--animate-pulse-1\/4: pulse-1-4 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+	@keyframes pulse-1-4 {
+		50% {
+			opacity: 0.25;
+		}
+	}
+
+	@keyframes dot-bounce {
+		0% {
+			transform: translateY(0px);
+		}
+		16% {
+			transform: translateY(-16px);
+		}
+		33% {
+			transform: translateY(0px);
+		}
+	}
+
+	--animate-three-dot-bounce: dot-bounce 1s linear infinite;
+
+	@keyframes wave-left {
+		from {
+			transform: translateX(100%);
+		}
+		to {
+			transform: translateX(-100%);
+		}
+	}
+
+	--animate-wave: wave-left 1s linear infinite;
+}
+
+@utility animation-delay-* {
+	animation-delay: calc(--value(integer) * 1ms);
+}
