@@ -8,6 +8,8 @@ import { BsExclamationCircle, BsPauseCircle } from "solid-icons/bs";
 import { ErrorBoundary, For, Match, Suspense, Switch } from "solid-js";
 import { AiFillFileUnknown } from "solid-icons/ai";
 import { LoadingAnimation } from "./LoadingAnimation";
+import { A } from "@solidjs/router";
+import { CONTEST_URL } from "./constants";
 
 dayjs.extend(duration);
 
@@ -85,24 +87,26 @@ function ContestSelectionCard(props: { contest: Contest }) {
 	}
 
 	return (
-		<div class="w-80 h-50 border border-black/10 rounded-md bg-white shadow-md flex flex-col cursor-pointer hover:scale-105 duration-75">
-			<div class="w-full grow flex items-center justify-center">
-				<AiFillFileUnknown size="3em" class="opacity-50" />
-			</div>
-			<div class="h-17 border-t border-black/10 p-2">
-				<div class="font-medium text-xl"> {props.contest.formal_name} </div>
-				<div class="flex flex-row items-center">
+		<A href={CONTEST_URL(props.contest.id)}>
+			<div class="w-80 h-50 border border-black/10 rounded-md bg-white shadow-md flex flex-col cursor-pointer hover:scale-105 duration-75">
+				<div class="w-full grow flex items-center justify-center">
+					<AiFillFileUnknown size="3em" class="opacity-50" />
+				</div>
+				<div class="h-17 border-t border-black/10 p-2">
+					<div class="font-medium text-xl"> {props.contest.formal_name} </div>
 					<div class="flex flex-row items-center">
-						<Hourglass size="0.9rem" />
-						<div class="ml-0.5">
-							{formatRemainingTime(props.contest.duration)}{" "}
+						<div class="flex flex-row items-center">
+							<Hourglass size="0.9rem" />
+							<div class="ml-0.5">
+								{formatRemainingTime(props.contest.duration)}{" "}
+							</div>
 						</div>
+						<div class="mx-0.5 opacity-50">·</div>
+						<ContestStatus contest={props.contest} />
 					</div>
-					<div class="mx-0.5 opacity-50">·</div>
-					<ContestStatus contest={props.contest} />
 				</div>
 			</div>
-		</div>
+		</A>
 	);
 }
 
