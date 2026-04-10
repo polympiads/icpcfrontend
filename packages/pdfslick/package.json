@@ -1,0 +1,26 @@
+{
+  "name": "pdfslick",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.tsx"
+  },
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "dependencies": {
+    "@types/d3-drag": "^3.0.7",
+    "@types/d3-selection": "^3.0.11",
+    "d3-drag": "^3.0.0",
+    "d3-selection": "^3.0.0",
+    "pdfjs-dist": "^5.6.205",
+    "zustand": "^5.0.12"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

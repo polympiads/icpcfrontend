@@ -23,7 +23,8 @@
 		"solid-icons": "^1.2.0",
 		"solid-js": "^1.9.12",
 		"tailwindcss": "^4.2.2",
-		"uuid": "^13.0.0"
+		"uuid": "^13.0.0",
+		"pdfslick": "workspace:*"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.10",
