@@ -2,7 +2,7 @@ import type { Contest } from "./worker/types/data/Contest";
 import { useContests } from "./worker/hooks/useContests";
 import dayjs, { type Dayjs, duration } from "dayjs";
 import type { Duration } from "dayjs/plugin/duration";
-import { Hourglass, RotateCw } from "lucide-solid";
+import { ArrowLeft, Hourglass, RotateCw } from "lucide-solid";
 import { FaSolidFlagCheckered } from "solid-icons/fa";
 import { BsExclamationCircle, BsPauseCircle } from "solid-icons/bs";
 import { ErrorBoundary, For, Match, Suspense, Switch } from "solid-js";
@@ -14,7 +14,7 @@ import { Button } from "@kobalte/core/button";
 dayjs.extend(duration);
 
 export function ContestSelect() {
-	const {contests, contestsActions} = useContests();
+	const { contests, contestsActions } = useContests();
 
 	return (
 		<ErrorBoundary
@@ -22,7 +22,13 @@ export function ContestSelect() {
 				<div class="w-full h-full flex flex-col items-center justify-center">
 					<BsExclamationCircle size="3em" />
 					<div class="text-xl font-medium mb-3"> Something went wrong. </div>
-					<Button class="border border-black/10 p-2 rounded-md flex flex-row items-center hover:bg-gray-100" onClick={() => contestsActions.refetch()}> <RotateCw size="1em"/> <div class="ml-1">Retry</div></Button>
+					<Button
+						class="border border-black/10 p-2 rounded-md flex flex-row items-center hover:bg-gray-100"
+						onClick={() => contestsActions.refetch()}
+					>
+						{" "}
+						<RotateCw size="1em" /> <div class="ml-1">Retry</div>
+					</Button>
 				</div>
 			}
 		>
@@ -178,4 +184,65 @@ function ContestStatus(props: { contest: Contest }) {
 			</div>
 		);
 	}
+}
+
+export function ContestPageOverlay(props: { contest: Contest | undefined }) {
+	function OverlayInfo(props: { contest: Contest }) {
+		return (
+			<>
+				<div class="w-80 h-50 flex items-center justify-center border border-black/10 rounded-md shadow-md">
+					<AiFillFileUnknown size="3em" class="opacity-50" />
+				</div>
+				<div class="text-3xl font-semibold my-3">
+					{props.contest?.formal_name}
+				</div>
+			</>
+		);
+	}
+
+	const isInProgress = () => {
+		const contestVal = props.contest;
+		const now = dayjs();
+
+		if (!contestVal) {
+			return false;
+		}
+		if (!contestVal.start_time) {
+			return false;
+		}
+
+		const remainingTimeMS = contestVal.start_time
+			.add(contestVal.duration)
+			.diff(now);
+		return remainingTimeMS > 0 && contestVal.start_time.diff(now) > 0;
+	};
+
+	return (
+		<div class="w-full h-full flex flex-col justify-center items-center">
+			<div class="absolute top-0 left-0 p-2">
+				<A href="/">
+					<div class="border border-black/10 p-2 rounded-md flex flex-row flex-nowrap items-center group/return_button overflow-hidden cursor-pointer">
+						<ArrowLeft size="1rem" />
+						<div class="w-0 group-hover/return_button:w-30 text-nowrap duration-75">
+							<div class="ml-2">Return to menu</div>
+						</div>
+					</div>
+				</A>
+			</div>
+
+			<Switch>
+				<Match when={props.contest === undefined}>
+					<LoadingAnimation.SpinningCircle size="4em" />
+					<div class="text-2xl font-medium"> Waiting for contest... </div>
+				</Match>
+				<Match when={props.contest !== undefined && !isInProgress()}>
+					{/** biome-ignore lint/style/noNonNullAssertion: contest can't be undefined because of the requirement of the Match */}
+					<OverlayInfo contest={props.contest!} />
+
+					{/** biome-ignore lint/style/noNonNullAssertion: contest can't be undefined because of the requirement of the Match */}
+					<ContestStatus contest={props.contest!} />
+				</Match>
+			</Switch>
+		</div>
+	);
 }

@@ -3,8 +3,14 @@ import { API_HOSTNAME } from "./constants";
 import { UserLoginWidget } from "./User";
 import { AuthProvider } from "./worker/context/AuthContext";
 import { WorkerProvider } from "./worker/context/WorkerContext";
-import { ContestSelect } from "./Contest";
-import { Route, Router } from "@solidjs/router";
+import { ContestPageOverlay, ContestSelect } from "./Contest";
+import { Route, Router, useParams } from "@solidjs/router";
+import { FeedProvider } from "./worker/context/FeedContext";
+import type { ParentProps } from "solid-js";
+import { useContest } from "./worker/hooks/useContest";
+import dayjs, { duration } from "dayjs";
+
+dayjs.extend(duration)
 
 function ContestSelectionPage() {
 	return (
@@ -23,14 +29,40 @@ function ContestSelectionPage() {
 	)
 }
 
+function InContestPage() {
+	const contest = useContest()
+
+	return (
+		<div class="relative w-full h-full">
+			<div class="absolute w-full h-full">
+				<ContestPageOverlay contest={contest()}/>
+			</div>
+		</div>
+	)
+}
+
+function RouteFeedWrapper(props: ParentProps) {
+	const urlParams = useParams();
+	if (!urlParams.id) {
+		throw "This component should be used for the /contests/:id route."
+	}
+
+	return (
+		<FeedProvider contestId={ urlParams.id }>
+			{ props.children }
+		</FeedProvider>
+	)
+}
+
+
 function App() {
 	return (
 		<WorkerProvider apiHostname={API_HOSTNAME}>
 			<AuthProvider>
 				<Router>
 					<Route path="/" component={ContestSelectionPage}/>
-					<Route path="/contests/:id">
-						<Route path="/"></Route>
+					<Route path="/contests/:id" component={RouteFeedWrapper}>
+						<Route path="/" component={InContestPage} />
 					</Route>
 				</Router>
 			</AuthProvider>
