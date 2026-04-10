@@ -33,7 +33,7 @@ function useStore<S extends StoreApi<unknown>, U>(
   equalityFn?: (a: U, b: U) => boolean
 ): U;
 
-function useStore<TState extends object, StateSlice extends TState>(
+function useStore<TState extends object, StateSlice extends object>(
   api: StoreApi<TState>,
   selector: (state: TState) => StateSlice = api.getState as any,
   equalityFn?: (a: StateSlice, b: StateSlice) => boolean
@@ -71,6 +71,7 @@ export const usePDFSlick: TUsePDFSlick = (url, options) => {
   const pdfSlickStore = useStore(zustandStore);
 
   const viewerRef = (node: HTMLElement) => {
+    if (!node) return;
     setContainer(node);
     setContainersMounted(true);
   };

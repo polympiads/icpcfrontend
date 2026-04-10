@@ -32,18 +32,19 @@ export function usePdfContext() {
 
 export function PdfViewerRoot(props: { pdfSource: Resource<ArrayBuffer | undefined> } & ComponentProps<"div"> & ParentProps) {
   const contextValue = usePDFSlick(props.pdfSource)
-  const error = () => contextValue.error() ?? props.pdfSource.state === "errored" ? new ResponseException("failed to load the pdf", "", "") : null
-
+  
   const [local, others] = splitProps(props, ["class", "pdfSource"])
   
   const [isThumbsbarOpen, setThumbsbarOpen] = createSignal(false)
   const isDocumentLoading = () => !contextValue.isDocumentLoaded() || props.pdfSource.state === "pending" || props.pdfSource.state === "refreshing"
-  
+  const error = () => {
+    if (isDocumentLoading()) return null
+    if (contextValue.error()) return contextValue.error();
+    if (props.pdfSource.state === "errored") return new ResponseException("failed to load the pdf", "", "");
+    return null;
+  }
   createEffect(() => {
     if (contextValue.error()) {
-      console.error(contextValue.error())
-    }
-    if (isDocumentLoading()) {
       console.error(contextValue.error())
     }
   })

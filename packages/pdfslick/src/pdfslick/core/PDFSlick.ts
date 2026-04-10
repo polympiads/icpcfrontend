@@ -11,7 +11,8 @@ import {
     type ResponseException,
     type InvalidPDFException,
     type RenderingCancelledException,
-    AnnotationEditorParamsType
+    AnnotationEditorParamsType,
+    type PDFDocumentLoadingTask
 } from "pdfjs-dist";
 import type { DocumentInitParameters } from "pdfjs-dist/types/src/display/api";
 import {
@@ -132,6 +133,7 @@ export class PDFSlick {
     #onError: ((err: PDFException) => void) | undefined;
 
     #eventAbortController: AbortController | undefined | null;
+    #currentLoadingTask: PDFDocumentLoadingTask | undefined;
 
     constructor({
         container,
@@ -274,6 +276,14 @@ export class PDFSlick {
         url: string | URL | ArrayBuffer,
         options?: { filename?: string; onProgress?: (_: OnProgressParameters) => void; },
     ) {
+        // Cancel any in-flight load
+        this.#currentLoadingTask?.destroy();
+        this.#currentLoadingTask = undefined;
+
+        this.document?.destroy();
+        this.viewer?.cleanup();
+        this.unbindEvents()
+        
         if (this.url && typeof this.url === "string") {
             try {
                 URL.revokeObjectURL(this.url);
@@ -281,9 +291,6 @@ export class PDFSlick {
         }
 
         try {
-            this.document?.destroy();
-            this.viewer?.cleanup();
-
             if (url instanceof URL) {
                 this.url = url.toString();
             } else if (url instanceof ArrayBuffer) {
@@ -300,8 +307,9 @@ export class PDFSlick {
                 url: this.url,
                 isEvalSupported: false
             });
+            this.#currentLoadingTask = pdfDocumentLoader;
 
-            if (!!options?.onProgress) {
+            if (options?.onProgress) {
                 pdfDocumentLoader.onProgress = options.onProgress;
             }
 
