@@ -15,6 +15,7 @@ import { Panel, SplitPanel } from "./SplitPanel";
 import { ArrowLeft, ChevronDown, Printer } from "lucide-solid";
 import {
 	createEffect,
+	createMemo,
 	createSignal,
 	ErrorBoundary,
 	onMount,
@@ -23,9 +24,8 @@ import {
 } from "solid-js";
 import { Tabs } from "@kobalte/core/tabs";
 import { Select } from "@kobalte/core/select";
-import type { Problem } from "./worker/types/data/Problems";
-import { useProblems } from "./worker/hooks/useProblems";
 import { BsExclamationCircle } from "solid-icons/bs";
+import { ProblemViewer } from "./Problems";
 
 dayjs.extend(duration);
 
@@ -123,122 +123,124 @@ function InContestPage() {
 
 	return (
 		<div class="relative w-full h-full">
-				{/* <div class="absolute w-full h-full bg-white z-10">
+			{/* <div class="absolute w-full h-full bg-white z-10">
 					<ContestPageOverlay contest={contest()}/>
 				</div> */}
 
-				<div class="relative w-full h-full flex flex-col z-0">
-					<div class="relative h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row z-10">
-						<FaSolidMountain class="h-14 w-14 aspect-square object-cover opacity-50" />
+			<div class="relative w-full h-full flex flex-col z-0">
+				<div class="relative h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row z-10">
+					<FaSolidMountain class="h-14 w-14 aspect-square object-cover opacity-50" />
 
-						<div class="grow" />
+					<div class="grow" />
 
-						<UserLoginWidget />
-					</div>
-					<div class="grow w-full overflow-hidden">
-						<Tabs
-							class="h-full flex flex-col"
-							value={selectedTab()}
-							onChange={setSelectedTab}
-						>
-							<Tabs.List class="*:bg-white *:border *:border-black/10 *:p-1 *:ui-highlighted:shadow-md *:opacity-75 *:ui-highlighted:opacity-100 *:ui-highlighted:z-10 *:ui-highlighted:hover:border-black/10 *:ui-highlighted:scale-105 *:ui-highlighted:cursor-auto *:cursor-pointer *:rounded-lg *:min-w-30 *:hover:opacity-100 *:hover:border-black/30 *:duration-75 px-2.5 pt-2 gap-2 flex flex-row">
-								<Tabs.Trigger value="problems">
-									<Show when={problems() !== undefined}>
-										<Select
-											value={selectedProblem()}
-											onChange={onProblemSelect}
-											options={Object.values(problems())}
-											optionValue="id"
-											itemComponent={(props) => (
-												<Select.Item item={props.item}>
-													<Select.ItemLabel class="px-2 hover:bg-black/20 outline-t border-t border-black/10 max-w-80 leading-7.5 box-border">
-														<ProblemInfo problem={props.item.rawValue} />
-													</Select.ItemLabel>
-												</Select.Item>
-											)}
-										>
-											<div class="flex flex-row flex-nowrap items-center">
-												<Select.Trigger class="flex flex-row flex-nowrap items-center hover:bg-black/20 rounded-full border border-black/20 cursor-pointer">
-													<Select.Icon class="">
-														<ChevronDown size="1.4rem" />
-													</Select.Icon>
-												</Select.Trigger>
-												<div class="ml-1">
-													<Select.Value<Problem>>
-														{(state) => (
-															<div class="flex flex-row flex-nowrap">
-																{" "}
-																<ProblemInfo
-																	problem={state.selectedOption()}
-																/>{" "}
-															</div>
-														)}
-													</Select.Value>
-												</div>
-											</div>
-											<Select.Portal>
-												<Select.Content class="bg-white border border-black/20 rounded-md shadow-lg">
-													<div class="max-h-ui-popup-h max-w-ui-popup-w overflow-auto">
-														<Select.Listbox class="flex flex-col flex-wrap h-ui-popup-h" />
-													</div>
-												</Select.Content>
-											</Select.Portal>
-										</Select>
-									</Show>
-								</Tabs.Trigger>
-								<Tabs.Trigger
-									value="scoreboard"
-									class="flex flex-row gap-1 justify-center items-center"
-								>
-									{" "}
-									<FaRegularCalendarAlt size="1rem" class="float-left" />{" "}
-									Scoreboard{" "}
-								</Tabs.Trigger>
-								<Tabs.Trigger
-									value="print"
-									class="flex flex-row gap-1 justify-center items-center"
-								>
-									{" "}
-									<Printer size="1rem" /> Print{" "}
-								</Tabs.Trigger>
-							</Tabs.List>
-							<Tabs.Content value="problems" class="grow w-full">
-								<SplitPanel direction="horizontal" class="h-full" includeMargin>
-									<Panel></Panel>
-									<SplitPanel direction="vertical">
-										<Panel></Panel>
-										<Panel></Panel>
-									</SplitPanel>
-								</SplitPanel>
-							</Tabs.Content>
-							<Tabs.Content value="scoreboard">Scoreboard</Tabs.Content>
-							<Tabs.Content value="print">Print</Tabs.Content>
-						</Tabs>
-					</div>
+					<UserLoginWidget />
 				</div>
+				<div class="grow w-full overflow-hidden">
+					<Tabs
+						class="h-full flex flex-col"
+						value={selectedTab()}
+						onChange={setSelectedTab}
+					>
+						<Tabs.List class="*:bg-white *:border *:border-black/10 *:p-1 *:ui-highlighted:shadow-md *:opacity-75 *:ui-highlighted:opacity-100 *:ui-highlighted:z-10 *:ui-highlighted:hover:border-black/10 *:ui-highlighted:scale-105 *:ui-highlighted:cursor-auto *:cursor-pointer *:rounded-lg *:min-w-30 *:hover:opacity-100 *:hover:border-black/30 *:duration-75 px-2.5 pt-2 gap-2 flex flex-row">
+							<Tabs.Trigger value="problems">
+								<Show when={problems() !== undefined}>
+									<Select
+										value={selectedProblem()}
+										onChange={onProblemSelect}
+										options={Object.values(problems())}
+										optionValue="id"
+  									optionTextValue="name"
+										itemComponent={(props) => (
+											<Select.Item item={props.item}>
+												<Select.ItemLabel class="px-2 hover:bg-black/20 outline-t border-t border-black/10 max-w-80 leading-7.5 box-border">
+													<ProblemInfo problem={props.item.rawValue} />
+												</Select.ItemLabel>
+											</Select.Item>
+										)}
+									>
+										<div class="flex flex-row flex-nowrap items-center">
+											<Select.Trigger class="flex flex-row flex-nowrap items-center hover:bg-black/20 rounded-full border border-black/20 cursor-pointer">
+												<Select.Icon class="">
+													<ChevronDown size="1.4rem" />
+												</Select.Icon>
+											</Select.Trigger>
+											<div class="ml-1">
+												<Select.Value<Problem>>
+													{(state) => {
+														console.log(state.selectedOption(), selectedProblem())
+														return (
+														<div class="flex flex-row flex-nowrap">
+															<ProblemInfo
+																problem={state.selectedOption()}
+															/>
+														</div>
+													)}}
+												</Select.Value>
+											</div>
+										</div>
+										<Select.Portal>
+											<Select.Content class="bg-white border border-black/20 rounded-md shadow-lg">
+												<div class="max-h-ui-popup-h max-w-ui-popup-w overflow-auto">
+													<Select.Listbox class="flex flex-col flex-wrap h-ui-popup-h" />
+												</div>
+											</Select.Content>
+										</Select.Portal>
+									</Select>
+								</Show>
+							</Tabs.Trigger>
+							<Tabs.Trigger
+								value="scoreboard"
+								class="flex flex-row gap-1 justify-center items-center"
+							>
+								<FaRegularCalendarAlt size="1rem" class="float-left" />
+								Scoreboard
+							</Tabs.Trigger>
+							<Tabs.Trigger
+								value="print"
+								class="flex flex-row gap-1 justify-center items-center"
+							>
+								<Printer size="1rem" /> Print
+							</Tabs.Trigger>
+						</Tabs.List>
+						<Tabs.Content value="problems" class="grow w-full">
+							<SplitPanel direction="horizontal" class="h-full" includeMargin>
+								<Panel> <ProblemViewer problemId={ () => selectedProblem().id } /> </Panel>
+								<SplitPanel direction="vertical">
+									<Panel></Panel>
+									<Panel></Panel>
+								</SplitPanel>
+							</SplitPanel>
+						</Tabs.Content>
+						<Tabs.Content value="scoreboard">Scoreboard</Tabs.Content>
+						<Tabs.Content value="print">Print</Tabs.Content>
+					</Tabs>
+				</div>
+			</div>
 		</div>
 	);
 }
 
 function PageCrashHandler(props: ParentProps) {
 	return (
-		<ErrorBoundary fallback={
-			<div class="w-full h-full flex flex-col items-center justify-center">
-				<BsExclamationCircle size="3em" />
-				<div class="text-xl font-medium mb-3"> Something went wrong. </div>
-				<A href="/">
-					<div class="border border-black/10 p-2 rounded-md flex flex-row flex-nowrap items-center group/return_button overflow-hidden cursor-pointer">
-						<ArrowLeft size="1rem" />
-						<div class="w-0 group-hover/return_button:w-30 text-nowrap duration-75">
-							<div class="ml-2">Return to menu</div>
+		<ErrorBoundary
+			fallback={
+				<div class="w-full h-full flex flex-col items-center justify-center">
+					<BsExclamationCircle size="3em" />
+					<div class="text-xl font-medium mb-3"> Something went wrong. </div>
+					<A href="/">
+						<div class="border border-black/10 p-2 rounded-md flex flex-row flex-nowrap items-center group/return_button overflow-hidden cursor-pointer">
+							<ArrowLeft size="1rem" />
+							<div class="w-0 group-hover/return_button:w-30 text-nowrap duration-75">
+								<div class="ml-2">Return to menu</div>
+							</div>
 						</div>
-					</div>
-				</A>
-			</div>
-		}>
-			{ props.children }
+					</A>
+				</div>
+			}
+		>
+			{props.children}
 		</ErrorBoundary>
-	)
+	);
 }
 
 function RouteFeedWrapper(props: ParentProps) {
