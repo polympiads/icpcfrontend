@@ -1,0 +1,8 @@
+.focus-visible {
+    outline: 1px solid BLACK;
+    outline-offset: -1px;
+}
+
+.readonly {
+    caret-color: transparent;
+}

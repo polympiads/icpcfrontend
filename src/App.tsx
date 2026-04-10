@@ -1,12 +1,9 @@
-import {
-	FaRegularCalendarAlt,
-	FaSolidMountain,
-} from "solid-icons/fa";
+import { FaRegularCalendarAlt, FaSolidMountain } from "solid-icons/fa";
 import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
 
-import { API_HOSTNAME } from "./constants";
+import { BASE_URL, API_ROOT, SUBMISSIONS_URL } from "./constants";
 import { UserLoginWidget } from "./User";
-import { AuthProvider } from "./worker/context/AuthContext";
+import { AuthProvider, useAuth } from "./worker/context/AuthContext";
 import { WorkerProvider } from "./worker/context/WorkerContext";
 import { ContestSelect } from "./Contest";
 import { FeedProvider } from "./worker/context/FeedContext";
@@ -26,6 +23,9 @@ import { Tabs } from "@kobalte/core/tabs";
 import { Select } from "@kobalte/core/select";
 import { BsExclamationCircle } from "solid-icons/bs";
 import { ProblemViewer } from "./Problems";
+import { SubmissionEditor } from "./Editor";
+import { useLanguages } from "./worker/hooks/useLanguages";
+import { BasePortalRoot } from "./Portal";
 
 dayjs.extend(duration);
 
@@ -50,11 +50,92 @@ function InContestPage() {
 	const urlParams = useParams();
 	const navigate = useNavigate();
 
-	const problems = useProblems();
+	const languages = useLanguages();
+	const auth = useAuth();
+
+	// ── types ─────────────────────────────────────────────────────────────
+
+	type Statement = {
+		href: string;
+		mime: "application/pdf";
+	};
+
+	type Problem = {
+		id: string;
+		label: string;
+		name: string;
+		time_limit: number;
+		memory_limit: number;
+		statement: Statement[];
+	};
+
+	// ── helpers ────────────────────────────────────────────────────────────
+
+	const uid = (): string => crypto.randomUUID();
+
+	function pick<T>(arr: T[]): T {
+		return arr[Math.floor(Math.random() * arr.length)];
+	}
+
+	// ── generator ──────────────────────────────────────────────────────────
+
+	function generateProblem(overrides: Partial<Problem> = {}): Problem {
+		const LABELS = ["A", "B", "C", "D", "E", "F"];
+		const NAMES = [
+			"Two Sum",
+			"Graph Traversal",
+			"Longest Path",
+			"Matrix Rotation",
+			"Segment Tree",
+			"Convex Hull",
+		];
+
+		const STATEMENTS: Statement[] = [
+			{
+				href: "https://example.com/statements/problem-a.pdf",
+				mime: "application/pdf",
+			},
+			{
+				href: "https://example.com/statements/problem-b.pdf",
+				mime: "application/pdf",
+			},
+			{
+				href: "https://example.com/statements/problem-c.pdf",
+				mime: "application/pdf",
+			},
+		];
+
+		return {
+			id: uid(),
+			label: pick(LABELS),
+			name: pick(NAMES),
+			time_limit: pick([1, 2, 3, 5]),
+			memory_limit: pick([64, 128, 256, 512]),
+			statement: [pick(STATEMENTS)],
+			...overrides,
+		};
+	}
+
+	// ── bulk generator ─────────────────────────────────────────────────────
+
+	function generateProblems(
+		count: number,
+		overrides: Partial<Problem> = {},
+	) {
+		return Object.fromEntries(
+			Array.from({ length: count }, () => {
+				const problem = generateProblem(overrides);
+				return [problem.id, problem];
+			}),
+		);
+	}
+
+	const problems = createMemo(() => generateProblems(10));
 
 	const [selectedProblem, setSelectedProblem] = createSignal<Problem>(
 		Object.values(problems())[0],
 	);
+	createEffect(() => console.log(problems()))
 
 	function onProblemSelect(problem: Problem | null) {
 		if (!problem) {
@@ -76,9 +157,9 @@ function InContestPage() {
 		const segment = wildParts[0];
 		console.log(segment);
 
-		const firstProblem = Object.values(problems())[0]
+		const firstProblem = Object.values(problems())[0];
 		if (firstProblem === undefined) {
-			throw "Error no problems available for that contest"
+			throw "Error no problems available for that contest";
 		}
 
 		if (wild === "") {
@@ -120,6 +201,34 @@ function InContestPage() {
 			</>
 		);
 	}
+
+	async function postSubmission(contest_id: string, code: string, problem_id: string, language_id: string, session: string) {
+		const url = new URL(API_ROOT + SUBMISSIONS_URL(contest_id), BASE_URL)
+		url.searchParams.append('language_id', language_id)
+		url.searchParams.append('problem_id', problem_id)
+		
+		const formData = new FormData()
+		const codeBlob = new Blob([code], { type: 'text/plain' })
+		formData.append('file', codeBlob)
+		
+		return await fetch(url.toString(), {
+			method: "POST",
+			body: formData,
+			headers: {
+				'X-Session-Id': session
+			}
+		})
+	}
+
+	async function submitCode(code: string, language_id: string) {
+    await postSubmission(
+      urlParams.id!,
+      code,
+      selectedProblem().id,
+      language_id,
+      auth.session()!,
+    );
+  }
 
 	return (
 		<div class="relative w-full h-full">
@@ -180,8 +289,8 @@ function InContestPage() {
 										</div>
 										<Select.Portal>
 											<Select.Content class="bg-white border border-black/20 rounded-md shadow-lg">
-												<div class="max-h-ui-popup-h max-w-ui-popup-w overflow-auto">
-													<Select.Listbox class="flex flex-col flex-wrap h-ui-popup-h" />
+												<div class="max-h-ui-popup-h max-w-ui-popup-w overflow-x-auto">
+													<Select.Listbox class="flex flex-col flex-wrap max-h-ui-popup-h" />
 												</div>
 											</Select.Content>
 										</Select.Portal>
@@ -203,13 +312,17 @@ function InContestPage() {
 							</Tabs.Trigger>
 						</Tabs.List>
 						<Tabs.Content value="problems" class="grow w-full">
-							<SplitPanel direction="horizontal" class="h-full" includeMargin>
-								<Panel> <ProblemViewer problemId={ () => selectedProblem().id } /> </Panel>
-								<SplitPanel direction="vertical">
-									<Panel></Panel>
-									<Panel></Panel>
+							<BasePortalRoot>
+								<SplitPanel direction="horizontal" class="h-full" includeMargin>
+									<Panel> <ProblemViewer problemId={ () => selectedProblem().id } /> </Panel>
+									<SplitPanel direction="vertical">
+										<Panel></Panel>
+										<Panel>
+											<SubmissionEditor onSubmit={submitCode} availableLanguages={() => Object.keys(languages())} />
+										</Panel>
+									</SplitPanel>
 								</SplitPanel>
-							</SplitPanel>
+							</BasePortalRoot>
 						</Tabs.Content>
 						<Tabs.Content value="scoreboard">Scoreboard</Tabs.Content>
 						<Tabs.Content value="print">Print</Tabs.Content>
@@ -254,12 +367,19 @@ function RouteFeedWrapper(props: ParentProps) {
 
 function App() {
 	return (
-		<WorkerProvider apiHostname={API_HOSTNAME}>
+		<WorkerProvider apiHostname={BASE_URL}>
 			<AuthProvider>
 				<Router>
 					<Route path="/" component={ContestSelectionPage} />
 					<Route path="/contests/:id" component={RouteFeedWrapper}>
-						<Route path="/*rest" component={() => <PageCrashHandler><InContestPage/></PageCrashHandler>} />
+						<Route
+							path="/*rest"
+							component={() => (
+								<PageCrashHandler>
+									<InContestPage />
+								</PageCrashHandler>
+							)}
+						/>
 					</Route>
 				</Router>
 			</AuthProvider>

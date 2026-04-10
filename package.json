@@ -18,13 +18,15 @@
 		"@tailwindcss/vite": "^4.2.2",
 		"clsx": "^2.1.1",
 		"dayjs": "^1.11.20",
+		"devicon": "^2.17.0",
 		"lucide-solid": "^1.8.0",
 		"normalize.css": "^8.0.1",
+		"pdfslick": "workspace:*",
 		"solid-icons": "^1.2.0",
 		"solid-js": "^1.9.12",
+		"solid-prism-editor": "2.2.0",
 		"tailwindcss": "^4.2.2",
-		"uuid": "^13.0.0",
-		"pdfslick": "workspace:*"
+		"uuid": "^13.0.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.10",
