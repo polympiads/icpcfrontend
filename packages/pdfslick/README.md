@@ -1,5 +1,7 @@
 # pdfslick
 
+This is a fork of [PDFSlick](https://github.com/pdfslick/pdfslick). Most of the contributions are the components in the root of `./src`.
+
 To install dependencies:
 
 ```bash
