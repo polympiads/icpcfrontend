@@ -123,13 +123,25 @@ const bg_map: Record<Status, string> = {
   "waiting": "bg-linear-to-r from-gray-50 to-gray-100 hover:from-gray-200 hover:to-gray-300",
 }
 
+function UserInfo(props: { team_id: string }) {
+  const team = useTeam(props.team_id)
+
+  return (
+    <>
+      <FaSolidUser size="1.5rem" class="opacity-40" />
+            
+      <PingPongScroller hoverOnly>
+        { team()?.name ?? "[Unknown team]" }
+      </PingPongScroller>
+    </>
+  )
+}
+
 export function SubmissionEntry(props: { index: number, submission: Submission }) {
   const judgments = useJudgementTypes()
   const judgment = createMemo(() => props.submission.judgement_type_id ? judgments()[props.submission.judgement_type_id] : undefined)
   
   const status = createMemo(() => computeStatus(props.submission, judgment()))
-  const team = createMemo(() => props.submission.team_id ? useTeam(props.submission.team_id) : undefined)
-  //createEffect(() => console.log(status()))
   
   function computeStatus(submission: Submission, judgment: JudgementType | undefined): Status {
     switch (submission.status) {
@@ -187,25 +199,21 @@ export function SubmissionEntry(props: { index: number, submission: Submission }
   }
 
   return (
-    <div class="relative h-12 w-full group @container/submissionEntry">
+    <div class="relative h-12 w-full group @container/submissionEntry rounded-md overflow-hidden">
       <div class="absolute w-full h-full z-0">
         <div class={ clsx("w-full h-full", status() && bg_map[status()!]) } />
       </div>
-      <div class="relative h-full flex flex-row *:not-last:mr-2 items-center bg-linear-to-r px-3 py-1 rounded-md duration-150 transition-all cursor-pointer border border-black/10 z-10">
+      <div class="relative h-full flex flex-row *:not-last:mr-2 items-center bg-linear-to-r px-3 rounded-md py-1 duration-150 transition-all cursor-pointer border border-black/10 z-10">
         <div class="text-gray-400"> {`#${props.index}`} </div>
         <ProblemLabel problem_id={props.submission.problem_id} class="text-xl font-normal"/>
         <LanguageIcon language={props.submission.language_id} class="p-1" />
         
-        <Show when={team() !== undefined}>
+        <Show when={props.submission.team_id !== undefined}>
           <div class="h-full flex flex-row *:not-last:mr-2 items-center @max-3xs/submissionEntry:hidden shrink overflow-x-hidden">
             { /* Separator */ }
             <div class="h-4/5 w-px bg-black/10"></div>
             
-            <FaSolidUser size="1.5rem" class="opacity-40" />
-            
-            <PingPongScroller hoverOnly>
-              { team()?.name ?? "[Unknown team]" }
-            </PingPongScroller>
+            <UserInfo team_id={props.submission.team_id!}/>
           </div>
         </Show>
         
@@ -242,7 +250,7 @@ function SubmissionEntryWithCode(props: { submission: Submission, index: Accesso
     <>
       <Accordion.Item value={props.submission.id} disabled={ !canAccessCode() }>
         <Accordion.Header class="relative z-10">
-          <Accordion.Trigger class="w-full rounded-md group">
+          <Accordion.Trigger class="w-full group">
             <SubmissionEntry
               index={props.index() + 1}
               submission={props.submission}
@@ -413,7 +421,7 @@ export function SubmissionEntries(
   //console.log(sortedSubmissions());
 
   const finalStyle = clsx(
-    "relative h-full overflow-x-hidden p-3 *:not-last:mb-3 overflow-auto grow",
+    "relative h-full overflow-x-hidden *:not-last:mb-3 overflow-auto grow",
     props.class,
   );
 
@@ -421,7 +429,7 @@ export function SubmissionEntries(
     <div class={finalStyle}>
       <Switch>
         <Match when={sortedSubmissions().length == 0}>
-          <div class="relative w-full h-full overflow-hidden *:not-last:mb-3">
+          <div class="relative w-full h-full overflow-hidden *:not-last:mb-3 p-3">
             <div class="absolute w-full h-full flex items-center justify-center z-20 text-xl font-medium opacity-50">
               No submissions yet.
             </div>
@@ -433,13 +441,15 @@ export function SubmissionEntries(
           </div>
         </Match>
         <Match when={sortedSubmissions().length > 0}>
-          <Accordion class={finalStyle} collapsible={true}>
-            <For each={sortedSubmissions()}>
-              {(item, index) => (
-                <SubmissionEntryWithCode submission={item} index={() => sortedSubmissions().length - index()} />
-              )}
-            </For>
-          </Accordion>
+          <div class="p-3">
+            <Accordion class={finalStyle} collapsible={true}>
+              <For each={sortedSubmissions()}>
+                {(item, index) => (
+                  <SubmissionEntryWithCode submission={item} index={() => sortedSubmissions().length - index()} />
+                )}
+              </For>
+            </Accordion>
+          </div>
         </Match>
       </Switch>
     </div>
