@@ -116,18 +116,22 @@ function InContestPage() {
 		if (wild === "") {
 			setSelectedProblem(firstProblem);
 		} else if (TABS.includes(segment)) {
-			setSelectedTab(segment);
-
-			if (segment === "problems") {
-				if (wildParts.length > 1) {
-					const problem_id = wildParts[1];
-					if (problem_id in problems()) {
-						setSelectedProblem(problems()[problem_id]);
+			if (segment === "print" && !isLoggedIn()) {
+				setSelectedProblem(firstProblem);
+			} else {
+				setSelectedTab(segment);
+	
+				if (segment === "problems") {
+					if (wildParts.length > 1) {
+						const problem_id = wildParts[1];
+						if (problem_id in problems()) {
+							setSelectedProblem(problems()[problem_id]);
+						} else {
+							setSelectedProblem(firstProblem);
+						}
 					} else {
 						setSelectedProblem(firstProblem);
 					}
-				} else {
-					setSelectedProblem(firstProblem);
 				}
 			}
 		} else {
@@ -201,7 +205,7 @@ function InContestPage() {
 						value={selectedTab()}
 						onChange={setSelectedTab}
 					>
-						<Tabs.List class="*:bg-white *:border *:border-black/10 *:p-1 *:ui-highlighted:shadow-md *:opacity-75 *:ui-highlighted:opacity-100 *:ui-highlighted:z-10 *:ui-highlighted:hover:border-black/10 *:ui-highlighted:scale-105 *:ui-highlighted:cursor-auto *:cursor-pointer *:rounded-lg *:min-w-30 *:hover:opacity-100 *:hover:border-black/30 *:duration-75 px-2.5 pt-2 gap-2 flex flex-row">
+						<Tabs.List class="*:bg-white *:border *:border-black/10 *:p-1 *:ui-highlighted:shadow-md *:opacity-75 *:ui-highlighted:opacity-100 *:ui-highlighted:z-10 *:ui-highlighted:hover:border-black/10 *:ui-highlighted:scale-105 *:ui-highlighted:cursor-auto *:cursor-pointer *:rounded-lg *:min-w-30 *:hover:opacity-100 *:hover:border-black/30 *:duration-75 *:ui-disabled:opacity-50 px-2.5 pt-2 gap-2 flex flex-row">
 							<Tabs.Trigger value="problems">
 								<Show when={problems() !== undefined}>
 									<Select
@@ -263,7 +267,7 @@ function InContestPage() {
 									Submissions
 								</Tabs.Trigger>
 							<Tabs.Trigger
-								
+								disabled={!isLoggedIn()}
 								value="print"
 								class="flex flex-row gap-1 justify-center items-center"
 							>
