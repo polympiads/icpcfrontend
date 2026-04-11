@@ -31,6 +31,8 @@ import type { Problem } from "./worker/types/data/Problems";
 import { AppEditor } from "./Editor";
 import { PrintEntries, SubmitPrintButton } from "./Prints";
 import { usePrints } from "./worker/hooks/usePrints";
+import { useContest } from "./worker/hooks/useContest";
+import type { Submission } from "./worker/types/data/Submission";
 
 dayjs.extend(duration);
 
@@ -137,7 +139,25 @@ function InContestPage() {
 	}
 
 	const problems = createMemo(() => generateProblems(10));
-	const submissions = useSubmissions();
+	const submissions = createMemo(() => generateSubmissions(12))
+	const prints = createMemo(() => generatePrintMap(15));
+	const contest = useContest()
+	const isFrozen = createMemo(() => {
+		const now = dayjs();
+		const contestVal = contest();
+		if (!contestVal) {
+			return;
+		}
+		if (!contestVal.start_time || !contestVal.scoreboard_freeze_time) {
+			return;
+		}
+
+		return now.diff(contestVal.scoreboard_freeze_time) > 0;
+	})
+
+	const frozenSubmissions = createMemo<Record<string, Submission>>((old) => isFrozen() ? old : submissions(), {})
+
+	console.log(prints())
 
 	const [selectedProblem, setSelectedProblem] = createSignal<Problem>(
 		Object.values(problems())[0],
