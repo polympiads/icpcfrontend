@@ -23,9 +23,9 @@ import { Tabs } from "@kobalte/core/tabs";
 import { Select } from "@kobalte/core/select";
 import { BsExclamationCircle } from "solid-icons/bs";
 import { ProblemViewer } from "./Problems";
-import { SubmissionEditor } from "./Editor";
 import { useLanguages } from "./worker/hooks/useLanguages";
 import { BasePortalRoot } from "./Portal";
+import { SubmissionEditor } from "./Submissions";
 
 dayjs.extend(duration);
 
@@ -52,6 +52,7 @@ function InContestPage() {
 
 	const languages = useLanguages();
 	const auth = useAuth();
+	const isLoggedIn = () => auth.whoami().is_authenticated
 
 	// ── types ─────────────────────────────────────────────────────────────
 
@@ -318,7 +319,7 @@ function InContestPage() {
 									<SplitPanel direction="vertical">
 										<Panel></Panel>
 										<Panel>
-											<SubmissionEditor onSubmit={submitCode} availableLanguages={() => Object.keys(languages())} />
+											<SubmissionEditor onSubmit={submitCode} availableLanguages={() => Object.keys(languages())} disableSubmission={!isLoggedIn()}/>
 										</Panel>
 									</SplitPanel>
 								</SplitPanel>
