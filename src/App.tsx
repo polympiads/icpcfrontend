@@ -1,5 +1,5 @@
 import { FaRegularCalendarAlt, FaSolidListSquares, FaSolidMountain } from "solid-icons/fa";
-import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
+import { A, Route, Router, useNavigate, useParams, useSubmission } from "@solidjs/router";
 
 import { BASE_URL, API_ROOT, SUBMISSIONS_URL } from "./constants";
 import { UserLoginWidget } from "./User";
@@ -25,7 +25,6 @@ import { BsExclamationCircle } from "solid-icons/bs";
 import { ProblemViewer } from "./Problems";
 import { useLanguages } from "./worker/hooks/useLanguages";
 import { BasePortalRoot } from "./Portal";
-import { generateProblems, generateSubmissions } from "./test";
 import { SubmissionEditor, SubmissionEntries } from "./Submissions";
 import type { Problem } from "./worker/types/data/Problems";
 import { AppEditor } from "./Editor";
@@ -33,6 +32,8 @@ import { PrintEntries, SubmitPrintButton } from "./Prints";
 import { usePrints } from "./worker/hooks/usePrints";
 import { useContest } from "./worker/hooks/useContest";
 import type { Submission } from "./worker/types/data/Submission";
+import { useProblems } from "./worker/hooks/useProblems";
+import { useSubmissions } from "./worker/hooks/useSubmissions";
 
 dayjs.extend(duration);
 
@@ -61,86 +62,9 @@ function InContestPage() {
 	const auth = useAuth();
 	const isLoggedIn = () => auth.whoami().is_authenticated
 
-	// ── types ─────────────────────────────────────────────────────────────
-
-	type Statement = {
-		href: string;
-		mime: "application/pdf";
-	};
-
-	type Problem = {
-		id: string;
-		label: string;
-		name: string;
-		time_limit: number;
-		memory_limit: number;
-		statement: Statement[];
-	};
-
-	// ── helpers ────────────────────────────────────────────────────────────
-
-	const uid = (): string => crypto.randomUUID();
-
-	function pick<T>(arr: T[]): T {
-		return arr[Math.floor(Math.random() * arr.length)];
-	}
-
-	// ── generator ──────────────────────────────────────────────────────────
-
-	function generateProblem(overrides: Partial<Problem> = {}): Problem {
-		const LABELS = ["A", "B", "C", "D", "E", "F"];
-		const NAMES = [
-			"Two Sum",
-			"Graph Traversal",
-			"Longest Path",
-			"Matrix Rotation",
-			"Segment Tree",
-			"Convex Hull",
-		];
-
-		const STATEMENTS: Statement[] = [
-			{
-				href: "https://example.com/statements/problem-a.pdf",
-				mime: "application/pdf",
-			},
-			{
-				href: "https://example.com/statements/problem-b.pdf",
-				mime: "application/pdf",
-			},
-			{
-				href: "https://example.com/statements/problem-c.pdf",
-				mime: "application/pdf",
-			},
-		];
-
-		return {
-			id: uid(),
-			label: pick(LABELS),
-			name: pick(NAMES),
-			time_limit: pick([1, 2, 3, 5]),
-			memory_limit: pick([64, 128, 256, 512]),
-			statement: [pick(STATEMENTS)],
-			...overrides,
-		};
-	}
-
-	// ── bulk generator ─────────────────────────────────────────────────────
-
-	function generateProblems(
-		count: number,
-		overrides: Partial<Problem> = {},
-	) {
-		return Object.fromEntries(
-			Array.from({ length: count }, () => {
-				const problem = generateProblem(overrides);
-				return [problem.id, problem];
-			}),
-		);
-	}
-
-	const problems = createMemo(() => generateProblems(10));
-	const submissions = createMemo(() => generateSubmissions(12))
-	const prints = createMemo(() => generatePrintMap(15));
+	const problems = useProblems();
+	const submissions = useSubmissions()
+	const prints = usePrints();
 	const contest = useContest()
 	const isFrozen = createMemo(() => {
 		const now = dayjs();
