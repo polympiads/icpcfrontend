@@ -1,4 +1,4 @@
-import { FaRegularCalendarAlt, FaSolidMountain } from "solid-icons/fa";
+import { FaRegularCalendarAlt, FaSolidListSquares, FaSolidMountain } from "solid-icons/fa";
 import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
 
 import { BASE_URL, API_ROOT, SUBMISSIONS_URL } from "./constants";
@@ -25,6 +25,7 @@ import { BsExclamationCircle } from "solid-icons/bs";
 import { ProblemViewer } from "./Problems";
 import { useLanguages } from "./worker/hooks/useLanguages";
 import { BasePortalRoot } from "./Portal";
+import { generateProblems, generateSubmissions } from "./test";
 import { SubmissionEditor, SubmissionEntries } from "./Submissions";
 import type { Problem } from "./worker/types/data/Problems";
 import { AppEditor } from "./Editor";
@@ -153,7 +154,7 @@ function InContestPage() {
 
 	const [selectedTab, setSelectedTab] = createSignal("problems");
 
-	const TABS = ["problems", "scoreboard", "print"];
+	const TABS = ["problems", "scoreboard", "print", "submissions"];
 	onMount(() => {
 		const wild = urlParams.rest;
 		if (wild === undefined)
@@ -311,6 +312,14 @@ function InContestPage() {
 								Scoreboard
 							</Tabs.Trigger>
 							<Tabs.Trigger
+								value="submissions"
+								class="flex flex-row gap-1 justify-center items-center"
+							>
+								<FaSolidListSquares size="1rem" class="float-left" />
+									Submissions
+								</Tabs.Trigger>
+							<Tabs.Trigger
+								
 								value="print"
 								class="flex flex-row gap-1 justify-center items-center"
 							>
@@ -332,7 +341,11 @@ function InContestPage() {
 								</SplitPanel>
 							</BasePortalRoot>
 						</Tabs.Content>
-						<Tabs.Content value="scoreboard">Scoreboard</Tabs.Content>
+						<Tabs.Content value="submissions" class="h-full w-full p-3">
+							<Panel>
+								<SubmissionEntries submissions={submissions}/>
+							</Panel>
+						</Tabs.Content>
 						<Tabs.Content value="print" class="w-full h-full p-2.5">
 							<SplitPanel direction="horizontal" class="h-full">
 								<Panel>
