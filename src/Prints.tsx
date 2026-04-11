@@ -117,7 +117,7 @@ function PrintEntry(props: { index: number, print: Print }) {
         <div class={ clsx("w-full h-full", bg_map[props.print.status]) } />
       </div>
       <div class="relative h-full flex flex-row *:not-last:mr-2 items-center bg-linear-to-r px-3 rounded-md py-1 duration-150 transition-all cursor-pointer border border-black/10 z-10">
-        <div class="text-gray-400"> {`#${props.index}`} </div>
+        <div class="text-gray-400"> {`Print #${props.index}`} </div>
         
         { /* Space */ }
         <div class="grow" />
