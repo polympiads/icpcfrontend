@@ -224,7 +224,7 @@ function InContestPage() {
 	function ProblemInfo(props: { problem: Problem }) {
 		return (
 			<>
-				P{props.problem.label} - {props.problem.name}
+				{props.problem.label} - {props.problem.name}
 			</>
 		);
 	}
