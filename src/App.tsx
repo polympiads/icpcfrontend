@@ -363,7 +363,16 @@ function InContestPage() {
 						</Tabs.Content>
 						<Tabs.Content value="submissions" class="h-full w-full p-3">
 							<Panel>
-								<SubmissionEntries submissions={submissions}/>
+								<div class="h-full w-full overflow-auto">
+									<div class="relative z-0">
+										<Show when={isFrozen()}>
+											<div class="absolute z-10 h-full w-full bg-sky-200/50" />
+										</Show>
+										<div class="relative z-0">
+											<SubmissionEntries submissions={frozenSubmissions}/>
+										</div>
+									</div>
+								</div>
 							</Panel>
 						</Tabs.Content>
 						<Tabs.Content value="print" class="w-full h-full p-2.5">
