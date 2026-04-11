@@ -95,16 +95,16 @@ function PrintEntry(props: { index: number, print: Print }) {
   function PrintStatusIcon(props: { status: Status }) {
     return (
       <Switch>
-        <Match when={props.status == "done"}>
+        <Match when={props.status === "done"}>
           <Check class="stroke-gray-400" size="1.5rem"/>
         </Match>
-        <Match when={props.status == "compiling" || props.status == "ready"}>
+        <Match when={props.status === "compiling" || props.status === "ready"}>
           <BiRegularPrinter size="1.5rem" class="animate-pulse"/>
         </Match>
-        <Match when={props.status == "failure" || props.status == "error"}>
+        <Match when={props.status === "failure" || props.status === "error"}>
           <VsWarning class="stroke-red-500" size="1.5rem"/>
         </Match>
-        <Match when={props.status == "pending"}>
+        <Match when={props.status === "pending"}>
           <LoadingAnimation.ThreePulsingDots />
         </Match>
       </Switch>
@@ -132,21 +132,19 @@ function PrintEntry(props: { index: number, print: Print }) {
 
 function PrintEntryWithCode(props: { print: Print, index: Accessor<number> }) {
   return (
-    <>
-      <Accordion.Item value={props.print.id}>
-        <Accordion.Header class="relative z-10">
-          <Accordion.Trigger class="w-full group">
-            <PrintEntry
-              index={props.index() + 1}
-              print={props.print}
-            />
-          </Accordion.Trigger>
-        </Accordion.Header>
-        <Accordion.Content class="ui-closed:animate-slide-up">
-          <PrintCodeView print={props.print}/>
-        </Accordion.Content>
-      </Accordion.Item>
-    </>
+    <Accordion.Item value={props.print.id}>
+      <Accordion.Header class="relative z-10">
+        <Accordion.Trigger class="w-full group">
+          <PrintEntry
+            index={props.index() + 1}
+            print={props.print}
+          />
+        </Accordion.Trigger>
+      </Accordion.Header>
+      <Accordion.Content class="ui-closed:animate-slide-up">
+        <PrintCodeView print={props.print}/>
+      </Accordion.Content>
+    </Accordion.Item>
   )
 }
 
@@ -177,7 +175,7 @@ function PrintCodeView(props: { print: Print }) {
     <div class="h-full relative -top-2 rounded-b-md overflow-hidden z-0 border-x border-b border-slate-200 bg-white">
       <div class="h-2" />
         <Switch>
-          <Match when={code.state == "ready"}>
+          <Match when={code.state === "ready"}>
             <div class="relative w-full max-h-60 overflow-hidden">
               <AppEditor
                 code={code()}
@@ -194,16 +192,16 @@ function PrintCodeView(props: { print: Print }) {
           </Match>
           <Match
             when={
-              code.state == "pending" ||
-              code.state == "refreshing" ||
-              code.state == "unresolved"
+              code.state === "pending" ||
+              code.state === "refreshing" ||
+              code.state === "unresolved"
             }
           >
             <div class="w-full h-20 flex items-center justify-center">
               <LoadingAnimation.SpinningCircle size="3rem" />
             </div>
           </Match>
-          <Match when={code.state == "errored"}>
+          <Match when={code.state === "errored"}>
             <div class="w-full h-20 flex items-center justify-center">
               <FaSolidWarning size="3rem" class="opacity-50" />
             </div>
@@ -231,7 +229,7 @@ export function PrintEntries(
   return (
     <div class={finalStyle}>
       <Switch>
-        <Match when={sortedPrints().length == 0}>
+        <Match when={sortedPrints().length === 0}>
           <div class="relative w-full h-full overflow-hidden">
             <div class="absolute w-full h-full flex items-center justify-center z-20 text-xl font-medium opacity-50">
               No prints yet.
