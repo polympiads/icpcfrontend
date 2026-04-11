@@ -171,15 +171,15 @@ export function SubmissionEntry(props: { index: number, submission: Submission }
           <LoadingAnimation.SpinningCircle size="1.5rem"/>
         </Match>
         <Match when={props.status == "accepted"}>
-          <Check class="stroke-green-500"/>
+          <Check class="stroke-green-500" size="1.5rem"/>
         </Match>
         <Match when={props.status == "reject"}>
           <div class="flex flex-row w-fit h-full items-center text-red-500 justify-center" >
-            <X />
+            <X size="1.5rem"/>
           </div>
         </Match>
         <Match when={props.status == "failed"}>
-          <VsWarning class="stroke-red-500" />
+          <VsWarning class="stroke-red-500" size="1.5rem"/>
         </Match>
       </Switch>
     )
