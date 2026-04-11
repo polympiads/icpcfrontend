@@ -30,7 +30,7 @@ export function ProblemViewer(props: { problemId: Accessor<string> }) {
       <PDFViewer.Loading>
         <div class="absolute w-full h-full backdrop-blur-md flex flex-col justify-center items-center z-10">
           <LoadingAnimation.SpinningCircle size="4em" />
-          <div class="text-2xl font-medium"> Waiting for problem... </div>
+          <div class="text-2xl font-medium text-center"> Waiting for problem... </div>
         </div>
       </PDFViewer.Loading>
       <PDFViewer.Error>
