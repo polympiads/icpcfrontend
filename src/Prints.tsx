@@ -1,19 +1,25 @@
-import { createEffect, createMemo, createResource, createSignal, For, Match, Switch, type Accessor, type ComponentProps } from "solid-js";
+import { createEffect, createMemo, createResource, createSignal, For, Match, Switch, type Accessor, type ComponentProps, type Setter } from "solid-js";
 import { AppEditor, useAppEditorContext } from "./Editor";
 import { Button } from "@kobalte/core/button";
 import { BiRegularPrinter } from "solid-icons/bi";
-import { Check, LoaderCircle } from "lucide-solid";
-import { API_ROOT, BASE_URL, PRINT_URL, PRINTS_URL } from "./constants";
+import { Check, LoaderCircle, RotateCw } from "lucide-solid";
+import { API_ROOT, BASE_URL, PRINT_DONE_URL, PRINT_URL, PRINTS_URL } from "./constants";
 import { useContest } from "./worker/hooks/useContest";
 import { useAuth } from "./worker/context/AuthContext";
 import { LoadingAnimation } from "./LoadingAnimation";
-import { FaSolidWarning } from "solid-icons/fa";
+import { FaSolidUser, FaSolidWarning } from "solid-icons/fa";
 import { Accordion } from "@kobalte/core/accordion";
 import clsx from "clsx";
 import { CopyButton } from "./CopyButtons";
 import { sortRecordValues } from "./utils";
 import type { Print } from "./worker/types/data/Print";
 import { VsWarning } from "solid-icons/vs";
+import { PDFViewer } from "pdfslick";
+import { BsExclamationCircle } from "solid-icons/bs";
+import { useAccount } from "./worker/hooks/useUsers";
+import PingPongScroller from "./PingPongScroller";
+import { RadioGroup } from "@kobalte/core/radio-group";
+import { usePrint, usePrints } from "./worker/hooks/usePrints";
 
 async function postPrint(contest_id: string, code: string, session: string) {
   const url = new URL(API_ROOT + PRINTS_URL(contest_id), BASE_URL)
@@ -40,6 +46,17 @@ async function getPrintCode(contest_id: string, print_id: string, session: strin
     }
   })
     .then(response => response.text())
+}
+
+async function markPrintAsDone(contest_id: string, print_id: string, session: string) {
+  const url = new URL(API_ROOT + PRINT_DONE_URL(contest_id, print_id), BASE_URL)
+  
+  return await fetch(url.toString(), {
+    method: "POST",
+    headers: {
+      'X-Session-Id': session
+    }
+  })
 }
 
 export function SubmitPrintButton(props: { disable: boolean }) {
@@ -256,5 +273,168 @@ export function PrintEntries(
         </Match>
       </Switch>
     </div>
+  );
+}
+
+function AccountInfo(props: { account_id: string }) {
+  const account = useAccount(props.account_id)
+
+  return (
+    <>
+      <FaSolidUser size="1.5rem" class="opacity-40" />
+            
+      <PingPongScroller hoverOnly>
+        { account()?.name ?? "[Unknown team]" }
+      </PingPongScroller>
+    </>
+  )
+}
+
+function StaffPrintEntry(props: { index: Accessor<number>, print_id: string }) {
+  const contest = useContest()
+  const { session } = useAuth()
+
+  const print = usePrint(props.print_id)
+  const [isSumbitting, setSubmitting] = createSignal(false)
+
+  async function markAsDone() {
+    setSubmitting(true)
+
+    markPrintAsDone(contest()!.id, props.print_id, session()!)
+      .finally(() => setSubmitting(false))
+  }
+
+  return (
+    <div class="relative h-12 w-full group @container/submissionEntry rounded-md overflow-hidden">
+      <div class="absolute w-full h-full z-0">
+        <div class={ clsx("w-full h-full", bg_map[print().status]) } />
+      </div>
+      <div class="relative h-full flex flex-row *:not-last:mr-2 items-center bg-linear-to-r px-3 rounded-md py-1 duration-150 transition-all cursor-pointer border border-black/10 z-10">
+        <div class="text-gray-400"> {`Print #${props.index()}`} </div>
+
+        <AccountInfo account_id={print().owner_id} />
+        
+        { /* Space */ }
+        <div class="grow" />
+        
+        <Button class="border border-black/10 rounded-md p-1 bg-white hover:bg-gray-100 cursor-pointer ui-disabled:text-gray-500 ui-disabled:cursor-auto" onClick={markAsDone} disabled={isSumbitting() || session() === undefined}>
+          <Check size="1.5rem"/>
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+export function StaffPrintSelect(
+  props: ComponentProps<"div"> & {
+    prints: Accessor<Record<string, Print>>,
+    selectedPrintId: Accessor<string | undefined>,
+    setSelectedPrintId: Setter<string | undefined>
+  },
+) {
+  const sortedPrints = createMemo(() => {
+    const printsVal = props.prints()
+    
+    const printsReady = Object.values(printsVal).filter(print => print.status === "ready");
+    const printsReadyRecord = Object.fromEntries(printsReady.map(print => [print.id, print]))
+
+    return sortRecordValues(printsReadyRecord, (v) => Number(v.id), "desc");
+  });
+  //console.log(sortedSubmissions());
+
+  const finalStyle = clsx(
+    "relative h-full overflow-x-hidden *:not-last:mb-3 overflow-auto grow",
+    props.class,
+  );
+
+  return (
+    <div class={finalStyle}>
+      <Switch>
+        <Match when={sortedPrints().length === 0}>
+          <div class="relative w-full h-full overflow-hidden">
+            <div class="absolute w-full h-full flex items-center justify-center z-20 text-xl font-medium opacity-50">
+              No prints ready yet.
+            </div>
+            <div class="w-full h-full max-h-60 absolute bg-linear-to-b from-transparent to-white z-10" />
+            <div class="p-3 *:not-last:mb-3">
+              <div class="h-12 w-full bg-slate-100 rounded-md"/>
+              <div class="h-12 w-full bg-slate-100 rounded-md"/>
+              <div class="h-12 w-full bg-slate-100 rounded-md"/>
+              <div class="h-12 w-full bg-slate-100 rounded-md"/>
+            </div>
+          </div>
+        </Match>
+        <Match when={sortedPrints().length > 0}>
+          <RadioGroup value={props.selectedPrintId()} onChange={props.setSelectedPrintId}>
+            <div class="p-3">
+              <For each={sortedPrints()}>
+                {(item, index) => (
+                  <RadioGroup.Item value={item.id}>
+                    <StaffPrintEntry print_id={item.id} index={() => sortedPrints().length - index()} />
+                  </RadioGroup.Item>
+                )}
+              </For>
+            </div>
+          </RadioGroup>
+        </Match>
+      </Switch>
+    </div>
+  );
+}
+
+export function StaffPrintViewer(props: { print: Accessor<string | undefined> }) {
+  const prints = usePrints()
+
+  const [printPdfData, printPdfAction] = createResource(() => ({ prints: prints(), print_id: props.print() }), async (params) => {
+    if (!params.print_id)
+      return;
+    
+    const print = params.prints[params.print_id]
+    
+    if (!print.pdf_href)
+      return;
+
+    return await fetch(print.pdf_href)
+      .then(response => response.blob())
+      .then(blob => blob.arrayBuffer())
+  });
+
+  return (
+    <PDFViewer
+      pdfSource={printPdfData}
+      class="relative w-full h-full inset-0 pdfSlick flex flex-col"
+    >
+      <PDFViewer.Toolbar>
+        <PDFViewer.Toolbar.ThumbsbarButton />
+        <PDFViewer.Toolbar.Splitter />
+        <PDFViewer.Toolbar.ZoomSelector />
+        <PDFViewer.Toolbar.Splitter />
+        <PDFViewer.Toolbar.PageSelector />
+      </PDFViewer.Toolbar>
+      <div
+        class="flex-1 relative h-full [&_.canvasWrapper]:shadow-md [&_.canvasWrapper]:outline [&_.canvasWrapper]:outline-black/10 [&_.viewerContainer]:z-0"
+      >
+        <PDFViewer.Thumbsbar />
+        <PDFViewer.Viewer />
+      </div>
+      <PDFViewer.Loading>
+        <div class="absolute w-full h-full backdrop-blur-md flex flex-col justify-center items-center z-10">
+          <LoadingAnimation.SpinningCircle size="4em" />
+          <div class="text-2xl font-medium text-center"> Waiting for problem... </div>
+        </div>
+      </PDFViewer.Loading>
+      <PDFViewer.Error>
+        <div class="absolute w-full h-full flex flex-col items-center justify-center z-10">
+          <BsExclamationCircle size="3em" />
+          <div class="text-xl font-medium mb-3"> Something went wrong. </div>
+          <Button
+            class="border border-black/10 p-2 rounded-md flex flex-row items-center hover:bg-gray-100"
+            onClick={() => printPdfAction.refetch()}
+          >
+            <RotateCw size="1em" /> <div class="ml-1">Retry</div>
+          </Button>
+        </div>
+      </PDFViewer.Error>
+    </PDFViewer>
   );
 }

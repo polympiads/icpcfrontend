@@ -1,5 +1,5 @@
 import { FaRegularCalendarAlt, FaSolidListSquares, FaSolidMountain } from "solid-icons/fa";
-import { A, Route, Router, useNavigate, useParams, useSubmission } from "@solidjs/router";
+import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
 
 import { BASE_URL, API_ROOT, SUBMISSIONS_URL } from "./constants";
 import { UserLoginWidget } from "./User";
@@ -28,7 +28,7 @@ import { BasePortalRoot } from "./Portal";
 import { SubmissionEditor, SubmissionEntries } from "./Submissions";
 import type { Problem } from "./worker/types/data/Problems";
 import { AppEditor } from "./Editor";
-import { PrintEntries, SubmitPrintButton } from "./Prints";
+import { PrintEntries, StaffPrintSelect, StaffPrintViewer, SubmitPrintButton } from "./Prints";
 import { usePrints } from "./worker/hooks/usePrints";
 import { useContest } from "./worker/hooks/useContest";
 import type { Submission } from "./worker/types/data/Submission";
@@ -61,6 +61,11 @@ function InContestPage() {
 	const languages = useLanguages();
 	const auth = useAuth();
 	const isLoggedIn = () => auth.whoami().is_authenticated
+	const isStaff = () => {
+		const whoamiVal = auth.whoami()
+		return whoamiVal.is_authenticated && whoamiVal.is_staff
+	}
+	const [selectedPrint, setSelectedPrint] = createSignal<string>()
 
 	const problems = useProblems();
 	const submissions = useSubmissions()
@@ -304,23 +309,35 @@ function InContestPage() {
 							</Panel>
 						</Tabs.Content>
 						<Tabs.Content value="print" class="w-full h-full p-2.5">
-							<SplitPanel direction="horizontal" class="h-full">
-								<Panel>
-									<PrintEntries prints={prints} />
-								</Panel>
-								<Panel>
-									<AppEditor>
-										<AppEditor.Toolbar class="border-b border-gray-300">
-											<div class="grow"/>
+							<Show when={!isStaff()}>
+								<SplitPanel direction="horizontal" class="h-full">
+									<Panel>
+										<PrintEntries prints={prints} />
+									</Panel>
+									<Panel>
+										<AppEditor>
+											<AppEditor.Toolbar class="border-b border-gray-300">
+												<div class="grow"/>
 
-											<SubmitPrintButton disable={false}/>
-										</AppEditor.Toolbar>
-										<div class="h-full w-full overflow-auto">
-											<AppEditor.Editor class="h-full"/>	
-										</div>
-									</AppEditor>
-								</Panel>
-							</SplitPanel>
+												<SubmitPrintButton disable={false}/>
+											</AppEditor.Toolbar>
+											<div class="h-full w-full overflow-auto">
+												<AppEditor.Editor class="h-full"/>	
+											</div>
+										</AppEditor>
+									</Panel>
+								</SplitPanel>
+							</Show>
+							<Show when={isStaff()}>
+								<SplitPanel direction="horizontal" class="h-full">
+									<Panel>
+										<StaffPrintSelect selectedPrintId={selectedPrint} setSelectedPrintId={setSelectedPrint} prints={prints} />
+									</Panel>
+									<Panel>
+										<StaffPrintViewer print={selectedPrint}/>
+									</Panel>
+								</SplitPanel>
+							</Show>
 						</Tabs.Content>
 					</Tabs>
 				</div>
