@@ -168,21 +168,21 @@ function SubmissionEntry(props: { index: number, submission: Submission }) {
   function SubmissionStatusIcon(props: { status: Status }) {
     return (
       <Switch>
-        <Match when={props.status == "running"}>
+        <Match when={props.status === "running"}>
           <LoadingAnimation.SpinningCircle size="1.5rem"/>
         </Match>
-        <Match when={props.status == "accepted"}>
+        <Match when={props.status === "accepted"}>
           <Check class="stroke-green-500" size="1.5rem"/>
         </Match>
-        <Match when={props.status == "reject"}>
+        <Match when={props.status === "reject"}>
           <div class="flex flex-row w-fit h-full items-center text-red-500 justify-center" >
             <X size="1.5rem"/>
           </div>
         </Match>
-        <Match when={props.status == "failed"}>
+        <Match when={props.status === "failed"}>
           <VsWarning class="stroke-red-500" size="1.5rem"/>
         </Match>
-        <Match when={props.status == "waiting"}>
+        <Match when={props.status === "waiting"}>
           <LoadingAnimation.ThreePulsingDots />
         </Match>
       </Switch>
@@ -194,11 +194,9 @@ function SubmissionEntry(props: { index: number, submission: Submission }) {
     const problem = useProblem(local.problem_id)
 
     return (
-      <>
-        <div {...other}>
-          P{ problem()?.label }
-        </div>
-      </>
+      <div {...other}>
+        P { problem()?.label }
+      </div>
     )
   }
 
@@ -227,7 +225,7 @@ function SubmissionEntry(props: { index: number, submission: Submission }) {
         <div class="shrink-0 flex flex-row items-center">
           <SubmissionStatusIcon status={status()} />
           
-          <Show when={ status() == "reject" && judgment() != undefined }>
+          <Show when={ status() === "reject" && judgment() !== undefined }>
             <div class="overflow-hidden font-mono leading-none text-red-500 w-8 text-center">
               { judgment()?.id }
             </div>
@@ -247,25 +245,23 @@ function SubmissionEntryWithCode(props: { submission: Submission, index: Accesso
       return false
     }
     
-    return whoamiVal.is_staff || whoamiVal.id == props.submission.account_id
+    return whoamiVal.is_staff || whoamiVal.id === props.submission.account_id
   })
   
   return (
-    <>
-      <Accordion.Item value={props.submission.id} disabled={ !canAccessCode() }>
-        <Accordion.Header class="relative z-10">
-          <Accordion.Trigger class="w-full group">
-            <SubmissionEntry
-              index={props.index() + 1}
-              submission={props.submission}
-            />
-          </Accordion.Trigger>
-        </Accordion.Header>
-        <Accordion.Content class="ui-closed:animate-slide-up">
-          <SubmissionCodeView submission={props.submission}/>
-        </Accordion.Content>
-      </Accordion.Item>
-    </>
+    <Accordion.Item value={props.submission.id} disabled={ !canAccessCode() }>
+      <Accordion.Header class="relative z-10">
+        <Accordion.Trigger class="w-full group">
+          <SubmissionEntry
+            index={props.index() + 1}
+            submission={props.submission}
+          />
+        </Accordion.Trigger>
+      </Accordion.Header>
+      <Accordion.Content class="ui-closed:animate-slide-up">
+        <SubmissionCodeView submission={props.submission}/>
+      </Accordion.Content>
+    </Accordion.Item>
   )
 }
 
@@ -296,7 +292,7 @@ function SubmissionCodeView(props: { submission: Submission }) {
     <div class="h-full relative -top-2 rounded-b-md overflow-hidden z-0 border-x border-b border-slate-200 bg-white">
       <div class="h-2" />
           <Switch>
-            <Match when={code.state == "ready"}>
+            <Match when={code.state === "ready"}>
               <div class="relative w-full max-h-60 overflow-hidden">
                 <AppEditor
                   code={code()}
@@ -323,16 +319,16 @@ function SubmissionCodeView(props: { submission: Submission }) {
             </Match>
             <Match
               when={
-                code.state == "pending" ||
-                code.state == "refreshing" ||
-                code.state == "unresolved"
+                code.state === "pending" ||
+                code.state === "refreshing" ||
+                code.state === "unresolved"
               }
             >
               <div class="w-full h-20 flex items-center justify-center">
                 <LoadingAnimation.SpinningCircle size="3rem" />
               </div>
             </Match>
-            <Match when={code.state == "errored"}>
+            <Match when={code.state === "errored"}>
               <div class="w-full h-20 flex items-center justify-center">
                 <FaSolidWarning size="3rem" class="opacity-50" />
               </div>
@@ -360,7 +356,7 @@ export function SubmissionEntries(
   return (
     <div class={finalStyle}>
       <Switch>
-        <Match when={sortedSubmissions().length == 0}>
+        <Match when={sortedSubmissions().length === 0}>
           <div class="relative w-full h-full overflow-hidden *:not-last:mb-3 p-3">
             <div class="absolute w-full h-full flex items-center justify-center z-20 text-xl font-medium opacity-50">
               No submissions yet.
