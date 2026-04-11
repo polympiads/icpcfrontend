@@ -25,7 +25,8 @@ import { BsExclamationCircle } from "solid-icons/bs";
 import { ProblemViewer } from "./Problems";
 import { useLanguages } from "./worker/hooks/useLanguages";
 import { BasePortalRoot } from "./Portal";
-import { SubmissionEditor } from "./Submissions";
+import { SubmissionEditor, SubmissionEntries } from "./Submissions";
+import { useSubmissions } from "./worker/hooks/useSubmissions";
 
 dayjs.extend(duration);
 
@@ -132,6 +133,7 @@ function InContestPage() {
 	}
 
 	const problems = createMemo(() => generateProblems(10));
+	const submissions = useSubmissions();
 
 	const [selectedProblem, setSelectedProblem] = createSignal<Problem>(
 		Object.values(problems())[0],
@@ -317,7 +319,9 @@ function InContestPage() {
 								<SplitPanel direction="horizontal" class="h-full" includeMargin>
 									<Panel> <ProblemViewer problemId={ () => selectedProblem().id } /> </Panel>
 									<SplitPanel direction="vertical">
-										<Panel></Panel>
+										<Panel>
+											<SubmissionEntries submissions={submissions}/>
+										</Panel>
 										<Panel>
 											<SubmissionEditor onSubmit={submitCode} availableLanguages={() => Object.keys(languages())} disableSubmission={!isLoggedIn()}/>
 										</Panel>
