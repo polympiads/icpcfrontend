@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createResource, createSignal, For, Match, onCleanup, Show, splitProps, Switch, type Accessor, type ComponentProps } from "solid-js";
+import { createEffect, createMemo, createResource, createSignal, For, Match, Show, splitProps, Switch, type Accessor, type ComponentProps } from "solid-js";
 import { AppEditor, useAppEditorContext } from "./Editor";
 import { Button } from "@kobalte/core/button";
 import { Check, LoaderCircle, Upload, X } from "lucide-solid";
@@ -20,8 +20,9 @@ import { Accordion } from "@kobalte/core/accordion";
 import { useContest } from "./worker/hooks/useContest";
 import { A } from "@solidjs/router";
 import { OcLinkexternal2 } from "solid-icons/oc";
-import { BsCopy, BsExclamationTriangle } from "solid-icons/bs";
 import type { Contest } from "./worker/types/data/Contest";
+import { CopyButton } from "./CopyButtons";
+import { sortRecordValues } from "./utils";
 
 export async function postSubmission(contest_id: string, code: string, problem_id: string, language_id: string, session: string) {
   const url = new URL(API_ROOT + SUBMISSIONS_URL(contest_id), BASE_URL)
@@ -137,7 +138,7 @@ function UserInfo(props: { team_id: string }) {
   )
 }
 
-export function SubmissionEntry(props: { index: number, submission: Submission }) {
+function SubmissionEntry(props: { index: number, submission: Submission }) {
   const judgments = useJudgementTypes()
   const judgment = createMemo(() => props.submission.judgement_type_id ? judgments()[props.submission.judgement_type_id] : undefined)
   
@@ -180,6 +181,9 @@ export function SubmissionEntry(props: { index: number, submission: Submission }
         </Match>
         <Match when={props.status == "failed"}>
           <VsWarning class="stroke-red-500" size="1.5rem"/>
+        </Match>
+        <Match when={props.status == "waiting"}>
+          <LoadingAnimation.ThreePulsingDots />
         </Match>
       </Switch>
     )
@@ -336,78 +340,6 @@ function SubmissionCodeView(props: { submission: Submission }) {
           </Switch>
     </div>
   );
-}
-
-function CopyButton() {
-  const { code } = useAppEditorContext()
-  
-  const [copied, setCopied] = createSignal(false)
-  const [error, setError] = createSignal(false)
-
-  let timeoutId: number | undefined
-
-  function resetStates() {
-    setCopied(false)
-    setError(false)
-  }
-
-  async function copyOnClipboard() {
-    const value = code()
-    if (value === undefined) return
-
-    // clear any existing timeout before setting a new one
-    if (timeoutId) clearTimeout(timeoutId)
-
-    try {
-      await navigator.clipboard.writeText(value)
-
-      setError(false)
-      setCopied(true)
-    } catch {
-      setCopied(false)
-      setError(true)
-    }
-
-    timeoutId = window.setTimeout(() => {
-      resetStates()
-    }, 1500)
-  }
-
-  onCleanup(() => {
-    if (timeoutId) clearTimeout(timeoutId)
-  })
-
-  return (
-    <Button class="p-1 cursor-pointer flex flex-row justify-center items-center border border-black/10 bg-white hover:bg-gray-100 disabled:cursor-default rounded-md duration-50 shrink-0" onClick={copyOnClipboard}>
-      {copied() ? (
-        <Check size="1rem" />
-      ) : error() ? (
-        <BsExclamationTriangle size="1rem" />
-      ) : (
-        <BsCopy size="1rem" />
-      )}
-    </Button>
-  )
-}
-
-function sortRecordValues<T extends Record<string, any>>(
-  record: T,
-  key: (v: T) => any,
-  direction: "asc" | "desc" = "asc",
-): T[keyof T][] {
-  const values = Object.values(record);
-
-  return values.sort((a, b) => {
-    const av = key(a);
-    const bv = key(b);
-
-    if (av == null) return 1;
-    if (bv == null) return -1;
-
-    if (av > bv) return direction === "asc" ? 1 : -1;
-    if (av < bv) return direction === "asc" ? -1 : 1;
-    return 0;
-  });
 }
 
 export function SubmissionEntries(

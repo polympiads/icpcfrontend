@@ -26,7 +26,10 @@ import { ProblemViewer } from "./Problems";
 import { useLanguages } from "./worker/hooks/useLanguages";
 import { BasePortalRoot } from "./Portal";
 import { SubmissionEditor, SubmissionEntries } from "./Submissions";
-import { useSubmissions } from "./worker/hooks/useSubmissions";
+import type { Problem } from "./worker/types/data/Problems";
+import { AppEditor } from "./Editor";
+import { PrintEntries, SubmitPrintButton } from "./Prints";
+import { usePrints } from "./worker/hooks/usePrints";
 
 dayjs.extend(duration);
 
@@ -330,7 +333,25 @@ function InContestPage() {
 							</BasePortalRoot>
 						</Tabs.Content>
 						<Tabs.Content value="scoreboard">Scoreboard</Tabs.Content>
-						<Tabs.Content value="print">Print</Tabs.Content>
+						<Tabs.Content value="print" class="w-full h-full p-2.5">
+							<SplitPanel direction="horizontal" class="h-full">
+								<Panel>
+									<PrintEntries prints={prints} />
+								</Panel>
+								<Panel>
+									<AppEditor>
+										<AppEditor.Toolbar class="border-b border-gray-300">
+											<div class="grow"/>
+
+											<SubmitPrintButton disable={false}/>
+										</AppEditor.Toolbar>
+										<div class="h-full w-full overflow-auto">
+											<AppEditor.Editor class="h-full"/>	
+										</div>
+									</AppEditor>
+								</Panel>
+							</SplitPanel>
+						</Tabs.Content>
 					</Tabs>
 				</div>
 			</div>
