@@ -5,7 +5,7 @@ import { createEffect, createSignal } from "solid-js";
 import type { PDFSlickState } from "./core/types";
 
 export type PDFSlickViewerProps = {
-	viewerRef: (instance: HTMLElement) => void;
+	viewerRef: (instance: HTMLDivElement) => void;
 	store: PDFSlickState;
 	class?: string;
 };

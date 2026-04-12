@@ -126,7 +126,7 @@ export type PDFSlickOptions = {
 };
 
 export type PDFSlickInputArgs = {
-	container: HTMLElement;
+	container: HTMLDivElement;
 	viewer?: HTMLDivElement | undefined;
 	thumbs?: HTMLElement | undefined;
 	store?: StoreApi<PDFSlickState>;

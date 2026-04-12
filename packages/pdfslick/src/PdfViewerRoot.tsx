@@ -22,7 +22,7 @@ export type PdfViewerContextProps = {
 	isDocumentLoading: Accessor<boolean>;
 	error: Accessor<PDFException | null>;
 
-	viewerRef: (node: HTMLElement) => void;
+	viewerRef: (node: HTMLDivElement) => void;
 	thumbsRef: (node: HTMLElement) => void;
 
 	pdfSlickStore: PDFSlickState;

@@ -11,7 +11,7 @@ type TUsePDFSlick = (
 	options?: PDFSlickOptions,
 ) => {
 	isDocumentLoaded: Accessor<boolean>;
-	viewerRef: (node: HTMLElement) => void;
+	viewerRef: (node: HTMLDivElement) => void;
 	thumbsRef: (node: HTMLElement) => void;
 	pdfSlick: Accessor<PDFSlick | null>;
 	pdfSlickStore: PDFSlickState;
@@ -56,7 +56,7 @@ function useStore<TState extends object, StateSlice extends object>(
 export const usePDFSlick: TUsePDFSlick = (url, options) => {
 	const [isDocumentLoaded, setIsDocumentLoaded] = createSignal(false);
 	const [areContainersMounted, setContainersMounted] = createSignal(false);
-	const [container, setContainer] = createSignal<HTMLElement | null>(null);
+	const [container, setContainer] = createSignal<HTMLDivElement | null>(null);
 	const [thumbs, setThumbs] = createSignal<HTMLElement | null>(null);
 	const [error, setError] = createSignal<PDFException | null>(null);
 
@@ -65,7 +65,7 @@ export const usePDFSlick: TUsePDFSlick = (url, options) => {
 	const zustandStore = create();
 	const pdfSlickStore = useStore(zustandStore);
 
-	const viewerRef = (node: HTMLElement) => {
+	const viewerRef = (node: HTMLDivElement) => {
 		if (!node) return;
 		setContainer(node);
 		setContainersMounted(true);

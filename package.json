@@ -25,6 +25,7 @@
 		"solid-icons": "^1.2.0",
 		"solid-js": "^1.9.12",
 		"solid-prism-editor": "2.2.0",
+		"split.js": "^1.6.5",
 		"tailwindcss": "^4.2.2",
 		"uuid": "^13.0.0"
 	},

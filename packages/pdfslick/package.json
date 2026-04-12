@@ -10,14 +10,18 @@
 		"check": "tsc --noEmit"
 	},
 	"devDependencies": {
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"vite": "^8.0.8"
 	},
 	"dependencies": {
+		"@solid-primitives/resize-observer": "^2.1.5",
 		"@types/d3-drag": "^3.0.7",
 		"@types/d3-selection": "^3.0.11",
+		"@types/pdfjs-dist": "^2.10.378",
 		"d3-drag": "^3.0.0",
 		"d3-selection": "^3.0.0",
 		"pdfjs-dist": "^5.6.205",
+		"solid-js": "^1.9.12",
 		"zustand": "^5.0.12"
 	},
 	"peerDependencies": {
