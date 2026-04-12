@@ -7,16 +7,17 @@ import { BsExclamationCircle } from "solid-icons/bs";
 import {
   FaRegularCalendarAlt,
   FaSolidListSquares,
-  FaSolidMountain,
 } from "solid-icons/fa";
 import {
   createEffect,
   createMemo,
   createSignal,
   ErrorBoundary,
+  Match,
   onMount,
   type ParentProps,
   Show,
+  Switch,
 } from "solid-js";
 import { ContestPageOverlay, ContestSelect } from "./Contest";
 import { API_ROOT, API_URL, BASE_URL, SUBMISSIONS_URL } from "./constants";
@@ -39,7 +40,7 @@ import { UserLoginWidget } from "./User";
 import { AuthProvider, useAuth } from "./worker/context/AuthContext";
 import { FeedProvider } from "./worker/context/FeedContext";
 import { WorkerProvider } from "./worker/context/WorkerContext";
-import { useContest } from "./worker/hooks/useContest";
+import { useContest, useContestState } from "./worker/hooks/useContest";
 import { useLanguages } from "./worker/hooks/useLanguages";
 import { usePrints } from "./worker/hooks/usePrints";
 import { useProblems } from "./worker/hooks/useProblems";
@@ -103,8 +104,6 @@ function InContestPage() {
     (old) => (isFrozen() ? old : submissions()),
     {},
   );
-
-  console.log(prints());
 
   const [selectedProblem, setSelectedProblem] = createSignal<Problem>(
     Object.values(problems())[0],
@@ -322,7 +321,9 @@ function InContestPage() {
               <BasePortalRoot>
                 <SplitPanel direction="horizontal" class="h-full" includeMargin>
                   <Panel>
-                    <ProblemViewer problemId={() => selectedProblem().id} />
+                    <Show when={selectedProblem() !== undefined}>
+                      <ProblemViewer problemId={() => selectedProblem().id} />
+                    </Show>
                   </Panel>
                   <SplitPanel direction="vertical">
                     <Panel>
@@ -393,6 +394,41 @@ function InContestPage() {
       </div>
     </div>
   );
+}
+
+function ContestPage() {
+  const { now } = useNow();
+  const contest = useContest()
+  const contestState = useContestState()
+
+  const isInProgress = () => {
+    const contestVal = contest();
+    const contestStateVal = contestState()
+    const nowVal = now();
+
+    if (!contestVal || !contestStateVal) {
+      return false;
+    }
+    if (!contestStateVal.started) {
+      return false;
+    }
+
+    const remainingTimeMS = contestStateVal.started
+      .add(contestVal.duration)
+      .diff(nowVal);
+    return remainingTimeMS > 0 && nowVal.diff(contestStateVal.started) >= 0;
+  };
+
+  return (
+    <Switch>
+      <Match when={!isInProgress()}>
+        <ContestPageOverlay contest={contest()}/>
+      </Match>
+      <Match when={isInProgress()}>
+        <InContestPage />
+      </Match>
+    </Switch>
+  )
 }
 
 function PageCrashHandler(props: ParentProps) {
@@ -471,7 +507,7 @@ function App() {
                 path="/*rest"
                 component={() => (
                   <PageCrashHandler>
-                    <InContestPage />
+                    <ContestPage />
                   </PageCrashHandler>
                 )}
               />
