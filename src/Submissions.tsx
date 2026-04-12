@@ -340,12 +340,28 @@ function SubmissionCodeView(props: { submission: Submission }) {
 
 export function SubmissionEntries(
   props: ComponentProps<"div"> & {
-    submissions: Accessor<Record<string, Submission>>;
+    submissions: Accessor<Record<string, Submission>>,
+    thisUserOnly?: boolean
   },
 ) {
-  const sortedSubmissions = createMemo(() =>
-    sortRecordValues(props.submissions(), (v) => Number(v.id), "desc"),
-  );
+  const { whoami } = useAuth()
+
+  const sortedSubmissions = createMemo(() => {
+    const submissionsVal = props.submissions();
+    
+    let submissionsToShow = submissionsVal;
+    if (props.thisUserOnly) {
+      const whoamiVal = whoami()
+      if (!whoamiVal.is_authenticated) {
+        submissionsToShow = {}
+      } else {
+        const submissionByThisUser = Object.values(submissionsVal).filter(submission => submission.account_id === whoamiVal.id)
+        submissionsToShow = Object.fromEntries(submissionByThisUser.map(submission => [submission.id, submission]))
+      }
+    }
+
+    return sortRecordValues(submissionsToShow, (v) => Number(v.id), "desc");
+  });
   //console.log(sortedSubmissions());
 
   const finalStyle = clsx(
