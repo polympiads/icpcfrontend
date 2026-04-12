@@ -24,7 +24,7 @@ function computeProblemColor(
 	if (submissions.length === 0) return NONE;
 
 	const anyAccepted = submissions.some((s) => {
-		const jt = s.judgement_type_id && judgementTypes[s.judgement_type_id];
+		const jt = s.judgement_type_id !== undefined ? judgementTypes[s.judgement_type_id] : undefined;
 		return jt?.solved;
 	});
 	if (anyAccepted) return ACCEPTED;
@@ -75,7 +75,7 @@ export function useScoreboard() {
 					} else {
 						const acceptedIndex = subsForProblem.findIndex((s) => {
 							const jt =
-								s.judgement_type_id && judgementTypes()[s.judgement_type_id];
+								s.judgement_type_id !== undefined ? judgementTypes()[s.judgement_type_id] : undefined;
 							return jt?.solved;
 						});
 						if (acceptedIndex !== -1) {
@@ -107,7 +107,7 @@ export function useScoreboard() {
 
 			return scoreboard;
 		},
-		undefined,
+		{ },
 		{ equals: equalScoreBoard },
 	);
 }

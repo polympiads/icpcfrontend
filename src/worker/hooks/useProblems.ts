@@ -1,6 +1,5 @@
 import {
 	type Accessor,
-	createEffect,
 	createMemo,
 	createResource,
 } from "solid-js";

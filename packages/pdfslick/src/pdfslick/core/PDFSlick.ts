@@ -539,46 +539,28 @@ export class PDFSlick {
 				await new Blob([data], { type: "application/pdf" }).arrayBuffer(),
 			);
 
-			await this.downloadManager?.download(blob, url, filename);
+			await this.downloadManager?.downloadData(blob, filename, "application/pdf");
 		} catch (_reason) {
 			// When the PDF document isn't ready, or the PDF file is still
 			// downloading, simply download using the URL.
-			await this.downloadManager?.download(null, url, filename);
+			if (typeof this.url === "string") {
+				this.downloadManager?.download(new Uint8Array(0), this.url, filename);
+			}
 		}
 	}
 
 	async save() {
-		// if (this._saveInProgress) return;
-		// this._saveInProgress = true;
-		// await this.pdfScriptingManager.dispatchWillSave();
+    const { filename } = this;
 
-		const url = this.url;
-		const { filename } = this;
-		try {
-			// this._ensureDownloadComplete();
+    try {
+        const data = (await this.document!.saveDocument()).slice(0);
+        const blob = new Uint8Array(data);
 
-			const data = (await this.document!.saveDocument()).slice(0);
-			const blob = new Uint8Array(
-				await new Blob([data], { type: "application/pdf" }).arrayBuffer(),
-			);
-
-			await this.downloadManager?.download(blob, url, filename);
-		} catch (reason: any) {
-			// When the PDF document isn't ready, or the PDF file is still
-			// downloading, simply fallback to a "regular" download.
-			console.error(`Error when saving the document: ${reason.message}`);
-			await this.download();
-		} finally {
-			// await this.pdfScriptingManager.dispatchDidSave();
-			// this._saveInProgress = false;
-		}
-
-		// if (this._hasAnnotationEditors) {
-		//   this.externalServices.reportTelemetry({
-		//     type: "editing",
-		//     data: { type: "save" },
-		//   });
-		// }
+        await this.downloadManager?.downloadData(blob, filename, "application/pdf");
+    } catch (reason: any) {
+        console.error(`Error when saving the document: ${reason.message}`);
+        await this.download();
+    }
 	}
 
 	downloadOrSave() {
