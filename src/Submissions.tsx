@@ -545,8 +545,8 @@ export function SubmissionView(props: { submission_id: string }) {
         <div class="w-30 h-20 border border-black/10 rounded-md shadow-md flex items-center justify-center">
           <AiFillFileUnknown size="2.5em" class="opacity-50" />
         </div>
-        <div class="flex flex-col">
-          <div class="text-xl">{contest()?.name}</div>
+        <div class="flex flex-col ml-2">
+          <div class="text-3xl">{contest()?.name}</div>
           <div class="flex flex-row">
             <Show when={submission()?.team_id !== undefined}>
               <div class="max-w-40">
@@ -554,7 +554,7 @@ export function SubmissionView(props: { submission_id: string }) {
               </div>
             </Show>
             <Show when={status() !== undefined}>
-              <div class={clsx("rounded-full px-2 py-1", bg_map[status()!])}>
+              <div class={clsx("rounded-full px-2 py-1 flex flex-nowrap items-center", bg_map[status()!])}>
                 <SubmissionStatusIcon status={status()!} />
                 <SubmissionStatuMessage
                   status={status()!}
@@ -585,7 +585,7 @@ export function SubmissionView(props: { submission_id: string }) {
                   language={submission().language_id}
                   readonly
                 >
-                  <AppEditor.Toolbar>
+                  <AppEditor.Toolbar class="bg-white border-b border-black/10">
                     <div class="grow" />
                     <CopyButton />
                     <LanguageEntry language={submission().language_id} />
