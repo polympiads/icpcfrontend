@@ -1,4 +1,4 @@
-export const BASE_URL = "/";
+export const BASE_URL = window.location.protocol + "//" + window.location.hostname + '/';
 
 export const CONTEST_URL_PATTERN = "/contests/:id/";
 export const CONTEST_URL = (id: string) => "/contests/" + id + "/";
@@ -24,6 +24,5 @@ export const SUBMISSION_URL = (contestId: string, submissionId: string) =>
 export const SUBMISSION_CODE_URL = (contestId: string, submissionId: string) =>
   SUBMISSION_URL(contestId, submissionId) + "code/";
 
-export const API_URL =
-  window.location.protocol + "//" + window.location.hostname + "/api/";
+export const API_URL = BASE_URL + "api/";
 export const API_ROOT = "/api";
