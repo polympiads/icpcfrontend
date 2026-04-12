@@ -54,8 +54,8 @@ function ContestSelectionPage() {
   return (
     <div class="w-full h-full flex flex-col">
       <div class="h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row">
-        <FaSolidMountain class="h-14 w-14 aspect-square object-cover opacity-50" />
-
+        <img src="/hc2_icon.png" class="h-14 w-14 object-cover"/>
+            
         <div class="grow" />
 
         <UserLoginWidget />
@@ -235,7 +235,7 @@ function InContestPage() {
 
       <div class="relative w-full h-full flex flex-col z-0">
         <div class="relative h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row z-10">
-          <FaSolidMountain class="h-14 w-14 aspect-square object-cover opacity-50" />
+		      <img src="/hc2_icon.png" class="h-14 w-14 object-cover"/>
 
           <div class="grow" />
 
@@ -433,7 +433,7 @@ function ContestSubmissionViewPage() {
   return (
     <div class="w-full h-full flex flex-col">
       <div class="h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row">
-        <FaSolidMountain class="h-14 w-14 aspect-square object-cover opacity-50" />
+        <img src="/hc2_icon.png" class="h-14 w-14 object-cover"/>
 
         <div class="grow" />
 
