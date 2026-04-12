@@ -11,6 +11,7 @@ import { LoadingAnimation } from "./LoadingAnimation";
 import { useContests } from "./worker/hooks/useContests";
 import type { Contest } from "./worker/types/data/Contest";
 import { useNow } from "./Now";
+import { useContestState } from "./worker/hooks/useContest";
 
 dayjs.extend(duration);
 
@@ -109,7 +110,7 @@ function ContestSelectionCard(props: { contest: Contest }) {
                 {formatRemainingTime(props.contest.duration)}{" "}
               </div>
             </div>
-            <div class="mx-0.5 opacity-50">·</div>
+            <div class="w-2"></div>
             <ContestStatus contest={props.contest} />
           </div>
         </div>
@@ -190,6 +191,7 @@ function ContestStatus(props: { contest: Contest }) {
 
 export function ContestPageOverlay(props: { contest: Contest | undefined }) {
   const { now } = useNow();
+  const contestState = useContestState()
 
   function OverlayInfo(props: { contest: Contest }) {
     return (
@@ -203,22 +205,23 @@ export function ContestPageOverlay(props: { contest: Contest | undefined }) {
       </>
     );
   }
-
+  
   const isInProgress = () => {
     const contestVal = props.contest;
+    const contestStateVal = contestState()
     const nowVal = now();
 
-    if (!contestVal) {
+    if (!contestVal || !contestStateVal) {
       return false;
     }
-    if (!contestVal.start_time) {
+    if (!contestStateVal.started) {
       return false;
     }
 
-    const remainingTimeMS = contestVal.start_time
+    const remainingTimeMS = contestStateVal.started
       .add(contestVal.duration)
       .diff(nowVal);
-    return remainingTimeMS > 0 && contestVal.start_time.diff(nowVal) > 0;
+    return remainingTimeMS > 0 && nowVal.diff(contestStateVal.started) >= 0;
   };
 
   return (
