@@ -1,6 +1,6 @@
-import { type JSXElement, For, createSignal, createEffect } from "solid-js";
-import { Portal } from "solid-js/web";
 import { createElementSize } from "@solid-primitives/resize-observer";
+import { createEffect, createSignal, For, type JSXElement } from "solid-js";
+import { Portal } from "solid-js/web";
 import type { PDFSlickState } from "./core/types";
 
 export type PDFSlickThumbProps = {

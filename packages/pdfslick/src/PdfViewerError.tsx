@@ -1,6 +1,6 @@
 import type { ParentProps } from "solid-js";
-import { usePdfContext } from "./PdfViewerRoot";
 import { Show } from "solid-js";
+import { usePdfContext } from "./PdfViewerRoot";
 
 export function PdfViewerError(props: ParentProps) {
 	const context = usePdfContext();

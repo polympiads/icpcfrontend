@@ -1,48 +1,47 @@
+import { Select } from "@kobalte/core/select";
+import { Tabs } from "@kobalte/core/tabs";
+import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
+import dayjs, { duration } from "dayjs";
+import { ArrowLeft, ChevronDown, Printer } from "lucide-solid";
+import { BsExclamationCircle } from "solid-icons/bs";
 import {
 	FaRegularCalendarAlt,
 	FaSolidListSquares,
 	FaSolidMountain,
 } from "solid-icons/fa";
-import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
-
-import { BASE_URL, API_ROOT, SUBMISSIONS_URL } from "./constants";
-import { UserLoginWidget } from "./User";
-import { AuthProvider, useAuth } from "./worker/context/AuthContext";
-import { WorkerProvider } from "./worker/context/WorkerContext";
-import { ContestSelect } from "./Contest";
-import { FeedProvider } from "./worker/context/FeedContext";
-import dayjs, { duration } from "dayjs";
-import { Panel, SplitPanel } from "./SplitPanel";
-import { ArrowLeft, ChevronDown, Printer } from "lucide-solid";
 import {
 	createEffect,
 	createMemo,
 	createSignal,
 	ErrorBoundary,
 	onMount,
-	Show,
 	type ParentProps,
+	Show,
 } from "solid-js";
-import { Tabs } from "@kobalte/core/tabs";
-import { Select } from "@kobalte/core/select";
-import { BsExclamationCircle } from "solid-icons/bs";
-import { ProblemViewer } from "./Problems";
-import { useLanguages } from "./worker/hooks/useLanguages";
-import { BasePortalRoot } from "./Portal";
-import { SubmissionEditor, SubmissionEntries } from "./Submissions";
-import type { Problem } from "./worker/types/data/Problems";
+import { ContestSelect } from "./Contest";
+import { API_ROOT, BASE_URL, SUBMISSIONS_URL } from "./constants";
 import { AppEditor } from "./Editor";
+import { BasePortalRoot } from "./Portal";
 import {
 	PrintEntries,
 	StaffPrintSelect,
 	StaffPrintViewer,
 	SubmitPrintButton,
 } from "./Prints";
-import { usePrints } from "./worker/hooks/usePrints";
+import { ProblemViewer } from "./Problems";
+import { Panel, SplitPanel } from "./SplitPanel";
+import { SubmissionEditor, SubmissionEntries } from "./Submissions";
+import { UserLoginWidget } from "./User";
+import { AuthProvider, useAuth } from "./worker/context/AuthContext";
+import { FeedProvider } from "./worker/context/FeedContext";
+import { WorkerProvider } from "./worker/context/WorkerContext";
 import { useContest } from "./worker/hooks/useContest";
-import type { Submission } from "./worker/types/data/Submission";
+import { useLanguages } from "./worker/hooks/useLanguages";
+import { usePrints } from "./worker/hooks/usePrints";
 import { useProblems } from "./worker/hooks/useProblems";
 import { useSubmissions } from "./worker/hooks/useSubmissions";
+import type { Problem } from "./worker/types/data/Problems";
+import type { Submission } from "./worker/types/data/Submission";
 
 dayjs.extend(duration);
 
@@ -316,9 +315,7 @@ function InContestPage() {
 							<BasePortalRoot>
 								<SplitPanel direction="horizontal" class="h-full" includeMargin>
 									<Panel>
-										<ProblemViewer
-											problemId={() => selectedProblem().id}
-										/>
+										<ProblemViewer problemId={() => selectedProblem().id} />
 									</Panel>
 									<SplitPanel direction="vertical">
 										<Panel>

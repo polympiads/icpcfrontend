@@ -1,11 +1,10 @@
+import { type Accessor, createEffect, createSignal, onCleanup } from "solid-js";
 import { createStore, reconcile } from "solid-js/store";
-import { createEffect, createSignal, type Accessor } from "solid-js";
-import { onCleanup } from "solid-js";
-import { create, PDFSlick } from "./core";
-import type { PDFSlickOptions, PDFSlickState, PDFException } from "./core";
 import type { StoreApi } from "zustand";
-import PDFSlickViewer from "./PDFSlickViewer";
+import type { PDFException, PDFSlickOptions, PDFSlickState } from "./core";
+import { create, PDFSlick } from "./core";
 import { PDFSlickThumbnails } from "./PDFSlickThumbnails";
+import PDFSlickViewer from "./PDFSlickViewer";
 
 type TUsePDFSlick = (
 	url: Accessor<string | URL | ArrayBuffer | undefined>,

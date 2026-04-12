@@ -16,7 +16,7 @@ export function dictsEqual<T>(
 ) {
 	if (!haveSameKeys(d1, d2)) return false;
 
-	for (let key of Object.keys(d1)) {
+	for (const key of Object.keys(d1)) {
 		if (!f(d1[key], d2[key])) {
 			return false;
 		}

@@ -1,6 +1,6 @@
-import { createStore } from "zustand/vanilla";
 import { AnnotationEditorType } from "pdfjs-dist";
-import { SpreadMode, ScrollMode } from "./lib";
+import { createStore } from "zustand/vanilla";
+import { ScrollMode, SpreadMode } from "./lib";
 import type { PDFSlickState, PDFSlickStateProps } from "./types";
 
 export const initialState: PDFSlickStateProps = {

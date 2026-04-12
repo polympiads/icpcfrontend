@@ -1,15 +1,15 @@
-import type { Contest } from "./worker/types/data/Contest";
-import { useContests } from "./worker/hooks/useContests";
+import { Button } from "@kobalte/core/button";
+import { A } from "@solidjs/router";
 import dayjs, { type Dayjs, duration } from "dayjs";
 import type { Duration } from "dayjs/plugin/duration";
 import { ArrowLeft, Hourglass, RotateCw } from "lucide-solid";
-import { FaSolidFlagCheckered } from "solid-icons/fa";
-import { BsExclamationCircle, BsPauseCircle } from "solid-icons/bs";
-import { ErrorBoundary, For, Match, Suspense, Switch } from "solid-js";
 import { AiFillFileUnknown } from "solid-icons/ai";
+import { BsExclamationCircle, BsPauseCircle } from "solid-icons/bs";
+import { FaSolidFlagCheckered } from "solid-icons/fa";
+import { ErrorBoundary, For, Match, Suspense, Switch } from "solid-js";
 import { LoadingAnimation } from "./LoadingAnimation";
-import { A } from "@solidjs/router";
-import { Button } from "@kobalte/core/button";
+import { useContests } from "./worker/hooks/useContests";
+import type { Contest } from "./worker/types/data/Contest";
 
 dayjs.extend(duration);
 

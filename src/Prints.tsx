@@ -1,19 +1,26 @@
+import { Accordion } from "@kobalte/core/accordion";
+import { Button } from "@kobalte/core/button";
+import { RadioGroup } from "@kobalte/core/radio-group";
+import clsx from "clsx";
+import { Check, LoaderCircle, RotateCw } from "lucide-solid";
+import { PDFViewer } from "pdfslick";
+import { BiRegularPrinter } from "solid-icons/bi";
+import { BsExclamationCircle } from "solid-icons/bs";
+import { FaSolidUser, FaSolidWarning } from "solid-icons/fa";
+import { VsWarning } from "solid-icons/vs";
 import {
+	type Accessor,
+	type ComponentProps,
 	createEffect,
 	createMemo,
 	createResource,
 	createSignal,
 	For,
 	Match,
-	Switch,
-	type Accessor,
-	type ComponentProps,
 	type Setter,
+	Switch,
 } from "solid-js";
-import { AppEditor, useAppEditorContext } from "./Editor";
-import { Button } from "@kobalte/core/button";
-import { BiRegularPrinter } from "solid-icons/bi";
-import { Check, LoaderCircle, RotateCw } from "lucide-solid";
+import { CopyButton } from "./CopyButtons";
 import {
 	API_ROOT,
 	BASE_URL,
@@ -21,22 +28,15 @@ import {
 	PRINT_URL,
 	PRINTS_URL,
 } from "./constants";
-import { useContest } from "./worker/hooks/useContest";
-import { useAuth } from "./worker/context/AuthContext";
+import { AppEditor, useAppEditorContext } from "./Editor";
 import { LoadingAnimation } from "./LoadingAnimation";
-import { FaSolidUser, FaSolidWarning } from "solid-icons/fa";
-import { Accordion } from "@kobalte/core/accordion";
-import clsx from "clsx";
-import { CopyButton } from "./CopyButtons";
-import { sortRecordValues } from "./utils";
-import type { Print } from "./worker/types/data/Print";
-import { VsWarning } from "solid-icons/vs";
-import { PDFViewer } from "pdfslick";
-import { BsExclamationCircle } from "solid-icons/bs";
-import { useAccount } from "./worker/hooks/useUsers";
 import PingPongScroller from "./PingPongScroller";
-import { RadioGroup } from "@kobalte/core/radio-group";
+import { sortRecordValues } from "./utils";
+import { useAuth } from "./worker/context/AuthContext";
+import { useContest } from "./worker/hooks/useContest";
 import { usePrint, usePrints } from "./worker/hooks/usePrints";
+import { useAccount } from "./worker/hooks/useUsers";
+import type { Print } from "./worker/types/data/Print";
 
 async function postPrint(contest_id: string, code: string, session: string) {
 	const url = new URL(API_ROOT + PRINTS_URL(contest_id), BASE_URL);

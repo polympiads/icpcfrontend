@@ -1,4 +1,4 @@
-import { createSignal, type Accessor, type Setter } from "solid-js";
+import { type Accessor, createSignal, type Setter } from "solid-js";
 
 type ResultHandler<U> = (v: U) => void;
 type ExceptionHandler = (e: Error) => void;

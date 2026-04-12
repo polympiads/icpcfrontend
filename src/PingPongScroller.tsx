@@ -1,8 +1,8 @@
 import {
-	createSignal,
-	onMount,
-	onCleanup,
 	type ComponentProps,
+	createSignal,
+	onCleanup,
+	onMount,
 } from "solid-js";
 
 type PingPongScrollerProps = ComponentProps<"div"> & {

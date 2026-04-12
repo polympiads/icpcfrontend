@@ -1,18 +1,20 @@
 import type { PolymorphicProps } from "@kobalte/core";
 import clsx from "clsx";
+import { OcGrabber2 } from "solid-icons/oc";
 import {
+	children,
 	createRoot,
 	For,
+	type JSXElement,
 	mergeProps,
 	onCleanup,
+	onMount,
+	type ParentProps,
 	splitProps,
-	type JSXElement,
 } from "solid-js";
-import { children, onMount, type ParentProps } from "solid-js";
 import { render } from "solid-js/web";
 import type { Instance, Options } from "split.js";
 import Split from "split.js";
-import { OcGrabber2 } from "solid-icons/oc";
 
 export type Direction = "horizontal" | "vertical";
 type OriginalSplitOptions = Omit<Options, "gutter">;

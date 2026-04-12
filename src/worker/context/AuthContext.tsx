@@ -3,12 +3,12 @@ import {
 	createSignal,
 	onCleanup,
 	onMount,
-	useContext,
 	type ParentComponent,
+	useContext,
 } from "solid-js";
-import { useWorkerContext, type WorkerContextValue } from "./WorkerContext";
-import type { WorkerOutgoing } from "../types/WorkerOutgoing";
 import { areWhoAmIEqual, type WhoAmI } from "../types/data/WhoAmI";
+import type { WorkerOutgoing } from "../types/WorkerOutgoing";
+import { useWorkerContext, type WorkerContextValue } from "./WorkerContext";
 
 interface AuthContextValue {
 	whoami: () => WhoAmI;
@@ -23,10 +23,10 @@ const STORAGE_SESSION_ITEM = "session_id";
 const STORAGE_WHOAMI_ITEM = "whoami";
 
 function getSession() {
-	let currentSession: string | null =
+	const currentSession: string | null =
 		localStorage.getItem(STORAGE_SESSION_ITEM);
 
-	let trueSession: string | undefined = undefined;
+	let trueSession: string | undefined;
 	if (currentSession !== null) {
 		trueSession = currentSession;
 	}

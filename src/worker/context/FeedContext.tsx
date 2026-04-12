@@ -1,27 +1,27 @@
 import {
 	createContext,
 	createSignal,
+	type JSX,
 	onCleanup,
 	onMount,
 	useContext,
-	type JSX,
 } from "solid-js";
+import { v4 as uuidv4 } from "uuid";
+import type { Balloon } from "../types/data/Balloons";
 import {
-	parseContest,
-	parseContestState,
 	type Contest,
 	type ContestState,
+	parseContest,
+	parseContestState,
 } from "../types/data/Contest";
-import { useWorkerContext } from "./WorkerContext";
-import type { WorkerOutgoing } from "../types/WorkerOutgoing";
-import type { Language } from "../types/data/Language";
 import type { JudgementType } from "../types/data/JudgementTypes";
-import type { Account, Team } from "../types/data/Users";
+import type { Language } from "../types/data/Language";
+import type { Print } from "../types/data/Print";
 import type { Problem } from "../types/data/Problems";
 import type { Submission } from "../types/data/Submission";
-import { v4 as uuidv4 } from "uuid";
-import type { Print } from "../types/data/Print";
-import type { Balloon } from "../types/data/Balloons";
+import type { Account, Team } from "../types/data/Users";
+import type { WorkerOutgoing } from "../types/WorkerOutgoing";
+import { useWorkerContext } from "./WorkerContext";
 
 interface FeedContextValue {
 	// Contest Information
@@ -96,7 +96,7 @@ export function FeedProvider(props: {
 
 	let unsubscribe: () => void = () => {};
 	let listen_hash: string = uuidv4();
-	let listen_feed: string = props.contestId;
+	const listen_feed: string = props.contestId;
 	onMount(() => {
 		listen_hash = uuidv4();
 
@@ -107,7 +107,7 @@ export function FeedProvider(props: {
 
 				const newFeed = copyFeed(feed());
 
-				for (let content of message.content) {
+				for (const content of message.content) {
 					switch (content.type) {
 						case "contests":
 							newFeed.contest = parseContest(content.data);

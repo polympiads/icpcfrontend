@@ -1,4 +1,15 @@
+import type { OverrideComponentProps } from "@kobalte/core";
+import { Accordion } from "@kobalte/core/accordion";
+import { Button } from "@kobalte/core/button";
+import { A } from "@solidjs/router";
+import clsx from "clsx";
+import { Check, LoaderCircle, Upload, X } from "lucide-solid";
+import { FaSolidUser, FaSolidWarning } from "solid-icons/fa";
+import { OcLinkexternal2 } from "solid-icons/oc";
+import { VsWarning } from "solid-icons/vs";
 import {
+	type Accessor,
+	type ComponentProps,
 	createEffect,
 	createMemo,
 	createResource,
@@ -6,14 +17,10 @@ import {
 	For,
 	Match,
 	Show,
-	splitProps,
 	Switch,
-	type Accessor,
-	type ComponentProps,
+	splitProps,
 } from "solid-js";
-import { AppEditor, useAppEditorContext } from "./Editor";
-import { Button } from "@kobalte/core/button";
-import { Check, LoaderCircle, Upload, X } from "lucide-solid";
+import { CopyButton } from "./CopyButtons";
 import {
 	API_ROOT,
 	BASE_URL,
@@ -21,26 +28,19 @@ import {
 	SUBMISSION_URL,
 	SUBMISSIONS_URL,
 } from "./constants";
-import { useJudgementTypes } from "./worker/hooks/useJudgementTypes";
-import type { Submission } from "./worker/types/data/Submission";
-import type { JudgementType } from "./worker/types/data/JudgementTypes";
-import clsx from "clsx";
-import { LoadingAnimation } from "./LoadingAnimation";
-import { VsWarning } from "solid-icons/vs";
-import { useProblem } from "./worker/hooks/useProblems";
+import { AppEditor, useAppEditorContext } from "./Editor";
 import { LanguageIcon } from "./Languages";
-import type { OverrideComponentProps } from "@kobalte/core";
+import { LoadingAnimation } from "./LoadingAnimation";
 import PingPongScroller from "./PingPongScroller";
-import { FaSolidUser, FaSolidWarning } from "solid-icons/fa";
-import { useTeam } from "./worker/hooks/useUsers";
-import { useAuth } from "./worker/context/AuthContext";
-import { Accordion } from "@kobalte/core/accordion";
-import { useContest } from "./worker/hooks/useContest";
-import { A } from "@solidjs/router";
-import { OcLinkexternal2 } from "solid-icons/oc";
-import type { Contest } from "./worker/types/data/Contest";
-import { CopyButton } from "./CopyButtons";
 import { sortRecordValues } from "./utils";
+import { useAuth } from "./worker/context/AuthContext";
+import { useContest } from "./worker/hooks/useContest";
+import { useJudgementTypes } from "./worker/hooks/useJudgementTypes";
+import { useProblem } from "./worker/hooks/useProblems";
+import { useTeam } from "./worker/hooks/useUsers";
+import type { Contest } from "./worker/types/data/Contest";
+import type { JudgementType } from "./worker/types/data/JudgementTypes";
+import type { Submission } from "./worker/types/data/Submission";
 
 export async function postSubmission(
 	contest_id: string,
@@ -71,7 +71,7 @@ async function getSubmissionCode(
 	contest: Contest,
 	submission: Submission,
 ) {
-	let headers = undefined;
+	let headers;
 	if (session) {
 		headers = {
 			"X-Session-Id": session,

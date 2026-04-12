@@ -19,7 +19,7 @@ export type Broadcast = (message: WorkerOutgoing) => void;
 export type Send = (message: WorkerOutgoing) => void;
 
 self.onconnect = (event: MessageEvent) => {
-	for (let port of event.ports) {
+	for (const port of event.ports) {
 		connections.push(port);
 		port.start();
 
@@ -32,7 +32,7 @@ self.onconnect = (event: MessageEvent) => {
 					content: message,
 				};
 
-				for (let port of connections) {
+				for (const port of connections) {
 					port.postMessage(payload);
 				}
 			};

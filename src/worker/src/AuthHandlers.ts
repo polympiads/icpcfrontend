@@ -44,14 +44,14 @@ export async function loginHandler(
 		return;
 	}
 
-	let session_id = json["session_id"] as string;
+	const session_id = json["session_id"] as string;
 
 	const whoami_resp = await fetch(
 		new URL(whoamiEndpoint(), params.apiHostname),
 		{ headers: { "X-Session-ID": session_id } },
 	);
 
-	let session_whoami = await whoami_resp.json();
+	const session_whoami = await whoami_resp.json();
 
 	await SessionDB.setSessionInformation(session_id, session_whoami);
 
@@ -74,8 +74,8 @@ export async function logoutHandler(
 	broadcast: Broadcast,
 	_message: AuthLogout,
 ) {
-	let session_id = undefined;
-	let session_whoami: WhoAmI = { is_authenticated: false };
+	const session_id = undefined;
+	const session_whoami: WhoAmI = { is_authenticated: false };
 
 	await SessionDB.setSessionInformation(session_id, session_whoami);
 

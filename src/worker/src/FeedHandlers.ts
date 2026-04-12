@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import { feedEndpoint } from "../Endpoints";
 import type { EventFeed } from "../types/data/EventFeed";
 import type { CloseFeed, ListenToFeed } from "../types/WorkerIncoming";
@@ -8,7 +9,6 @@ import type {
 import params from "./entry.worker";
 import { NDJsonReader } from "./NDJsonReader";
 import { SessionDB } from "./SessionDB";
-import { v4 as uuidv4 } from "uuid";
 
 function outcomingMessageFromFeed(
 	feed: string,
@@ -63,7 +63,7 @@ class FeedGroup {
 
 		if (this.localSessionId !== sessionId || forcedReset) {
 			const toRemove: string[] = [];
-			for (let [hash, port] of this.listeners.entries()) {
+			for (const [hash, port] of this.listeners.entries()) {
 				try {
 					port.postMessage(resetFeedMessage(this.feed, hash));
 				} catch (e) {
@@ -71,7 +71,7 @@ class FeedGroup {
 				}
 			}
 
-			for (let hash of toRemove) {
+			for (const hash of toRemove) {
 				this.removeListener(hash);
 			}
 
@@ -121,7 +121,7 @@ class FeedGroup {
 	onEventFeed(eventFeed: EventFeed[]) {
 		this.feedCache.push(...eventFeed);
 		const toRemove: string[] = [];
-		for (let [hash, port] of this.listeners) {
+		for (const [hash, port] of this.listeners) {
 			try {
 				port.postMessage(outcomingMessageFromFeed(this.feed, hash, eventFeed));
 			} catch (e) {
@@ -129,7 +129,7 @@ class FeedGroup {
 			}
 		}
 
-		for (let hash of toRemove) this.removeListener(hash);
+		for (const hash of toRemove) this.removeListener(hash);
 	}
 	addListener(hash: string, port: MessagePort) {
 		try {
@@ -164,7 +164,7 @@ export function closeHandler(message: CloseFeed) {
 	groups.get(message.feed)?.removeListener(message.handlerHash);
 }
 export function setSessionIDOnGroups(sessionId: string | undefined) {
-	for (let [_feed, group] of groups.entries()) {
+	for (const [_feed, group] of groups.entries()) {
 		group.setSessionId(sessionId);
 	}
 }

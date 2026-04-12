@@ -21,6 +21,13 @@
 // eslint-disable-next-line max-len
 /** @typedef {import("./pdf_rendering_queue").PDFRenderingQueue} PDFRenderingQueue */
 
+import type { PDFDocumentProxy } from "pdfjs-dist";
+import type { PDFViewerOptions } from "pdfjs-dist/types/web/pdf_viewer";
+import type { EventBus } from "pdfjs-dist/web/pdf_viewer.mjs";
+import type { StoreApi } from "zustand/vanilla";
+import type { PDFSlickState } from "../types";
+import type { PDFRenderingQueue } from "./pdf_rendering_queue";
+import { PDFThumbnailView, TempImageFactory } from "./pdf_thumbnail_view";
 import {
 	getVisibleElements,
 	isValidRotation,
@@ -28,13 +35,6 @@ import {
 	scrollIntoView,
 	watchScroll,
 } from "./ui_utils";
-import { PDFThumbnailView, TempImageFactory } from "./pdf_thumbnail_view";
-import { EventBus } from "pdfjs-dist/web/pdf_viewer.mjs";
-import type { PDFDocumentProxy } from "pdfjs-dist";
-import type { StoreApi } from "zustand/vanilla";
-import type { PDFSlickState } from "../types";
-import type { PDFViewerOptions } from "pdfjs-dist/types/web/pdf_viewer";
-import type { PDFRenderingQueue } from "./pdf_rendering_queue";
 
 const THUMBNAIL_SCROLL_MARGIN = -19;
 const THUMBNAIL_SELECTED_CLASS = "selected";

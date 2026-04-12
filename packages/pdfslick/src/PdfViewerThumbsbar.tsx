@@ -1,10 +1,9 @@
-import { createEffect, createSignal, onMount } from "solid-js";
-
-import { type PDFSlickState, PDFSlickThumbnails } from "./pdfslick";
-import { select } from "d3-selection";
-import { drag } from "d3-drag";
 import { createResizeObserver } from "@solid-primitives/resize-observer";
+import { drag } from "d3-drag";
+import { select } from "d3-selection";
+import { createEffect, createSignal, onMount } from "solid-js";
 import { usePdfContext } from "./PdfViewerRoot";
+import { type PDFSlickState, PDFSlickThumbnails } from "./pdfslick";
 
 export function PdfViewerThumbsbar() {
 	const { pdfSlickStore: store, isThumbsbarOpen, thumbsRef } = usePdfContext();

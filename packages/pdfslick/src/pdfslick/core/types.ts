@@ -1,9 +1,9 @@
-import { type OnProgressParameters } from "pdfjs-dist";
-import { PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
-import type { StoreApi } from "zustand";
-import { PDFSlick, type PDFException } from "./PDFSlick";
-import { PDFThumbnailView } from "./lib";
+import type { OnProgressParameters } from "pdfjs-dist";
 import type { DocumentInitParameters } from "pdfjs-dist/types/src/display/api";
+import type { PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
+import type { StoreApi } from "zustand";
+import type { PDFThumbnailView } from "./lib";
+import type { PDFException, PDFSlick } from "./PDFSlick";
 import type { IPDFSlickPrintDialog } from "./PDFSlickPrintDialog";
 
 export type TPDFDocumentOutline = {

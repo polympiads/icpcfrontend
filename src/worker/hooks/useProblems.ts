@@ -1,11 +1,11 @@
 import {
+	type Accessor,
 	createEffect,
 	createMemo,
 	createResource,
-	type Accessor,
 } from "solid-js";
-import { useFeed } from "../context/FeedContext";
 import { headerFromSession, useAuth } from "../context/AuthContext";
+import { useFeed } from "../context/FeedContext";
 import { useWorkerContext } from "../context/WorkerContext";
 import { problemDictsEquals, problemEquals } from "../types/data/Problems";
 

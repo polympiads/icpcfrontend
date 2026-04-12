@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
+import { AnnotationEditorType } from "pdfjs-dist";
+import type { EventBus, PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
 import {
 	normalizeWheelEventDelta,
 	PresentationModeState,
 	ScrollMode,
 	SpreadMode,
 } from "./ui_utils";
-import { AnnotationEditorType } from "pdfjs-dist";
-import { EventBus, PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
 
 // NOTE: PDFViewer types are wrong!
 type PDFViewerType = Omit<PDFViewer, "annotationEditorMode"> & {

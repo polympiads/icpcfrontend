@@ -1,15 +1,13 @@
-import { ResponseException } from "pdfjs-dist";
-import { usePDFSlick, type PDFException, type PDFSlickState } from "./pdfslick";
-import type { PDFSlickViewerProps } from "./pdfslick/PDFSlickViewer";
 import clsx from "clsx";
+import { ResponseException } from "pdfjs-dist";
 import type {
 	Accessor,
+	Component,
 	ComponentProps,
 	ParentProps,
 	Resource,
 	Setter,
 } from "solid-js";
-import type { Component } from "solid-js";
 import {
 	createContext,
 	createEffect,
@@ -17,6 +15,8 @@ import {
 	splitProps,
 	useContext,
 } from "solid-js";
+import { type PDFException, type PDFSlickState, usePDFSlick } from "./pdfslick";
+import type { PDFSlickViewerProps } from "./pdfslick/PDFSlickViewer";
 
 export type PdfViewerContextProps = {
 	isDocumentLoading: Accessor<boolean>;

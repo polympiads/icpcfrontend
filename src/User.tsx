@@ -2,14 +2,14 @@ import { Button } from "@kobalte/core/button";
 import { Popover } from "@kobalte/core/popover";
 import { TextField } from "@kobalte/core/text-field";
 import { LogIn, LogOut } from "lucide-solid";
+import { BsExclamationCircle } from "solid-icons/bs";
 import { CgPassword } from "solid-icons/cg";
 import { FaSolidUserAlt, FaSolidUserAltSlash } from "solid-icons/fa";
 import { createMemo, createSignal, onCleanup, onMount, Show } from "solid-js";
+import { LoadingAnimation } from "./LoadingAnimation";
+import { SingleTaskHandler } from "./taskManager";
 import { useAuth } from "./worker/context/AuthContext";
 import type { WhoAmI_Auth } from "./worker/types/data/WhoAmI";
-import { SingleTaskHandler } from "./taskManager";
-import { LoadingAnimation } from "./LoadingAnimation";
-import { BsExclamationCircle } from "solid-icons/bs";
 
 let LOGIN_TASK: SingleTaskHandler<string | undefined> | undefined;
 
@@ -109,8 +109,7 @@ export function UserLoginWidget() {
 
 					<Show when={userInfo() !== undefined}>
 						<div class="text-2xl my-5 text-center">
-							Welcome, {userInfo()?.display_name ??
-								`@${userInfo()?.username}`}
+							Welcome, {userInfo()?.display_name ?? `@${userInfo()?.username}`}
 						</div>
 
 						<Button

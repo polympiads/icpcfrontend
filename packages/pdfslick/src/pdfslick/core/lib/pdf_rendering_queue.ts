@@ -18,11 +18,10 @@
 /** @typedef {import("./pdf_thumbnail_viewer").PDFThumbnailViewer} PDFThumbnailViewer */
 
 import { RenderingCancelledException } from "pdfjs-dist";
+import type { PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
 // import { IRenderableView } from "pdfjs-dist/types/web/interfaces.js";
-import { PDFThumbnailViewer } from "./pdf_thumbnail_viewer";
-
-import { PDFViewer } from "pdfjs-dist/web/pdf_viewer.mjs";
-import { getVisibleElements, RenderingStates } from "./ui_utils";
+import type { PDFThumbnailViewer } from "./pdf_thumbnail_viewer";
+import { type getVisibleElements, RenderingStates } from "./ui_utils";
 
 interface IRenderableView {
 	resume: (() => void) | null;
@@ -54,12 +53,9 @@ class PDFRenderingQueue {
 		this.idleTimeout = null;
 		this.printing = false;
 		this.isThumbnailViewEnabled = false;
-
-		{
-			Object.defineProperty(this, "hasViewer", {
-				value: () => !!this.pdfViewer,
-			});
-		}
+		Object.defineProperty(this, "hasViewer", {
+			value: () => !!this.pdfViewer,
+		});
 	}
 
 	/**

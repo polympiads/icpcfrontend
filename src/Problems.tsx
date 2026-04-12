@@ -1,10 +1,10 @@
-import { useStatement } from "./worker/hooks/useProblems";
-import { PDFViewer } from "../packages/pdfslick/src";
-import { LoadingAnimation } from "./LoadingAnimation";
-import { BsExclamationCircle } from "solid-icons/bs";
 import { Button } from "@kobalte/core/button";
 import { RotateCw } from "lucide-solid";
+import { BsExclamationCircle } from "solid-icons/bs";
 import type { Accessor } from "solid-js";
+import { PDFViewer } from "../packages/pdfslick/src";
+import { LoadingAnimation } from "./LoadingAnimation";
+import { useStatement } from "./worker/hooks/useProblems";
 
 export function ProblemViewer(props: { problemId: Accessor<string> }) {
 	const [statement, statementActions] = useStatement(props.problemId);

@@ -1,8 +1,5 @@
 import type { PolymorphicProps } from "@kobalte/core";
 import clsx from "clsx";
-
-// Import devicon SVGs as raw strings
-import ada from "./assets/ada_logo.svg?raw";
 import c from "devicon/icons/c/c-original.svg?raw";
 import cpp from "devicon/icons/cplusplus/cplusplus-original.svg?raw";
 import csharp from "devicon/icons/csharp/csharp-original.svg?raw";
@@ -11,8 +8,6 @@ import haskell from "devicon/icons/haskell/haskell-original.svg?raw";
 import java from "devicon/icons/java/java-original.svg?raw";
 import javascript from "devicon/icons/javascript/javascript-original.svg?raw";
 import kotlin from "devicon/icons/kotlin/kotlin-original.svg?raw";
-import objectivec from "./assets/objective_c.svg?raw";
-import pascal from "./assets/pascal.svg?raw";
 import php from "devicon/icons/php/php-original.svg?raw";
 import prolog from "devicon/icons/prolog/prolog-original.svg?raw";
 import python from "devicon/icons/python/python-original.svg?raw"; // for both python2 & python3
@@ -20,6 +15,10 @@ import ruby from "devicon/icons/ruby/ruby-original.svg?raw";
 import rust from "devicon/icons/rust/rust-original.svg?raw";
 import scala from "devicon/icons/scala/scala-original.svg?raw";
 import { createMemo, splitProps } from "solid-js";
+// Import devicon SVGs as raw strings
+import ada from "./assets/ada_logo.svg?raw";
+import objectivec from "./assets/objective_c.svg?raw";
+import pascal from "./assets/pascal.svg?raw";
 
 const languageIdToName: Record<string, string> = {
 	ada: "Ada",

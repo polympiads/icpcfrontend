@@ -15,17 +15,17 @@
 
 import {
 	AnnotationMode,
-	PixelsPerInch,
-	RenderingCancelledException,
 	getXfaPageViewport,
 	type PDFDocumentProxy,
 	type PDFPageProxy,
+	PixelsPerInch,
+	RenderingCancelledException,
 } from "pdfjs-dist";
+import type { OptionalContentConfig } from "pdfjs-dist/types/web/pdf_viewer";
 import {
 	SimpleLinkService,
 	XfaLayerBuilder,
 } from "pdfjs-dist/web/pdf_viewer.mjs";
-import type { OptionalContentConfig } from "pdfjs-dist/types/web/pdf_viewer";
 
 //
 // https://github.com/mozilla/pdf.js/blob/master/web/print_utils.js
@@ -236,7 +236,7 @@ class PDFPrintService {
 				this._printAnnotationStoragePromise,
 			)
 				.then(this.useRenderedPage.bind(this))
-				.then(function () {
+				.then(() => {
 					renderNextPage(resolve, reject);
 				}, reject);
 		};

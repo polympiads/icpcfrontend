@@ -5,38 +5,40 @@ import "solid-prism-editor/layout.css";
 // import "solid-prism-editor/folding.css";
 // import "solid-prism-editor/copy-button.css";
 import "solid-prism-editor/themes/github-light.css";
-import { matchBrackets } from "solid-prism-editor/match-brackets";
+import clsx from "clsx";
+import {
+	type Accessor,
+	type ComponentProps,
+	createContext,
+	createEffect,
+	createSignal,
+	onCleanup,
+	type ParentProps,
+	type Setter,
+	Show,
+	untrack,
+	useContext,
+} from "solid-js";
+import { defaultCommands, editHistory } from "solid-prism-editor/commands";
+import { cursorPosition } from "solid-prism-editor/cursor";
+import { indentGuides } from "solid-prism-editor/guides";
 import { highlightBracketPairs } from "solid-prism-editor/highlight-brackets";
+import { matchBrackets } from "solid-prism-editor/match-brackets";
 import {
 	highlightMatchingTags,
 	matchTags,
 } from "solid-prism-editor/match-tags";
-import { defaultCommands, editHistory } from "solid-prism-editor/commands";
 import {
 	highlightSelectionMatches,
 	showInvisibles,
 } from "solid-prism-editor/search";
-import { cursorPosition } from "solid-prism-editor/cursor";
-import { indentGuides } from "solid-prism-editor/guides";
-import { onCleanup, Show, untrack, type Setter } from "solid-js";
-import {
-	createContext,
-	createEffect,
-	createSignal,
-	useContext,
-	type Accessor,
-	type ComponentProps,
-	type ParentProps,
-} from "solid-js";
-import clsx from "clsx";
 
 import "./Editor.css";
 import { Select } from "@kobalte/core/select";
 
 import { splitProps } from "solid-js";
-
-import { BasePortal } from "./Portal";
 import { LanguageEntry } from "./Languages";
+import { BasePortal } from "./Portal";
 
 interface BaseEditorProps {
 	code: string;

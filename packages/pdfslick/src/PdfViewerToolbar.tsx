@@ -1,5 +1,4 @@
-import type { ParentProps } from "solid-js";
-import { usePdfContext } from "./PdfViewerRoot";
+import { DropdownMenu } from "@kobalte/core/dropdown-menu";
 import {
 	VsAdd,
 	VsChevronDown,
@@ -9,9 +8,9 @@ import {
 	VsLayoutSidebarLeftOff,
 	VsRemove,
 } from "solid-icons/vs";
-import { DropdownMenu } from "@kobalte/core/dropdown-menu";
-import { createSignal, onCleanup } from "solid-js";
-import { createEffect } from "solid-js";
+import type { ParentProps } from "solid-js";
+import { createEffect, createSignal, onCleanup } from "solid-js";
+import { usePdfContext } from "./PdfViewerRoot";
 
 function _PdfViewerToolbar(props: ParentProps) {
 	return (

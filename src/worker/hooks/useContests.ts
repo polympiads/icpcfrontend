@@ -1,12 +1,12 @@
+import { createResource, type Resource, type ResourceActions } from "solid-js";
 import { useAuth } from "../context/AuthContext";
 import { useWorkerContext } from "../context/WorkerContext";
 import { contestEndpoint } from "../Endpoints";
 import {
-	parseContest,
 	type Contest,
 	type ContestJson,
+	parseContest,
 } from "../types/data/Contest";
-import { createResource, type Resource, type ResourceActions } from "solid-js";
 
 type ContestValue = {
 	contests: Resource<Contest[]>;

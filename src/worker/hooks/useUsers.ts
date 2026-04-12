@@ -1,13 +1,13 @@
 import { createMemo } from "solid-js";
+import { useAuth } from "../context/AuthContext";
 import { useFeed } from "../context/FeedContext";
 import {
+	type Account,
 	accountDictsEquals,
 	accountEquals,
 	teamDictsEquals,
 	teamEquals,
-	type Account,
 } from "../types/data/Users";
-import { useAuth } from "../context/AuthContext";
 
 export function useTeams() {
 	const feed = useFeed();

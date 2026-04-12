@@ -1,5 +1,5 @@
 import type dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
+import type duration from "dayjs/plugin/duration";
 import { parseReltime, parseTime } from "./DeltaTime";
 
 export interface Contest {

@@ -1,20 +1,19 @@
 import {
 	createContext,
+	type JSX,
 	onCleanup,
 	onMount,
 	useContext,
-	type JSX,
 } from "solid-js";
+import { v4 as uuidv4 } from "uuid";
+import SharedWorkerFactory from "../src/entry.worker.ts?sharedworker";
 import type { WorkerListener } from "../types/Listener";
 import type { WorkerIncoming } from "../types/WorkerIncoming";
-
-import SharedWorkerFactory from "../src/entry.worker.ts?sharedworker";
 import type {
 	FullWorkerOutgoing,
 	WorkerOutgoing,
 } from "../types/WorkerOutgoing";
 import type { WorkerParams } from "../types/WorkerParams";
-import { v4 as uuidv4 } from "uuid";
 
 export interface WorkerContextValue {
 	apiHostname: string;
@@ -30,7 +29,7 @@ export const WorkerProvider = (props: {
 	children?: JSX.Element;
 	apiHostname: string;
 }) => {
-	let port: MessagePort | undefined = undefined;
+	let port: MessagePort | undefined;
 
 	const listeners: Set<WorkerListener> = new Set();
 	const pendingCallbacks: Map<

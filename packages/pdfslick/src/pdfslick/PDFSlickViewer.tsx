@@ -1,6 +1,7 @@
 /** @jsxImportSource solid-js */
-import { createEffect, createSignal } from "solid-js";
+
 import { createElementSize } from "@solid-primitives/resize-observer";
+import { createEffect, createSignal } from "solid-js";
 import type { PDFSlickState } from "./core/types";
 
 export type PDFSlickViewerProps = {

@@ -1,21 +1,21 @@
 import { createMemo } from "solid-js";
-import { useProblems } from "./useProblems";
-import { useTeams } from "./useUsers";
-import { useSubmissions } from "./useSubmissions";
-import { useJudgementTypes } from "./useJudgementTypes";
+import type { JudgementType } from "../types/data/JudgementTypes";
+import type { Submission } from "../types/data/Submission";
 import {
 	ACCEPTED,
+	equalScoreBoard,
 	NONE,
 	PENDING,
 	REJECTED,
 	type ScoreBoard,
+	type ScoreBoardColor,
 	type ScoreboardProblemInfo,
 	type ScoreboardTeamInfo,
-	type ScoreBoardColor,
-	equalScoreBoard,
 } from "../types/data/scoreboard";
-import type { Submission } from "../types/data/Submission";
-import type { JudgementType } from "../types/data/JudgementTypes";
+import { useJudgementTypes } from "./useJudgementTypes";
+import { useProblems } from "./useProblems";
+import { useSubmissions } from "./useSubmissions";
+import { useTeams } from "./useUsers";
 
 function computeProblemColor(
 	submissions: { judgement_type_id?: string }[],

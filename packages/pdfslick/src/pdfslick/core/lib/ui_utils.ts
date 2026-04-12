@@ -634,7 +634,7 @@ function getVisibleElements<T extends { div: HTMLElement; id: number }>({
 		last = visible.at(-1)!;
 
 	if (sortByVisibility) {
-		visible.sort(function (a, b) {
+		visible.sort((a, b) => {
 			const pc = a.percent - b.percent;
 			if (Math.abs(pc) > 0.001) {
 				return -pc;
@@ -698,7 +698,7 @@ function isPortraitOrientation(size: { width: number; height: number }) {
 /**
  * Promise that is resolved when DOM window becomes visible.
  */
-const animationStarted = new Promise(function (resolve) {
+const animationStarted = new Promise((resolve) => {
 	window.requestAnimationFrame(resolve);
 });
 
@@ -888,22 +888,22 @@ function toggleExpandedBtn(
 // In Firefox, the css calc function uses f32 precision but the Chrome or Safari
 // are using f64 one. So in order to have the same rendering in all browsers, we
 // need to use the right precision in order to have correct dimensions.
-const calcRound: (v: number) => number = (function () {
+const calcRound: (v: number) => number = (() => {
 	const e = document.createElement("div");
 	e.style.width = "round(down, calc(1.6666666666666665 * 792px), 1px)";
 	return e.style.width === "calc(1320px)" ? Math.fround : (x) => x;
 })();
 
 export {
+	AutoPrintRegExp,
 	animationStarted,
 	apiPageLayoutToViewerModes,
 	apiPageModeToSidebarView,
 	approximateFraction,
-	AutoPrintRegExp,
 	backtrackBeforeAllVisibleElements, // only exported for testing
 	binarySearchFirstItem,
-	calcRound,
 	CursorTool,
+	calcRound,
 	DEFAULT_SCALE,
 	DEFAULT_SCALE_DELTA,
 	DEFAULT_SCALE_VALUE,
@@ -921,17 +921,17 @@ export {
 	MIN_SCALE,
 	normalizeWheelEventDelta,
 	normalizeWheelEventDirection,
-	parseQueryString,
 	PresentationModeState,
 	ProgressBar,
-	removeNullCharacters,
+	parseQueryString,
 	RendererType,
 	RenderingStates,
+	removeNullCharacters,
 	SCROLLBAR_PADDING,
-	scrollIntoView,
 	ScrollMode,
 	SidebarView,
 	SpreadMode,
+	scrollIntoView,
 	TextLayerMode,
 	toggleCheckedBtn,
 	toggleExpandedBtn,

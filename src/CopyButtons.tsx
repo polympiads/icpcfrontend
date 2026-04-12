@@ -1,8 +1,8 @@
-import { createSignal, onCleanup } from "solid-js";
-import { useAppEditorContext } from "./Editor";
 import { Button } from "@kobalte/core/button";
 import { Check } from "lucide-solid";
 import { BsCopy, BsExclamationTriangle } from "solid-icons/bs";
+import { createSignal, onCleanup } from "solid-js";
+import { useAppEditorContext } from "./Editor";
 
 export function CopyButton() {
 	const { code } = useAppEditorContext();

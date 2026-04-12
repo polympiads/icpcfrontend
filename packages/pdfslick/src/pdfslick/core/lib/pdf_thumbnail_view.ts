@@ -22,22 +22,22 @@
 /** @typedef {import("./interfaces").IRenderableView} IRenderableView */
 /** @typedef {import("./pdf_rendering_queue").PDFRenderingQueue} PDFRenderingQueue */
 
-import { RenderingStates } from "./ui_utils";
 import {
-	RenderingCancelledException,
-	type PDFPageProxy,
-	type PageViewport,
-	type RenderTask,
 	OutputScale,
+	type PageViewport,
+	type PDFPageProxy,
+	RenderingCancelledException,
+	type RenderTask,
 } from "pdfjs-dist";
-import type { PDFPageView, EventBus } from "pdfjs-dist/web/pdf_viewer.mjs";
-import type { StoreApi } from "zustand/vanilla";
-import type { PDFSlickState } from "../types";
 import type {
 	OptionalContentConfig,
 	PDFViewerOptions,
 } from "pdfjs-dist/types/web/pdf_viewer";
+import type { EventBus, PDFPageView } from "pdfjs-dist/web/pdf_viewer.mjs";
+import type { StoreApi } from "zustand/vanilla";
+import type { PDFSlickState } from "../types";
 import type { PDFRenderingQueue } from "./pdf_rendering_queue";
+import { RenderingStates } from "./ui_utils";
 
 const DRAW_UPSCALE_FACTOR = 2; // See comment in `PDFThumbnailView.draw` below.
 const MAX_NUM_SCALING_STEPS = 3;
