@@ -529,7 +529,6 @@ export class PDFSlick {
 	}
 
 	async download() {
-		const url = this.url;
 		const { filename } = this;
 		try {
 			// this._ensureDownloadComplete();
