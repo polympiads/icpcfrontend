@@ -1,0 +1,21 @@
+services:
+  frontend-dev:
+    container_name: frontend
+    profiles: [dev]
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "5173:80"
+
+  frontend-prod:
+    container_name: frontend
+    profiles: [prod]
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"

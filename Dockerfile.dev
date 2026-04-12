@@ -1,0 +1,16 @@
+# ── base ──────────────────────────────────────────────────────────────────────
+FROM oven/bun:1-alpine
+WORKDIR /app
+
+# Install dependencies
+COPY package.json ./
+COPY packages ./packages
+RUN bun install
+
+ENV NODE_ENV=development
+# Vite dev server runs on 5173 internally; docker compose maps it to host port 80.
+EXPOSE 5173
+
+# Source files are bind-mounted by docker compose (not copied here).
+# Using --host exposes the dev server outside the container.
+CMD ["bun", "run", "dev", "--", "--host"]
