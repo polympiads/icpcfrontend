@@ -58,7 +58,7 @@ export function ContestSelect() {
           </div>
         }
       >
-        <div class="relative z-0 w-full grid column-auto-fit-80 grid-rows-11 gap-2 animate-pulse justify-center pt-20">
+        <div class="relative z-0 w-full grid column-auto-fit-80 grid-rows-11 gap-2 justify-center pt-20">
           <For each={contests()}>
             {(contest, _) => <ContestSelectionCard contest={contest} />}
           </For>
