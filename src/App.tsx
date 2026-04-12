@@ -42,6 +42,7 @@ import { useProblems } from "./worker/hooks/useProblems";
 import { useSubmissions } from "./worker/hooks/useSubmissions";
 import type { Problem } from "./worker/types/data/Problems";
 import type { Submission } from "./worker/types/data/Submission";
+import { NowProvider, useNow } from "./Now";
 
 dayjs.extend(duration);
 
@@ -66,6 +67,8 @@ function InContestPage() {
 	const urlParams = useParams();
 	const navigate = useNavigate();
 
+	const { now } = useNow()
+
 	const languages = useLanguages();
 	const auth = useAuth();
 	const isLoggedIn = () => auth.whoami().is_authenticated;
@@ -80,7 +83,7 @@ function InContestPage() {
 	const prints = usePrints();
 	const contest = useContest();
 	const isFrozen = createMemo(() => {
-		const now = dayjs();
+		const nowVal = now();
 		const contestVal = contest();
 		if (!contestVal) {
 			return;
@@ -89,7 +92,7 @@ function InContestPage() {
 			return;
 		}
 
-		return now.diff(contestVal.scoreboard_freeze_time) > 0;
+		return nowVal.diff(contestVal.scoreboard_freeze_time) > 0;
 	});
 
 	const frozenSubmissions = createMemo<Record<string, Submission>>(
@@ -422,23 +425,25 @@ function RouteFeedWrapper(props: ParentProps) {
 
 function App() {
 	return (
-		<WorkerProvider apiHostname={BASE_URL}>
-			<AuthProvider>
-				<Router>
-					<Route path="/" component={ContestSelectionPage} />
-					<Route path="/contests/:id" component={RouteFeedWrapper}>
-						<Route
-							path="/*rest"
-							component={() => (
-								<PageCrashHandler>
-									<InContestPage />
-								</PageCrashHandler>
-							)}
-						/>
-					</Route>
-				</Router>
-			</AuthProvider>
-		</WorkerProvider>
+		<NowProvider>
+			<WorkerProvider apiHostname={BASE_URL}>
+				<AuthProvider>
+					<Router>
+						<Route path="/" component={ContestSelectionPage} />
+						<Route path="/contests/:id" component={RouteFeedWrapper}>
+							<Route
+								path="/*rest"
+								component={() => (
+									<PageCrashHandler>
+										<InContestPage />
+									</PageCrashHandler>
+								)}
+							/>
+						</Route>
+					</Router>
+				</AuthProvider>
+			</WorkerProvider>
+		</NowProvider>
 	);
 }
 

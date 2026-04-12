@@ -10,6 +10,7 @@ import { ErrorBoundary, For, Match, Suspense, Switch } from "solid-js";
 import { LoadingAnimation } from "./LoadingAnimation";
 import { useContests } from "./worker/hooks/useContests";
 import type { Contest } from "./worker/types/data/Contest";
+import { useNow } from "./Now";
 
 dayjs.extend(duration);
 
@@ -118,10 +119,12 @@ function ContestSelectionCard(props: { contest: Contest }) {
 }
 
 function ContestStatus(props: { contest: Contest }) {
+	const { now } = useNow()
+
 	if (props.contest.start_time) {
-		const now = dayjs();
+		const nowVal = now();
 		const remainingTime = dayjs.duration(
-			props.contest.start_time.add(props.contest.duration).diff(now),
+			props.contest.start_time.add(props.contest.duration).diff(nowVal),
 		);
 
 		function formatRemainingTime(time: Duration) {
@@ -153,14 +156,14 @@ function ContestStatus(props: { contest: Contest }) {
 
 		return (
 			<Switch>
-				<Match when={props.contest.start_time.diff(now) < 0}>
+				<Match when={props.contest.start_time.diff(nowVal) < 0}>
 					<div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-white">
 						Scheduled for {props.contest.start_time?.format("HH:mm")}
 					</div>
 				</Match>
 				<Match
 					when={
-						props.contest.start_time.diff(now) > 0 &&
+						props.contest.start_time.diff(nowVal) > 0 &&
 						remainingTime.asMilliseconds() > 0
 					}
 				>
@@ -186,6 +189,8 @@ function ContestStatus(props: { contest: Contest }) {
 }
 
 export function ContestPageOverlay(props: { contest: Contest | undefined }) {
+	const { now } = useNow()
+	
 	function OverlayInfo(props: { contest: Contest }) {
 		return (
 			<>
@@ -201,7 +206,7 @@ export function ContestPageOverlay(props: { contest: Contest | undefined }) {
 
 	const isInProgress = () => {
 		const contestVal = props.contest;
-		const now = dayjs();
+		const nowVal = now();
 
 		if (!contestVal) {
 			return false;
@@ -212,8 +217,8 @@ export function ContestPageOverlay(props: { contest: Contest | undefined }) {
 
 		const remainingTimeMS = contestVal.start_time
 			.add(contestVal.duration)
-			.diff(now);
-		return remainingTimeMS > 0 && contestVal.start_time.diff(now) > 0;
+			.diff(nowVal);
+		return remainingTimeMS > 0 && contestVal.start_time.diff(nowVal) > 0;
 	};
 
 	return (
