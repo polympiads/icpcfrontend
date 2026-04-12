@@ -24,4 +24,5 @@ export const SUBMISSION_URL = (contestId: string, submissionId: string) =>
 export const SUBMISSION_CODE_URL = (contestId: string, submissionId: string) =>
 	SUBMISSION_URL(contestId, submissionId) + "code/";
 
-export const API_ROOT = "/api";
+export const API_URL = window.location.protocol + '//' + window.location.hostname + "/api/";
+export const API_ROOT = "/api"

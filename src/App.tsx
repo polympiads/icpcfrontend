@@ -19,7 +19,7 @@ import {
 	Show,
 } from "solid-js";
 import { ContestPageOverlay, ContestSelect } from "./Contest";
-import { API_ROOT, BASE_URL, SUBMISSIONS_URL } from "./constants";
+import { API_ROOT, API_URL, BASE_URL, SUBMISSIONS_URL } from "./constants";
 import { AppEditor } from "./Editor";
 import { BasePortalRoot } from "./Portal";
 import {
@@ -51,7 +51,7 @@ function ContestSelectionPage() {
 		<div class="w-full h-full flex flex-col">
 			<div class="h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row">
 				<FaSolidMountain class="h-14 w-14 aspect-square object-cover opacity-50" />
-
+					
 				<div class="grow" />
 
 				<UserLoginWidget />
@@ -454,7 +454,7 @@ function RouteFeedWrapper(props: ParentProps) {
 function App() {
 	return (
 		<NowProvider>
-			<WorkerProvider apiHostname={BASE_URL}>
+			<WorkerProvider apiHostname={API_URL}>
 				<AuthProvider>
 					<Router>
 						<Route path="/" component={ContestSelectionPage} />
