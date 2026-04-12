@@ -227,11 +227,6 @@ function InContestPage() {
   }
 
   return (
-    <div class="relative w-full h-full">
-      <div class="absolute w-full h-full bg-white z-10">
-        <ContestPageOverlay contest={contest()} />
-      </div>
-
       <div class="relative w-full h-full flex flex-col z-0">
         <div class="relative h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row z-10">
 		      <img src="/hc2_icon.png" class="h-14 w-14 object-cover"/>
@@ -392,7 +387,6 @@ function InContestPage() {
           </Tabs>
         </div>
       </div>
-    </div>
   );
 }
 
