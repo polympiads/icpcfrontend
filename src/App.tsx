@@ -30,7 +30,7 @@ import {
 } from "./Prints";
 import { ProblemViewer } from "./Problems";
 import { Panel, SplitPanel } from "./SplitPanel";
-import { SubmissionEditor, SubmissionEntries } from "./Submissions";
+import { SubmissionEditor, SubmissionEntries, SubmissionView } from "./Submissions";
 import { UserLoginWidget } from "./User";
 import { AuthProvider, useAuth } from "./worker/context/AuthContext";
 import { FeedProvider } from "./worker/context/FeedContext";
@@ -414,6 +414,34 @@ function PageCrashHandler(props: ParentProps) {
 	);
 }
 
+function ContestSubmissionViewPage() {
+	const urlParams = useParams();
+	const navigate = useNavigate();
+
+	const { whoami } = useAuth();
+
+	onMount(() => {
+		if (!whoami().is_authenticated) {
+			navigate("/404")
+		}
+	})
+  
+	return (
+		<div class="w-full h-full flex flex-col">
+			<div class="h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row">
+				<FaSolidMountain class="h-14 w-14 aspect-square object-cover opacity-50" />
+
+				<div class="grow" />
+
+				<UserLoginWidget />
+			</div>
+			<div class="grow w-full overflow-hidden">
+				<SubmissionView submission_id={urlParams.submission_id!} />
+			</div>
+		</div>
+	);
+}
+
 function RouteFeedWrapper(props: ParentProps) {
 	const urlParams = useParams();
 	if (!urlParams.id) {
@@ -431,6 +459,7 @@ function App() {
 					<Router>
 						<Route path="/" component={ContestSelectionPage} />
 						<Route path="/contests/:id" component={RouteFeedWrapper}>
+							<Route path="/submissions/:submission_id" component={ContestSubmissionViewPage}/>
 							<Route
 								path="/*rest"
 								component={() => (

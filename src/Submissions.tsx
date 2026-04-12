@@ -29,7 +29,7 @@ import {
 	SUBMISSIONS_URL,
 } from "./constants";
 import { AppEditor, useAppEditorContext } from "./Editor";
-import { LanguageIcon } from "./Languages";
+import { LanguageEntry, LanguageIcon } from "./Languages";
 import { LoadingAnimation } from "./LoadingAnimation";
 import PingPongScroller from "./PingPongScroller";
 import { sortRecordValues } from "./utils";
@@ -41,6 +41,10 @@ import { useTeam } from "./worker/hooks/useUsers";
 import type { Contest } from "./worker/types/data/Contest";
 import type { JudgementType } from "./worker/types/data/JudgementTypes";
 import type { Submission } from "./worker/types/data/Submission";
+import { useSubmission } from "./worker/hooks/useSubmissions";
+import { Panel, SplitPanel } from "./SplitPanel";
+import { ProblemViewer } from "./Problems";
+import { AiFillFileUnknown } from "solid-icons/ai";
 
 export async function postSubmission(
 	contest_id: string,
@@ -71,7 +75,7 @@ async function getSubmissionCode(
 	contest: Contest,
 	submission: Submission,
 ) {
-	let headers;
+	let headers = {};
 	if (session) {
 		headers = {
 			"X-Session-Id": session,
@@ -180,6 +184,54 @@ function UserInfo(props: { team_id: string }) {
 	);
 }
 
+function computeStatus(
+	submission: Submission,
+	judgment: JudgementType | undefined,
+): Status {
+	switch (submission.status) {
+		case "starting":
+			return "waiting";
+		case "compiling":
+		case "running":
+			return "running";
+		case "finished":
+			if (judgment) {
+				if (judgment.solved) {
+					return "accepted";
+				} else {
+					return "reject";
+				}
+			}
+			return "running";
+		case "failed":
+			return "failed";
+	}
+}
+
+function SubmissionStatusIcon(props: { status: Status }) {
+	return (
+		<Switch>
+			<Match when={props.status === "running"}>
+				<LoadingAnimation.SpinningCircle size="1.5rem" />
+			</Match>
+			<Match when={props.status === "accepted"}>
+				<Check class="stroke-green-500" size="1.5rem" />
+			</Match>
+			<Match when={props.status === "reject"}>
+				<div class="flex flex-row w-fit h-full items-center text-red-500 justify-center">
+					<X size="1.5rem" />
+				</div>
+			</Match>
+			<Match when={props.status === "failed"}>
+				<VsWarning class="stroke-red-500" size="1.5rem" />
+			</Match>
+			<Match when={props.status === "waiting"}>
+				<LoadingAnimation.ThreePulsingDots />
+			</Match>
+		</Switch>
+	);
+}
+
 function SubmissionEntry(props: { index: number; submission: Submission }) {
 	const judgments = useJudgementTypes();
 	const judgment = createMemo(() =>
@@ -189,54 +241,6 @@ function SubmissionEntry(props: { index: number; submission: Submission }) {
 	);
 
 	const status = createMemo(() => computeStatus(props.submission, judgment()));
-
-	function computeStatus(
-		submission: Submission,
-		judgment: JudgementType | undefined,
-	): Status {
-		switch (submission.status) {
-			case "starting":
-				return "waiting";
-			case "compiling":
-			case "running":
-				return "running";
-			case "finished":
-				if (judgment) {
-					if (judgment.solved) {
-						return "accepted";
-					} else {
-						return "reject";
-					}
-				}
-				return "running";
-			case "failed":
-				return "failed";
-		}
-	}
-
-	function SubmissionStatusIcon(props: { status: Status }) {
-		return (
-			<Switch>
-				<Match when={props.status === "running"}>
-					<LoadingAnimation.SpinningCircle size="1.5rem" />
-				</Match>
-				<Match when={props.status === "accepted"}>
-					<Check class="stroke-green-500" size="1.5rem" />
-				</Match>
-				<Match when={props.status === "reject"}>
-					<div class="flex flex-row w-fit h-full items-center text-red-500 justify-center">
-						<X size="1.5rem" />
-					</div>
-				</Match>
-				<Match when={props.status === "failed"}>
-					<VsWarning class="stroke-red-500" size="1.5rem" />
-				</Match>
-				<Match when={props.status === "waiting"}>
-					<LoadingAnimation.ThreePulsingDots />
-				</Match>
-			</Switch>
-		);
-	}
 
 	function ProblemLabel(
 		props: OverrideComponentProps<"div", { problem_id: string }>,
@@ -458,4 +462,146 @@ export function SubmissionEntries(
 			</Switch>
 		</div>
 	);
+}
+
+export function SubmissionView(props: { submission_id: string }) {
+	const { session } = useAuth()
+	const contest = useContest()
+	
+	const submission = useSubmission(props.submission_id);
+
+	const [code] = createResource(() => ({ session: session(), contest: contest(), submission: submission() }), async (params) => {
+		if (!params.session || !params.contest)
+      throw "Try to access session without session or contest providers";
+
+    const response = await getSubmissionCode(
+      params.session,
+      params.contest,
+      params.submission,
+    );
+
+    return response;
+	}) 
+	
+	const judgments = useJudgementTypes();
+	const judgment = createMemo(() => {
+		const submissionVal = submission();
+		if (!submissionVal) {
+			return;
+		}
+
+		return submissionVal.judgement_type_id
+			? judgments()[submissionVal.judgement_type_id]
+			: undefined;
+	});
+	const status = createMemo(() => {
+		if (submission()) {
+			return computeStatus(submission(), judgment());
+		}
+	});
+
+	const bg_map: Record<Status, string> = {
+		"accepted": "bg-linear-to-r from-green-50 to-green-200 hover:from-green-200 hover:to-green-300",
+		"failed": "bg-linear-to-r from-red-50 to-red-200 hover:from-red-200 hover:to-red-300",
+		"reject": "bg-linear-to-r from-red-50 to-red-200 hover:from-red-200 hover:to-red-300",
+		"running": "bg-linear-to-r from-gray-50 to-gray-200 hover:from-gray-200 hover:to-gray-300",
+		"waiting": "bg-linear-to-r from-gray-50 to-gray-100 hover:from-gray-200 hover:to-gray-300",
+	}
+
+	function SubmissionStatuMessage(props: { status: Status, judgment: Accessor<JudgementType | undefined> }) {
+		const message_map: Record<Status, string> = {
+			"accepted": "Passed",
+			"failed": "An error has occured. Contact assistance.",
+			"reject": "Rejected",
+			"running": "Running...",
+			"waiting": "Waiting...",
+		}
+		
+		if (props.status === "reject") {
+			return props.judgment()?.name ?? message_map[props.status]
+		} else {
+			return message_map[props.status]
+		}
+	}
+
+	return (
+		<div class="flex flex-col w-full h-full">
+			<div class=" flex justify-center items-center mx-2.5 mt-2.5">
+				<div class="w-30 h-20 border border-black/10 rounded-md shadow-md flex items-center justify-center">
+					<AiFillFileUnknown size="2.5em" class="opacity-50" />
+				</div>
+				<div class="flex flex-col">
+					<div class="text-xl">
+						{ contest()?.name }
+					</div>
+					<div class="flex flex-row">
+						<Show when={submission()?.team_id !== undefined}>
+							<div class="max-w-40">
+								<UserInfo team_id={ submission()!.team_id! }/>
+							</div>
+						</Show>
+						<Show when={status() !== undefined}>
+							<div class={clsx("rounded-full px-2 py-1", bg_map[status()!])}>
+								<SubmissionStatusIcon status={status()!} />
+								<SubmissionStatuMessage
+									status={status()!}
+									judgment={judgment}
+								/>
+							</div>
+						</Show>
+					</div>
+				</div>
+			</div>
+			<SplitPanel direction="horizontal" includeMargin class="grow">
+				<Panel>
+					<Show when={submission() !== undefined}>
+						<ProblemViewer problemId={() => submission().problem_id} />
+					</Show>
+					<Show when={submission() === undefined}>
+						<div class="w-full h-full flex items-center justify-center">
+							<LoadingAnimation.SpinningCircle size="3rem" />
+						</div>
+					</Show>
+				</Panel>
+				<Panel>
+					<Switch>
+						<Match when={code.state === "ready"}>
+							<div class="flex flex-col w-full h-full bg-white @container/editor overflow-hidden">
+								<AppEditor
+									code={code()}
+									language={submission().language_id}
+									readonly
+								>
+									<AppEditor.Toolbar>
+										<div class="grow"/>
+										<CopyButton />
+										<LanguageEntry language={submission().language_id}/>
+									</AppEditor.Toolbar>
+									<div class="relative w-full z-0 max-h-60 overflow-auto">
+										<AppEditor.Editor />
+									</div>
+								</AppEditor>
+							</div>
+						</Match>
+						<Match
+							when={
+								code.state === "pending" ||
+								code.state === "refreshing" ||
+								code.state === "unresolved"
+							}
+						>
+							<div class="w-full h-full flex items-center justify-center">
+								<LoadingAnimation.SpinningCircle size="3rem" />
+							</div>
+						</Match>
+						<Match when={code.state === "errored"}>
+							<div class="w-full h-full flex items-center justify-center">
+								<FaSolidWarning size="3rem" class="opacity-50" />
+							</div>
+						</Match>
+					</Switch>
+				</Panel>
+			</SplitPanel>
+		</div>
+	)
 }
