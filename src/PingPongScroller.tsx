@@ -138,6 +138,7 @@ export default function PingPongScroller(props: PingPongScrollerProps) {
 
 	return (
 		<div
+			role="marquee"
 			ref={containerRef}
 			{...props}
 			onMouseEnter={handleMouseEnter}
