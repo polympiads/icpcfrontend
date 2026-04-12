@@ -410,6 +410,10 @@ export function StaffPrintViewer(props: { print: Accessor<string | undefined> })
         <PDFViewer.Toolbar.ZoomSelector />
         <PDFViewer.Toolbar.Splitter />
         <PDFViewer.Toolbar.PageSelector />
+
+        <div class="grow"/>
+
+        <PDFViewer.Toolbar.DownloadButton />
       </PDFViewer.Toolbar>
       <div
         class="flex-1 relative h-full [&_.canvasWrapper]:shadow-md [&_.canvasWrapper]:outline [&_.canvasWrapper]:outline-black/10 [&_.viewerContainer]:z-0"

@@ -1,6 +1,6 @@
 import type { ParentProps } from "solid-js";
 import { usePdfContext } from "./PdfViewerRoot";
-import { VsAdd, VsChevronDown, VsChevronUp, VsLayoutSidebarLeft, VsLayoutSidebarLeftOff, VsRemove } from "solid-icons/vs";
+import { VsAdd, VsChevronDown, VsChevronUp, VsDesktopDownload, VsLayoutSidebarLeft, VsLayoutSidebarLeftOff, VsRemove } from "solid-icons/vs";
 import { DropdownMenu } from "@kobalte/core/dropdown-menu";
 import { createSignal, onCleanup } from "solid-js";
 import { createEffect } from "solid-js";
@@ -232,6 +232,20 @@ export function PageSelector() {
   )
 }
 
+export function DownloadButton() {
+  const { pdfSlickStore: store } = usePdfContext()
+
+  return (
+    <button
+      type="button"
+      class="enabled:hover:bg-slate-200 enabled:hover:text-black text-slate-500 disabled:text-slate-300 p-1 rounded-xs transition-all group relative focus:border-blue-400 focus:ring-0 focus:shadow-sm outline-hidden border border-transparent"
+      onClick={() => store.pdfSlick?.downloadOrSave()}
+    >
+      <VsDesktopDownload class="w-4 h-4" />
+    </button>
+  )
+}
+
 function Splitter() {
   return (
     <>
@@ -244,5 +258,6 @@ export const PdfViewerToolbar = Object.assign(_PdfViewerToolbar, {
   ThumbsbarButton: ThumbsbarButton,
   ZoomSelector: ZoomSelector,
   PageSelector: PageSelector,
-  Splitter: Splitter
+  Splitter: Splitter,
+  DownloadButton: DownloadButton
 })
