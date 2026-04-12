@@ -3,7 +3,7 @@ import { Show } from "solid-js";
 import { usePdfContext } from "./PdfViewerRoot";
 
 export function PdfViewerError(props: ParentProps) {
-	const context = usePdfContext();
+  const context = usePdfContext();
 
-	return <Show when={context.error()}>{props.children}</Show>;
+  return <Show when={context.error()}>{props.children}</Show>;
 }

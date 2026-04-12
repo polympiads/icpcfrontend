@@ -5,44 +5,44 @@ import { createEffect, createSignal } from "solid-js";
 import type { PDFSlickState } from "./core/types";
 
 export type PDFSlickViewerProps = {
-	viewerRef: (instance: HTMLDivElement) => void;
-	store: PDFSlickState;
-	class?: string;
+  viewerRef: (instance: HTMLDivElement) => void;
+  store: PDFSlickState;
+  class?: string;
 };
 
 export default function PDFSlickViewer(props: PDFSlickViewerProps) {
-	const [resizeRef, setResizeRef] = createSignal<HTMLElement>();
+  const [resizeRef, setResizeRef] = createSignal<HTMLElement>();
 
-	const size = createElementSize(resizeRef);
-	createEffect(() => {
-		if (size.width && size.height) {
-			if (
-				props.store.pdfSlick &&
-				(props.store.scaleValue === "auto" ||
-					props.store.scaleValue === "page-fit" ||
-					props.store.scaleValue === "page-width")
-			) {
-				props.store.pdfSlick.viewer.currentScaleValue = props.store.scaleValue;
-			}
-			props.store.pdfSlick?.viewer.update();
-		}
-	});
+  const size = createElementSize(resizeRef);
+  createEffect(() => {
+    if (size.width && size.height) {
+      if (
+        props.store.pdfSlick &&
+        (props.store.scaleValue === "auto" ||
+          props.store.scaleValue === "page-fit" ||
+          props.store.scaleValue === "page-width")
+      ) {
+        props.store.pdfSlick.viewer.currentScaleValue = props.store.scaleValue;
+      }
+      props.store.pdfSlick?.viewer.update();
+    }
+  });
 
-	return (
-		<div
-			ref={(el) => {
-				props.viewerRef(el);
-				setResizeRef(el);
-			}}
-			id="viewerContainer"
-			class={`pdfSlickContainer ${props.class ?? ""}`}
-			style={{
-				position: "absolute",
-				inset: 0,
-				overflow: "auto",
-			}}
-		>
-			<div id="viewer" class="pdfSlickViewer pdfViewer" />
-		</div>
-	);
+  return (
+    <div
+      ref={(el) => {
+        props.viewerRef(el);
+        setResizeRef(el);
+      }}
+      id="viewerContainer"
+      class={`pdfSlickContainer ${props.class ?? ""}`}
+      style={{
+        position: "absolute",
+        inset: 0,
+        overflow: "auto",
+      }}
+    >
+      <div id="viewer" class="pdfSlickViewer pdfViewer" />
+    </div>
+  );
 }

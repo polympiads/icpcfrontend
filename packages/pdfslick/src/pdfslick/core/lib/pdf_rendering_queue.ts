@@ -24,10 +24,10 @@ import type { PDFThumbnailViewer } from "./pdf_thumbnail_viewer";
 import { type getVisibleElements, RenderingStates } from "./ui_utils";
 
 interface IRenderableView {
-	resume: (() => void) | null;
-	renderingId: string;
-	renderingState: number;
-	draw(): Promise<void>;
+  resume: (() => void) | null;
+  renderingId: string;
+  renderingState: number;
+  draw(): Promise<void>;
 }
 
 const CLEANUP_TIMEOUT = 30000;
@@ -36,214 +36,214 @@ const CLEANUP_TIMEOUT = 30000;
  * Controls rendering of the views for pages and thumbnails.
  */
 class PDFRenderingQueue {
-	pdfViewer: PDFViewer | null;
-	pdfThumbnailViewer: PDFThumbnailViewer | null;
-	onIdle: (() => void) | null;
-	highestPriorityPage: string | null;
-	idleTimeout: ReturnType<typeof setTimeout> | null; // number | null
-	printing: boolean;
-	isThumbnailViewEnabled: boolean;
+  pdfViewer: PDFViewer | null;
+  pdfThumbnailViewer: PDFThumbnailViewer | null;
+  onIdle: (() => void) | null;
+  highestPriorityPage: string | null;
+  idleTimeout: ReturnType<typeof setTimeout> | null; // number | null
+  printing: boolean;
+  isThumbnailViewEnabled: boolean;
 
-	constructor() {
-		this.pdfViewer = null;
-		this.pdfThumbnailViewer = null;
-		this.onIdle = null;
-		this.highestPriorityPage = null;
-		/** @type {number} */
-		this.idleTimeout = null;
-		this.printing = false;
-		this.isThumbnailViewEnabled = false;
-		Object.defineProperty(this, "hasViewer", {
-			value: () => !!this.pdfViewer,
-		});
-	}
+  constructor() {
+    this.pdfViewer = null;
+    this.pdfThumbnailViewer = null;
+    this.onIdle = null;
+    this.highestPriorityPage = null;
+    /** @type {number} */
+    this.idleTimeout = null;
+    this.printing = false;
+    this.isThumbnailViewEnabled = false;
+    Object.defineProperty(this, "hasViewer", {
+      value: () => !!this.pdfViewer,
+    });
+  }
 
-	/**
-	 * @param {PDFViewer} pdfViewer
-	 */
-	setViewer(pdfViewer: PDFViewer) {
-		this.pdfViewer = pdfViewer;
-	}
+  /**
+   * @param {PDFViewer} pdfViewer
+   */
+  setViewer(pdfViewer: PDFViewer) {
+    this.pdfViewer = pdfViewer;
+  }
 
-	/**
-	 * @param {PDFThumbnailViewer} pdfThumbnailViewer
-	 */
-	setThumbnailViewer(pdfThumbnailViewer: PDFThumbnailViewer) {
-		this.pdfThumbnailViewer = pdfThumbnailViewer;
-	}
+  /**
+   * @param {PDFThumbnailViewer} pdfThumbnailViewer
+   */
+  setThumbnailViewer(pdfThumbnailViewer: PDFThumbnailViewer) {
+    this.pdfThumbnailViewer = pdfThumbnailViewer;
+  }
 
-	/**
-	 * @param {IRenderableView} view
-	 * @returns {boolean}
-	 */
-	isHighestPriority(view: IRenderableView) {
-		return this.highestPriorityPage === view.renderingId;
-	}
+  /**
+   * @param {IRenderableView} view
+   * @returns {boolean}
+   */
+  isHighestPriority(view: IRenderableView) {
+    return this.highestPriorityPage === view.renderingId;
+  }
 
-	/**
-	 * @param {Object} currentlyVisiblePages
-	 */
-	renderHighestPriority(currentlyVisiblePages?: Object) {
-		if (this.idleTimeout) {
-			clearTimeout(this.idleTimeout);
-			this.idleTimeout = null;
-		}
+  /**
+   * @param {Object} currentlyVisiblePages
+   */
+  renderHighestPriority(currentlyVisiblePages?: Object) {
+    if (this.idleTimeout) {
+      clearTimeout(this.idleTimeout);
+      this.idleTimeout = null;
+    }
 
-		// Pages have a higher priority than thumbnails, so check them first.
-		if (this.pdfViewer!.forceRendering(currentlyVisiblePages)) {
-			return;
-		}
-		// No pages needed rendering, so check thumbnails.
-		if (
-			this.isThumbnailViewEnabled &&
-			this.pdfThumbnailViewer?.forceRendering()
-		) {
-			return;
-		}
+    // Pages have a higher priority than thumbnails, so check them first.
+    if (this.pdfViewer!.forceRendering(currentlyVisiblePages)) {
+      return;
+    }
+    // No pages needed rendering, so check thumbnails.
+    if (
+      this.isThumbnailViewEnabled &&
+      this.pdfThumbnailViewer?.forceRendering()
+    ) {
+      return;
+    }
 
-		if (this.printing) {
-			// If printing is currently ongoing do not reschedule cleanup.
-			return;
-		}
+    if (this.printing) {
+      // If printing is currently ongoing do not reschedule cleanup.
+      return;
+    }
 
-		if (this.onIdle) {
-			this.idleTimeout = setTimeout(this.onIdle.bind(this), CLEANUP_TIMEOUT);
-		}
-	}
+    if (this.onIdle) {
+      this.idleTimeout = setTimeout(this.onIdle.bind(this), CLEANUP_TIMEOUT);
+    }
+  }
 
-	/**
-	 * @param {Object} visible
-	 * @param {Array} views
-	 * @param {boolean} scrolledDown
-	 * @param {boolean} [preRenderExtra]
-	 */
-	getHighestPriority<
-		T extends {
-			div: HTMLElement;
-			id: number;
-			detailView?: IRenderableView;
-		} & IRenderableView,
-	>(
-		visible: ReturnType<typeof getVisibleElements<T>>,
-		views: T[],
-		scrolledDown: boolean,
-		preRenderExtra = false,
-		ignoreDetailViews = false,
-	): IRenderableView | null {
-		/**
-		 * The state has changed. Figure out which page has the highest priority to
-		 * render next (if any).
-		 *
-		 * Priority:
-		 * 1. visible pages
-		 * 2. zoomed-in partial views of visible pages, unless `ignoreDetailViews`
-		 * 3. if last scrolled down, the page after the visible pages, or
-		 *    if last scrolled up, the page before the visible pages
-		 */
-		const visibleViews = visible.views,
-			numVisible = visibleViews.length;
+  /**
+   * @param {Object} visible
+   * @param {Array} views
+   * @param {boolean} scrolledDown
+   * @param {boolean} [preRenderExtra]
+   */
+  getHighestPriority<
+    T extends {
+      div: HTMLElement;
+      id: number;
+      detailView?: IRenderableView;
+    } & IRenderableView,
+  >(
+    visible: ReturnType<typeof getVisibleElements<T>>,
+    views: T[],
+    scrolledDown: boolean,
+    preRenderExtra = false,
+    ignoreDetailViews = false,
+  ): IRenderableView | null {
+    /**
+     * The state has changed. Figure out which page has the highest priority to
+     * render next (if any).
+     *
+     * Priority:
+     * 1. visible pages
+     * 2. zoomed-in partial views of visible pages, unless `ignoreDetailViews`
+     * 3. if last scrolled down, the page after the visible pages, or
+     *    if last scrolled up, the page before the visible pages
+     */
+    const visibleViews = visible.views,
+      numVisible = visibleViews.length;
 
-		if (numVisible === 0) {
-			return null;
-		}
-		for (let i = 0; i < numVisible; i++) {
-			const view = visibleViews[i].view;
-			if (!this.isViewFinished(view)) {
-				return view;
-			}
-		}
+    if (numVisible === 0) {
+      return null;
+    }
+    for (let i = 0; i < numVisible; i++) {
+      const view = visibleViews[i].view;
+      if (!this.isViewFinished(view)) {
+        return view;
+      }
+    }
 
-		if (!ignoreDetailViews) {
-			for (let i = 0; i < numVisible; i++) {
-				const { detailView } = visibleViews[i].view;
-				if (detailView && !this.isViewFinished(detailView)) {
-					return detailView;
-				}
-			}
-		}
+    if (!ignoreDetailViews) {
+      for (let i = 0; i < numVisible; i++) {
+        const { detailView } = visibleViews[i].view;
+        if (detailView && !this.isViewFinished(detailView)) {
+          return detailView;
+        }
+      }
+    }
 
-		const firstId = visible.first.id,
-			lastId = visible.last.id;
+    const firstId = visible.first.id,
+      lastId = visible.last.id;
 
-		// All the visible views have rendered; try to handle any "holes" in the
-		// page layout (can happen e.g. with spreadModes at higher zoom levels).
-		if (lastId - firstId + 1 > numVisible) {
-			const visibleIds = visible.ids;
-			for (let i = 1, ii = lastId - firstId; i < ii; i++) {
-				const holeId = scrolledDown ? firstId + i : lastId - i;
-				if (visibleIds.has(holeId)) {
-					continue;
-				}
-				const holeView = views[holeId - 1];
-				if (!this.isViewFinished(holeView)) {
-					return holeView;
-				}
-			}
-		}
+    // All the visible views have rendered; try to handle any "holes" in the
+    // page layout (can happen e.g. with spreadModes at higher zoom levels).
+    if (lastId - firstId + 1 > numVisible) {
+      const visibleIds = visible.ids;
+      for (let i = 1, ii = lastId - firstId; i < ii; i++) {
+        const holeId = scrolledDown ? firstId + i : lastId - i;
+        if (visibleIds.has(holeId)) {
+          continue;
+        }
+        const holeView = views[holeId - 1];
+        if (!this.isViewFinished(holeView)) {
+          return holeView;
+        }
+      }
+    }
 
-		// All the visible views have rendered; try to render next/previous page.
-		// (IDs start at 1, so no need to add 1 when `scrolledDown === true`.)
-		let preRenderIndex = scrolledDown ? lastId : firstId - 2;
-		let preRenderView = views[preRenderIndex];
+    // All the visible views have rendered; try to render next/previous page.
+    // (IDs start at 1, so no need to add 1 when `scrolledDown === true`.)
+    let preRenderIndex = scrolledDown ? lastId : firstId - 2;
+    let preRenderView = views[preRenderIndex];
 
-		if (preRenderView && !this.isViewFinished(preRenderView)) {
-			return preRenderView;
-		}
-		if (preRenderExtra) {
-			preRenderIndex += scrolledDown ? 1 : -1;
-			preRenderView = views[preRenderIndex];
+    if (preRenderView && !this.isViewFinished(preRenderView)) {
+      return preRenderView;
+    }
+    if (preRenderExtra) {
+      preRenderIndex += scrolledDown ? 1 : -1;
+      preRenderView = views[preRenderIndex];
 
-			if (preRenderView && !this.isViewFinished(preRenderView)) {
-				return preRenderView;
-			}
-		}
-		// Everything that needs to be rendered has been.
-		return null;
-	}
+      if (preRenderView && !this.isViewFinished(preRenderView)) {
+        return preRenderView;
+      }
+    }
+    // Everything that needs to be rendered has been.
+    return null;
+  }
 
-	/**
-	 * @param {IRenderableView} view
-	 * @returns {boolean}
-	 */
-	isViewFinished(view: IRenderableView) {
-		return view.renderingState === RenderingStates.FINISHED;
-	}
+  /**
+   * @param {IRenderableView} view
+   * @returns {boolean}
+   */
+  isViewFinished(view: IRenderableView) {
+    return view.renderingState === RenderingStates.FINISHED;
+  }
 
-	/**
-	 * Render a page or thumbnail view. This calls the appropriate function
-	 * based on the views state. If the view is already rendered it will return
-	 * `false`.
-	 *
-	 * @param {IRenderableView} view
-	 */
-	renderView(view: IRenderableView) {
-		switch (view.renderingState) {
-			case RenderingStates.FINISHED:
-				return false;
-			case RenderingStates.PAUSED:
-				this.highestPriorityPage = view.renderingId;
-				view.resume!();
-				break;
-			case RenderingStates.RUNNING:
-				this.highestPriorityPage = view.renderingId;
-				break;
-			case RenderingStates.INITIAL:
-				this.highestPriorityPage = view.renderingId;
-				view
-					.draw()
-					.finally(() => {
-						this.renderHighestPriority();
-					})
-					.catch((reason) => {
-						if (reason instanceof RenderingCancelledException) {
-							return;
-						}
-						console.error("renderView:", reason);
-					});
-				break;
-		}
-		return true;
-	}
+  /**
+   * Render a page or thumbnail view. This calls the appropriate function
+   * based on the views state. If the view is already rendered it will return
+   * `false`.
+   *
+   * @param {IRenderableView} view
+   */
+  renderView(view: IRenderableView) {
+    switch (view.renderingState) {
+      case RenderingStates.FINISHED:
+        return false;
+      case RenderingStates.PAUSED:
+        this.highestPriorityPage = view.renderingId;
+        view.resume!();
+        break;
+      case RenderingStates.RUNNING:
+        this.highestPriorityPage = view.renderingId;
+        break;
+      case RenderingStates.INITIAL:
+        this.highestPriorityPage = view.renderingId;
+        view
+          .draw()
+          .finally(() => {
+            this.renderHighestPriority();
+          })
+          .catch((reason) => {
+            if (reason instanceof RenderingCancelledException) {
+              return;
+            }
+            console.error("renderView:", reason);
+          });
+        break;
+    }
+    return true;
+  }
 }
 
 export { PDFRenderingQueue };

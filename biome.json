@@ -24,7 +24,8 @@
 			"semicolons": "always",
 			"arrowParentheses": "always",
 			"bracketSpacing": true,
-			"indentStyle": "tab"
+			"indentStyle": "space",
+			"indentWidth": 2
 		}
 	},
 	"assist": {

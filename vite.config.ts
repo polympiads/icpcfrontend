@@ -4,14 +4,14 @@ import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 
 export default defineConfig({
-	plugins: [solid(), lucideImportOptimizer(), tailwindcss()],
+  plugins: [solid(), lucideImportOptimizer(), tailwindcss()],
 
-	server: {
-		host: true,
-		strictPort: true,
+  server: {
+    host: true,
+    strictPort: true,
 
-		watch: {
-			usePolling: true,
-		},
-	},
+    watch: {
+      usePolling: true,
+    },
+  },
 });

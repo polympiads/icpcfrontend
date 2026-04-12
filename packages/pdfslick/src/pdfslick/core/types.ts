@@ -7,149 +7,149 @@ import type { PDFException, PDFSlick } from "./PDFSlick";
 import type { IPDFSlickPrintDialog } from "./PDFSlickPrintDialog";
 
 export type TPDFDocumentOutline = {
-	title: string;
-	bold: boolean;
-	italic: boolean;
-	color: Uint8ClampedArray;
-	dest: string | any[];
-	url: string;
-	unsafeUrl: string;
-	newWindow: boolean;
-	count: number;
-	items: TPDFDocumentOutline;
+  title: string;
+  bold: boolean;
+  italic: boolean;
+  color: Uint8ClampedArray;
+  dest: string | any[];
+  url: string;
+  unsafeUrl: string;
+  newWindow: boolean;
+  count: number;
+  items: TPDFDocumentOutline;
 }[];
 
 export type TPDFDocumentAttachment = {
-	filename: string;
-	content: Uint8Array;
+  filename: string;
+  content: Uint8Array;
 };
 
 export type TPDFDocumentAttachments = Record<string, TPDFDocumentAttachment>;
 
 export type PDFSlickStateProps = {
-	isDocumentLoaded: boolean;
-	pagesReady: boolean;
+  isDocumentLoaded: boolean;
+  pagesReady: boolean;
 
-	numPages: number;
-	pageNumber: number;
-	scale: number;
-	scaleValue: string | undefined;
-	pagesRotation: number;
-	spreadMode: number;
-	scrollMode: number;
-	highlightDefaultColor?: string;
+  numPages: number;
+  pageNumber: number;
+  scale: number;
+  scaleValue: string | undefined;
+  pagesRotation: number;
+  spreadMode: number;
+  scrollMode: number;
+  highlightDefaultColor?: string;
 
-	// documentInfo
-	url: string | ArrayBuffer | null;
-	filename?: string;
-	filesize?: number;
-	title?: string;
-	author?: string;
-	subject?: string;
-	keywords?: any;
-	creationDate?: Date | null;
-	modificationDate?: Date | null;
-	creator?: string;
-	producer?: string;
-	version?: string;
-	pageSize?: any;
-	isLinearized?: boolean;
+  // documentInfo
+  url: string | ArrayBuffer | null;
+  filename?: string;
+  filesize?: number;
+  title?: string;
+  author?: string;
+  subject?: string;
+  keywords?: any;
+  creationDate?: Date | null;
+  modificationDate?: Date | null;
+  creator?: string;
+  producer?: string;
+  version?: string;
+  pageSize?: any;
+  isLinearized?: boolean;
 
-	documentOutline: TPDFDocumentOutline | null;
-	attachments: Map<string, TPDFDocumentAttachment>;
+  documentOutline: TPDFDocumentOutline | null;
+  attachments: Map<string, TPDFDocumentAttachment>;
 
-	annotationEditorMode: number;
+  annotationEditorMode: number;
 
-	// thumbnailViews: PDFThumbnailView[],
-	thumbnailViews: Map<number, PDFThumbnailView>;
-	thumbnails: Map<
-		number,
-		{
-			pageNumber: number;
-			width: number;
-			height: number;
-			scale: number;
-			rotation: number;
-			loaded: boolean;
-			pageLabel: string | null;
-			src: string | null;
-		}
-	>;
+  // thumbnailViews: PDFThumbnailView[],
+  thumbnailViews: Map<number, PDFThumbnailView>;
+  thumbnails: Map<
+    number,
+    {
+      pageNumber: number;
+      width: number;
+      height: number;
+      scale: number;
+      rotation: number;
+      loaded: boolean;
+      pageLabel: string | null;
+      src: string | null;
+    }
+  >;
 
-	pdfSlick: PDFSlick | null;
+  pdfSlick: PDFSlick | null;
 };
 
 export type PDFSlickStateSetters = {
-	_setThumbnailView: (pageNumber: number, view: PDFThumbnailView) => void;
-	_setThumbnailsViews: (views: PDFThumbnailView[]) => void;
+  _setThumbnailView: (pageNumber: number, view: PDFThumbnailView) => void;
+  _setThumbnailsViews: (views: PDFThumbnailView[]) => void;
 };
 
 export type PDFSlickState = PDFSlickStateProps & PDFSlickStateSetters;
 
 export type TEventBusEvent = {
-	source: PDFViewer;
-	pagesCount: number;
-	pageNumber: number;
-	pagesRotation: number;
-	pageLabel: string;
-	previous: number;
-	scale: number;
-	mode: number; // switchspreadmode + switchscrollmode
-	presetValue: string | undefined;
-	error?: any;
+  source: PDFViewer;
+  pagesCount: number;
+  pageNumber: number;
+  pagesRotation: number;
+  pageLabel: string;
+  previous: number;
+  scale: number;
+  mode: number; // switchspreadmode + switchscrollmode
+  presetValue: string | undefined;
+  error?: any;
 };
 
 export type PDFSlickOptions = {
-	textLayerMode?: number;
-	annotationMode?: number;
-	annotationEditorMode?: number;
-	singlePageViewer?: boolean;
-	removePageBorders?: boolean;
-	enablePrintAutoRotate?: boolean;
-	useOnlyCssZoom?: boolean;
-	pageColors?: { background: any; foreground: any };
-	annotationEditorHighlightColors?: string;
-	l10n?: any;
-	maxCanvasPixels?: number;
-	maxCanvasDim?: number;
-	capCanvasAreaFactor?: number;
-	printResolution?: number;
-	thumbnailWidth?: number;
-	scaleValue?: string;
-	enableHWA?: boolean;
-	enableDetailCanvas?: boolean;
-	enableOptimizedPartialRendering?: boolean;
-	minDurationToUpdateCanvas?: number;
-	filename?: string;
-	getDocumentParams?: DocumentInitParameters;
-	onProgress?: (opts: OnProgressParameters) => void;
+  textLayerMode?: number;
+  annotationMode?: number;
+  annotationEditorMode?: number;
+  singlePageViewer?: boolean;
+  removePageBorders?: boolean;
+  enablePrintAutoRotate?: boolean;
+  useOnlyCssZoom?: boolean;
+  pageColors?: { background: any; foreground: any };
+  annotationEditorHighlightColors?: string;
+  l10n?: any;
+  maxCanvasPixels?: number;
+  maxCanvasDim?: number;
+  capCanvasAreaFactor?: number;
+  printResolution?: number;
+  thumbnailWidth?: number;
+  scaleValue?: string;
+  enableHWA?: boolean;
+  enableDetailCanvas?: boolean;
+  enableOptimizedPartialRendering?: boolean;
+  minDurationToUpdateCanvas?: number;
+  filename?: string;
+  getDocumentParams?: DocumentInitParameters;
+  onProgress?: (opts: OnProgressParameters) => void;
 };
 
 export type PDFSlickInputArgs = {
-	container: HTMLDivElement;
-	viewer?: HTMLDivElement | undefined;
-	thumbs?: HTMLElement | undefined;
-	store?: StoreApi<PDFSlickState>;
-	options?: PDFSlickOptions;
-	onError?: (err: PDFException) => void;
-	printDialog?: IPDFSlickPrintDialog;
+  container: HTMLDivElement;
+  viewer?: HTMLDivElement | undefined;
+  thumbs?: HTMLElement | undefined;
+  store?: StoreApi<PDFSlickState>;
+  options?: PDFSlickOptions;
+  onError?: (err: PDFException) => void;
+  printDialog?: IPDFSlickPrintDialog;
 };
 
 export type TEventBusName =
-	| "textlayerrendered"
-	| "pagesinit"
-	| "pagesloaded"
-	| "scalechanging"
-	| "pagechanging"
-	| string;
+  | "textlayerrendered"
+  | "pagesinit"
+  | "pagesloaded"
+  | "scalechanging"
+  | "pagechanging"
+  | string;
 export type TEventBusOptions = {
-	once?: boolean;
+  once?: boolean;
 };
 
 export type TEventBusListener = (source: TEventBusEvent | Object) => void;
 
 export type TEventBusOn = (
-	eventName: TEventBusName,
-	listener: TEventBusListener,
-	options: TEventBusOptions,
+  eventName: TEventBusName,
+  listener: TEventBusListener,
+  options: TEventBusOptions,
 ) => void;

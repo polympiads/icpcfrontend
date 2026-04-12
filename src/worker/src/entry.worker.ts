@@ -2,8 +2,8 @@
 
 import type { WorkerIncoming } from "../types/WorkerIncoming";
 import type {
-	FullWorkerOutgoing,
-	WorkerOutgoing,
+  FullWorkerOutgoing,
+  WorkerOutgoing,
 } from "../types/WorkerOutgoing";
 import type { WorkerParams } from "../types/WorkerParams";
 import { initHandler, loginHandler, logoutHandler } from "./AuthHandlers";
@@ -19,73 +19,73 @@ export type Broadcast = (message: WorkerOutgoing) => void;
 export type Send = (message: WorkerOutgoing) => void;
 
 self.onconnect = (event: MessageEvent) => {
-	for (const port of event.ports) {
-		connections.push(port);
-		port.start();
+  for (const port of event.ports) {
+    connections.push(port);
+    port.start();
 
-		port.onmessage = async (event: MessageEvent<WorkerIncoming>) => {
-			//console.log(event.data)
-			let didAnswer: boolean = false;
-			const broadcast = (message: WorkerOutgoing) => {
-				const payload: FullWorkerOutgoing = {
-					answerTo: undefined,
-					content: message,
-				};
+    port.onmessage = async (event: MessageEvent<WorkerIncoming>) => {
+      //console.log(event.data)
+      let didAnswer: boolean = false;
+      const broadcast = (message: WorkerOutgoing) => {
+        const payload: FullWorkerOutgoing = {
+          answerTo: undefined,
+          content: message,
+        };
 
-				for (const port of connections) {
-					port.postMessage(payload);
-				}
-			};
-			const send = (message: WorkerOutgoing) => {
-				const fullMessage: FullWorkerOutgoing = {
-					answerTo: undefined,
-					content: message,
-				};
+        for (const port of connections) {
+          port.postMessage(payload);
+        }
+      };
+      const send = (message: WorkerOutgoing) => {
+        const fullMessage: FullWorkerOutgoing = {
+          answerTo: undefined,
+          content: message,
+        };
 
-				port.postMessage(fullMessage);
-			};
-			const answer = (message: WorkerOutgoing | undefined) => {
-				if (didAnswer) {
-					throw new Error("Can't answer to message twice.");
-				}
+        port.postMessage(fullMessage);
+      };
+      const answer = (message: WorkerOutgoing | undefined) => {
+        if (didAnswer) {
+          throw new Error("Can't answer to message twice.");
+        }
 
-				const fullMessage: FullWorkerOutgoing = {
-					answerTo: event.data.hash as string,
-					content: message,
-				};
+        const fullMessage: FullWorkerOutgoing = {
+          answerTo: event.data.hash as string,
+          content: message,
+        };
 
-				port.postMessage(fullMessage);
-				didAnswer = true;
-			};
+        port.postMessage(fullMessage);
+        didAnswer = true;
+      };
 
-			try {
-				switch (event.data.type) {
-					case "LOGIN":
-						await loginHandler(answer, broadcast, event.data);
-						break;
-					case "LOGIN_INIT":
-						await initHandler(answer, broadcast, send, event.data);
-						break;
-					case "LOGOUT":
-						await logoutHandler(answer, broadcast, event.data);
-						break;
-					case "LISTEN_FEED":
-						await listenHandler(port, event.data);
-						break;
-					case "CLOSE_FEED":
-						closeHandler(event.data);
-						break;
+      try {
+        switch (event.data.type) {
+          case "LOGIN":
+            await loginHandler(answer, broadcast, event.data);
+            break;
+          case "LOGIN_INIT":
+            await initHandler(answer, broadcast, send, event.data);
+            break;
+          case "LOGOUT":
+            await logoutHandler(answer, broadcast, event.data);
+            break;
+          case "LISTEN_FEED":
+            await listenHandler(port, event.data);
+            break;
+          case "CLOSE_FEED":
+            closeHandler(event.data);
+            break;
 
-					default:
-						break;
-				}
-			} finally {
-				if (!didAnswer) {
-					answer(undefined);
-				}
-			}
-		};
-	}
+          default:
+            break;
+        }
+      } finally {
+        if (!didAnswer) {
+          answer(undefined);
+        }
+      }
+    };
+  }
 };
 
 export default params;

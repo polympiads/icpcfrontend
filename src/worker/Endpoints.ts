@@ -1,12 +1,12 @@
 export function loginEndpoint() {
-	return "login/";
+  return "login/";
 }
 export function whoamiEndpoint() {
-	return "whoami/";
+  return "whoami/";
 }
 export function contestEndpoint() {
-	return "contests/";
+  return "contests/";
 }
 export function feedEndpoint(feed: string) {
-	return `contests/${feed}/eventfeed/`;
+  return `contests/${feed}/eventfeed/`;
 }
