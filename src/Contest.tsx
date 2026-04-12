@@ -179,7 +179,7 @@ function ContestStatus(props: { contest: Contest }) {
         </Match>
       </Switch>
     );
-  } else {
+  } else if (props.contest.countdown_pause_time) {
     return (
       <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-yellow-300 text-yellow-800 flex flex-row items-center">
         <BsPauseCircle /> <div class="font-medium ml-0.5">Paused</div>
