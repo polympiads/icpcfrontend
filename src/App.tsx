@@ -119,6 +119,7 @@ function InContestPage() {
 		}
 
 		if (wild === "") {
+			setSelectedTab("problems");
 			setSelectedProblem(firstProblem);
 		} else if (TABS.includes(segment)) {
 			if (segment === "print" && !isLoggedIn()) {
@@ -153,6 +154,18 @@ function InContestPage() {
 			navigate(`./${selectedTabVal}/${problem?.id}`, { replace: true });
 		}
 	});
+
+	createEffect(() => {
+		const firstProblem = Object.values(problems())[0];
+		if (firstProblem === undefined) {
+			throw "Error no problems available for that contest";
+		}
+
+		if (!isLoggedIn() && selectedTab() === "print") {
+			setSelectedTab("problems");
+			setSelectedProblem(firstProblem)
+		}
+	})
 
 	function ProblemInfo(props: { problem: Problem }) {
 		return (
