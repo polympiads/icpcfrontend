@@ -18,7 +18,7 @@ import {
 	type ParentProps,
 	Show,
 } from "solid-js";
-import { ContestSelect } from "./Contest";
+import { ContestPageOverlay, ContestSelect } from "./Contest";
 import { API_ROOT, BASE_URL, SUBMISSIONS_URL } from "./constants";
 import { AppEditor } from "./Editor";
 import { BasePortalRoot } from "./Portal";
@@ -225,9 +225,9 @@ function InContestPage() {
 
 	return (
 		<div class="relative w-full h-full">
-			{/* <div class="absolute w-full h-full bg-white z-10">
-					<ContestPageOverlay contest={contest()}/>
-				</div> */}
+			<div class="absolute w-full h-full bg-white z-10">
+				<ContestPageOverlay contest={contest()}/>
+			</div>
 
 			<div class="relative w-full h-full flex flex-col z-0">
 				<div class="relative h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row z-10">
