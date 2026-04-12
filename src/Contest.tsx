@@ -2,11 +2,11 @@ import { Button } from "@kobalte/core/button";
 import { A } from "@solidjs/router";
 import dayjs, { type Dayjs, duration } from "dayjs";
 import type { Duration } from "dayjs/plugin/duration";
-import { ArrowLeft, Hourglass, RotateCw } from "lucide-solid";
+import { ArrowLeft, Hourglass, Plus, RotateCw } from "lucide-solid";
 import { AiFillFileUnknown } from "solid-icons/ai";
 import { BsExclamationCircle, BsPauseCircle } from "solid-icons/bs";
 import { FaSolidFlagCheckered } from "solid-icons/fa";
-import { ErrorBoundary, For, Match, Suspense, Switch } from "solid-js";
+import { createEffect, createMemo, ErrorBoundary, For, Match, Suspense, Switch } from "solid-js";
 import { LoadingAnimation } from "./LoadingAnimation";
 import { useContests } from "./worker/hooks/useContests";
 import type { Contest } from "./worker/types/data/Contest";
@@ -59,7 +59,7 @@ export function ContestSelect() {
           </div>
         }
       >
-        <div class="relative z-0 w-full grid column-auto-fit-80 grid-rows-11 gap-2 justify-center pt-20">
+        <div class="relative z-0 w-full grid column-auto-fit-80 gap-2 justify-center py-20">
           <For each={contests()}>
             {(contest, _) => <ContestSelectionCard contest={contest} />}
           </For>
@@ -79,12 +79,18 @@ function ContestSelectionCard(props: { contest: Contest }) {
       if (time.minute() > 0) {
         string += `${time.minute()}m`;
       }
+      if (time.second() > 0) {
+        string += `${time.minute()}s`;
+      }
     } else {
       if (time.hours() > 0) {
         string += `${time.hours()}h`;
       }
       if (time.minutes() > 0) {
-        string += `${time.minutes()}h`;
+        string += `${time.minutes()}m`;
+      }
+      if (time.seconds() > 0) {
+        string += `${time.seconds()}s`;
       }
     }
 
@@ -110,8 +116,9 @@ function ContestSelectionCard(props: { contest: Contest }) {
                 {formatRemainingTime(props.contest.duration)}{" "}
               </div>
             </div>
-            <div class="w-2"></div>
-            <ContestStatus contest={props.contest} />
+            <div class="mx-0.5 opacity-50">·</div>
+            <Plus size="0.9rem"/>
+            { formatRemainingTime(props.contest.penalty_time) }
           </div>
         </div>
       </div>
@@ -123,10 +130,9 @@ function ContestStatus(props: { contest: Contest }) {
   const { now } = useNow();
 
   if (props.contest.start_time) {
-    const nowVal = now();
-    const remainingTime = dayjs.duration(
-      props.contest.start_time.add(props.contest.duration).diff(nowVal),
-    );
+    const remainingTime = createMemo(() => dayjs.duration(
+      props.contest.start_time!.add(props.contest.duration).diff(now()),
+    ));
 
     function formatRemainingTime(time: Duration) {
       let string = "";
@@ -157,22 +163,22 @@ function ContestStatus(props: { contest: Contest }) {
 
     return (
       <Switch>
-        <Match when={props.contest.start_time.diff(nowVal) < 0}>
+        <Match when={now().diff(props.contest.start_time) < 0}>
           <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-white">
             Scheduled for {props.contest.start_time?.format("HH:mm")}
           </div>
         </Match>
         <Match
           when={
-            props.contest.start_time.diff(nowVal) > 0 &&
-            remainingTime.asMilliseconds() > 0
+            now().diff(props.contest.start_time) >= 0 &&
+            remainingTime().asMilliseconds() > 0
           }
         >
           <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-medium">
-            {formatRemainingTime(remainingTime)} remaining
+            {formatRemainingTime(remainingTime())} remaining
           </div>
         </Match>
-        <Match when={remainingTime.asMilliseconds() < 0}>
+        <Match when={remainingTime().asMilliseconds() < 0}>
           <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-slate-700 text-white flex flex-row items-center">
             <FaSolidFlagCheckered />
             <div class="font-medium ml-0.5">Finished</div>
@@ -186,12 +192,107 @@ function ContestStatus(props: { contest: Contest }) {
         <BsPauseCircle /> <div class="font-medium ml-0.5">Paused</div>
       </div>
     );
+  } else {
+    return (
+      <> Not yet scheduled </>
+    )
   }
 }
 
 export function ContestPageOverlay(props: { contest: Contest | undefined }) {
   const { now } = useNow();
   const contestState = useContestState()
+
+  function ContestOverlayStatus(props: { contest: Contest }) {
+    const { now } = useNow();
+
+    const HALF_HOUR_THRESHOLD_MS = 1800000
+
+    function formatRemainingTime(time: Duration) {
+      let string = "";
+      const parts_with_unit_map: [number, string, boolean][] = [
+        [time.hours(), "h", false],
+        [time.minutes(), "m", true],
+        [time.seconds(), "", true],
+      ];
+
+      let b = false;
+      for (const part of parts_with_unit_map) {
+        if (part[0] > 0 || b || part[2]) {
+          const part_str = b
+            ? part[0].toString().padStart(2, "0")
+            : part[0].toString();
+
+          string += `${part_str}${part[1]}`;
+          b = true;
+        }
+      }
+
+      if (string.length === 0) {
+        string = "0m";
+      }
+
+      return string;
+    }
+
+    if (props.contest.start_time) {
+      const remainingTime = createMemo(() => {
+        const contestStateVal = contestState()
+        if (contestStateVal === undefined) {
+          return
+        }
+        if (contestStateVal.started === null) {
+          return
+        }
+
+        return contestStateVal.started.add(props.contest.duration).diff(now())
+      });
+      const isFinished = createMemo(() => remainingTime() !== undefined && remainingTime()! < 0)
+
+      createEffect(() => console.log(contestState()))
+
+      return (
+        <Switch>
+          <Match when={now().diff(props.contest.start_time) < -HALF_HOUR_THRESHOLD_MS}>
+            <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-white">
+              Scheduled for {props.contest.start_time?.format("HH:mm")}
+            </div>
+          </Match>
+          <Match when={now().diff(props.contest.start_time) < 0}>
+            <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-medium">
+              Starts in {formatRemainingTime(dayjs.duration(props.contest.start_time.diff(now())))}
+            </div>
+          </Match>
+          <Match when={isFinished()}>
+            <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-slate-700 text-white flex flex-row items-center">
+              <FaSolidFlagCheckered />
+              <div class="font-medium ml-0.5">Finished</div>
+            </div>
+          </Match>
+          <Match
+            when={now().diff(props.contest.start_time) >= 0 && !isFinished()}
+          >
+            <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-medium">
+              Starting...
+            </div>
+          </Match>
+          
+        </Switch>
+      );
+    } else if (props.contest.countdown_pause_time) {
+      return (
+        <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-yellow-300 text-yellow-800 flex flex-row items-center">
+          <BsPauseCircle /> <div class="font-medium ml-0.5">Paused</div>
+        </div>
+      );
+    } else {
+      return (
+        <> Not yet scheduled </>
+      )
+    }
+  }
+
+  console.log(props.contest)
 
   function OverlayInfo(props: { contest: Contest }) {
     return (
@@ -247,7 +348,7 @@ export function ContestPageOverlay(props: { contest: Contest | undefined }) {
           <OverlayInfo contest={props.contest!} />
 
           {/** biome-ignore lint/style/noNonNullAssertion: contest can't be undefined because of the requirement of the Match */}
-          <ContestStatus contest={props.contest!} />
+          <ContestOverlayStatus contest={props.contest!} />
         </Match>
       </Switch>
     </div>
