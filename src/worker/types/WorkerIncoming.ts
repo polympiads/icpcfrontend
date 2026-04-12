@@ -1,30 +1,35 @@
-
 export type AuthLogin = {
-  type: "LOGIN";
+	type: "LOGIN";
 
-  username: string;
-  password: string;
+	username: string;
+	password: string;
 };
 
 export type AuthLogout = {
-  type: "LOGOUT";
+	type: "LOGOUT";
 };
 
 export type AuthInit = {
-  type: "LOGIN_INIT";
+	type: "LOGIN_INIT";
 };
 
 export type ListenToFeed = {
-  type: "LISTEN_FEED";
-  feed: string;
-  handlerHash: string;
+	type: "LISTEN_FEED";
+	feed: string;
+	handlerHash: string;
 };
 export type CloseFeed = {
-  type: "CLOSE_FEED";
-  feed: string;
-  handlerHash: string;
+	type: "CLOSE_FEED";
+	feed: string;
+	handlerHash: string;
 };
 
-export type WorkerIncoming = (AuthLogin | AuthLogout | AuthInit | ListenToFeed | CloseFeed) & {
-  "hash"?: string
+export type WorkerIncoming = (
+	| AuthLogin
+	| AuthLogout
+	| AuthInit
+	| ListenToFeed
+	| CloseFeed
+) & {
+	hash?: string;
 };

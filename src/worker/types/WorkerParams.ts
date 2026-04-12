@@ -1,4 +1,3 @@
-
 export type WorkerParams = {
-  apiHostname: string;
+	apiHostname: string;
 };

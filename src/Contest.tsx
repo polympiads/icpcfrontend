@@ -26,7 +26,6 @@ export function ContestSelect() {
 						class="border border-black/10 p-2 rounded-md flex flex-row items-center hover:bg-gray-100"
 						onClick={() => contestsActions.refetch()}
 					>
-						{" "}
 						<RotateCw size="1em" /> <div class="ml-1">Retry</div>
 					</Button>
 				</div>
@@ -171,7 +170,7 @@ function ContestStatus(props: { contest: Contest }) {
 				</Match>
 				<Match when={remainingTime.asMilliseconds() < 0}>
 					<div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-slate-700 text-white flex flex-row items-center">
-						<FaSolidFlagCheckered />{" "}
+						<FaSolidFlagCheckered />
 						<div class="font-medium ml-0.5">Finished</div>
 					</div>
 				</Match>

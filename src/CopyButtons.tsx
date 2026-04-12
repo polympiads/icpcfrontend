@@ -1,57 +1,60 @@
-import { createSignal, onCleanup } from "solid-js"
-import { useAppEditorContext } from "./Editor"
-import { Button } from "@kobalte/core/button"
-import { Check } from "lucide-solid"
-import { BsCopy, BsExclamationTriangle } from "solid-icons/bs"
+import { createSignal, onCleanup } from "solid-js";
+import { useAppEditorContext } from "./Editor";
+import { Button } from "@kobalte/core/button";
+import { Check } from "lucide-solid";
+import { BsCopy, BsExclamationTriangle } from "solid-icons/bs";
 
 export function CopyButton() {
-  const { code } = useAppEditorContext()
-  
-  const [copied, setCopied] = createSignal(false)
-  const [error, setError] = createSignal(false)
+	const { code } = useAppEditorContext();
 
-  let timeoutId: number | undefined
+	const [copied, setCopied] = createSignal(false);
+	const [error, setError] = createSignal(false);
 
-  function resetStates() {
-    setCopied(false)
-    setError(false)
-  }
+	let timeoutId: number | undefined;
 
-  async function copyOnClipboard() {
-    const value = code()
-    if (value === undefined) return
+	function resetStates() {
+		setCopied(false);
+		setError(false);
+	}
 
-    // clear any existing timeout before setting a new one
-    if (timeoutId) clearTimeout(timeoutId)
+	async function copyOnClipboard() {
+		const value = code();
+		if (value === undefined) return;
 
-    try {
-      await navigator.clipboard.writeText(value)
+		// clear any existing timeout before setting a new one
+		if (timeoutId) clearTimeout(timeoutId);
 
-      setError(false)
-      setCopied(true)
-    } catch {
-      setCopied(false)
-      setError(true)
-    }
+		try {
+			await navigator.clipboard.writeText(value);
 
-    timeoutId = window.setTimeout(() => {
-      resetStates()
-    }, 1500)
-  }
+			setError(false);
+			setCopied(true);
+		} catch {
+			setCopied(false);
+			setError(true);
+		}
 
-  onCleanup(() => {
-    if (timeoutId) clearTimeout(timeoutId)
-  })
+		timeoutId = window.setTimeout(() => {
+			resetStates();
+		}, 1500);
+	}
 
-  return (
-    <Button class="p-1 cursor-pointer flex flex-row justify-center items-center border border-black/10 bg-white hover:bg-gray-100 disabled:cursor-default rounded-md duration-50 shrink-0" onClick={copyOnClipboard}>
-      {copied() ? (
-        <Check size="1rem" />
-      ) : error() ? (
-        <BsExclamationTriangle size="1rem" />
-      ) : (
-        <BsCopy size="1rem" />
-      )}
-    </Button>
-  )
+	onCleanup(() => {
+		if (timeoutId) clearTimeout(timeoutId);
+	});
+
+	return (
+		<Button
+			class="p-1 cursor-pointer flex flex-row justify-center items-center border border-black/10 bg-white hover:bg-gray-100 disabled:cursor-default rounded-md duration-50 shrink-0"
+			onClick={copyOnClipboard}
+		>
+			{copied() ? (
+				<Check size="1rem" />
+			) : error() ? (
+				<BsExclamationTriangle size="1rem" />
+			) : (
+				<BsCopy size="1rem" />
+			)}
+		</Button>
+	);
 }

@@ -30,7 +30,8 @@ function computeProblemColor(
 	if (anyAccepted) return ACCEPTED;
 
 	const last = submissions[submissions.length - 1];
-	const lastType = last.judgement_type_id && judgementTypes[last.judgement_type_id];
+	const lastType =
+		last.judgement_type_id && judgementTypes[last.judgement_type_id];
 
 	if (!last.judgement_type_id || !lastType) return PENDING;
 
@@ -43,57 +44,70 @@ export function useScoreboard() {
 	const submissions = useSubmissions();
 	const judgementTypes = useJudgementTypes();
 
-	return createMemo<ScoreBoard>(() => {
-		const problemsList = Object.values(problems());
-		const teamsList = Object.values(teams());
+	return createMemo<ScoreBoard>(
+		() => {
+			const problemsList = Object.values(problems());
+			const teamsList = Object.values(teams());
 
-		const submissionsByTeam = Object.values(submissions()).reduce((acc, submission) => {
-			if (!submission.team_id) return acc;
-			if (!acc[submission.team_id]) acc[submission.team_id] = [];
-			acc[submission.team_id].push(submission);
-			return acc;
-		}, {} as { [teamId: string]: Submission[] });
+			const submissionsByTeam = Object.values(submissions()).reduce(
+				(acc, submission) => {
+					if (!submission.team_id) return acc;
+					if (!acc[submission.team_id]) acc[submission.team_id] = [];
+					acc[submission.team_id].push(submission);
+					return acc;
+				},
+				{} as { [teamId: string]: Submission[] },
+			);
 
-		const scoreboard: ScoreBoard = {};
+			const scoreboard: ScoreBoard = {};
 
-		teamsList.forEach((team, idx) => {
-			const teamSubs = submissionsByTeam[team.id] ?? [];
+			teamsList.forEach((team, idx) => {
+				const teamSubs = submissionsByTeam[team.id] ?? [];
 
-			const problemInfos: ScoreboardProblemInfo[] = problemsList.map((p) => {
-				const subsForProblem = teamSubs.filter((s) => s.problem_id === p.id);
+				const problemInfos: ScoreboardProblemInfo[] = problemsList.map((p) => {
+					const subsForProblem = teamSubs.filter((s) => s.problem_id === p.id);
 
-				const color = computeProblemColor(subsForProblem, judgementTypes());
+					const color = computeProblemColor(subsForProblem, judgementTypes());
 
-				let title: string;
-				if (subsForProblem.length === 0) {
-					title = "-";
-				} else {
-					const acceptedIndex = subsForProblem.findIndex((s) => {
-						const jt = s.judgement_type_id && judgementTypes()[s.judgement_type_id];
-						return jt?.solved;
-					});
-					if (acceptedIndex !== -1) {
-						title = `+${acceptedIndex + 1}`;
+					let title: string;
+					if (subsForProblem.length === 0) {
+						title = "-";
 					} else {
-						title = `-${subsForProblem.length}`;
+						const acceptedIndex = subsForProblem.findIndex((s) => {
+							const jt =
+								s.judgement_type_id && judgementTypes()[s.judgement_type_id];
+							return jt?.solved;
+						});
+						if (acceptedIndex !== -1) {
+							title = `+${acceptedIndex + 1}`;
+						} else {
+							title = `-${subsForProblem.length}`;
+						}
 					}
-				}
 
-				const subtitle = "TODO";
-				const name = p.label ?? p.id;
+					const subtitle = "TODO";
+					const name = p.label ?? p.id;
 
-				return { name, title, subtitle, color } satisfies ScoreboardProblemInfo;
+					return {
+						name,
+						title,
+						subtitle,
+						color,
+					} satisfies ScoreboardProblemInfo;
+				});
+
+				const teamInfo: ScoreboardTeamInfo = {
+					teamName: team.display_name ?? team.name,
+					position: idx + 1,
+					problem: problemInfos,
+				};
+
+				scoreboard[team.id] = teamInfo;
 			});
 
-			const teamInfo: ScoreboardTeamInfo = {
-				teamName: team.display_name ?? team.name,
-				position: idx + 1,
-				problem: problemInfos,
-			};
-
-			scoreboard[team.id] = teamInfo;
-		});
-
-		return scoreboard;
-		}, undefined, { equals: equalScoreBoard });
+			return scoreboard;
+		},
+		undefined,
+		{ equals: equalScoreBoard },
+	);
 }

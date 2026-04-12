@@ -1,4 +1,8 @@
-import { FaRegularCalendarAlt, FaSolidListSquares, FaSolidMountain } from "solid-icons/fa";
+import {
+	FaRegularCalendarAlt,
+	FaSolidListSquares,
+	FaSolidMountain,
+} from "solid-icons/fa";
 import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
 
 import { BASE_URL, API_ROOT, SUBMISSIONS_URL } from "./constants";
@@ -28,7 +32,12 @@ import { BasePortalRoot } from "./Portal";
 import { SubmissionEditor, SubmissionEntries } from "./Submissions";
 import type { Problem } from "./worker/types/data/Problems";
 import { AppEditor } from "./Editor";
-import { PrintEntries, StaffPrintSelect, StaffPrintViewer, SubmitPrintButton } from "./Prints";
+import {
+	PrintEntries,
+	StaffPrintSelect,
+	StaffPrintViewer,
+	SubmitPrintButton,
+} from "./Prints";
 import { usePrints } from "./worker/hooks/usePrints";
 import { useContest } from "./worker/hooks/useContest";
 import type { Submission } from "./worker/types/data/Submission";
@@ -60,17 +69,17 @@ function InContestPage() {
 
 	const languages = useLanguages();
 	const auth = useAuth();
-	const isLoggedIn = () => auth.whoami().is_authenticated
+	const isLoggedIn = () => auth.whoami().is_authenticated;
 	const isStaff = () => {
-		const whoamiVal = auth.whoami()
-		return whoamiVal.is_authenticated && whoamiVal.is_staff
-	}
-	const [selectedPrint, setSelectedPrint] = createSignal<string>()
+		const whoamiVal = auth.whoami();
+		return whoamiVal.is_authenticated && whoamiVal.is_staff;
+	};
+	const [selectedPrint, setSelectedPrint] = createSignal<string>();
 
 	const problems = useProblems();
-	const submissions = useSubmissions()
+	const submissions = useSubmissions();
 	const prints = usePrints();
-	const contest = useContest()
+	const contest = useContest();
 	const isFrozen = createMemo(() => {
 		const now = dayjs();
 		const contestVal = contest();
@@ -82,16 +91,19 @@ function InContestPage() {
 		}
 
 		return now.diff(contestVal.scoreboard_freeze_time) > 0;
-	})
+	});
 
-	const frozenSubmissions = createMemo<Record<string, Submission>>((old) => isFrozen() ? old : submissions(), {})
+	const frozenSubmissions = createMemo<Record<string, Submission>>(
+		(old) => (isFrozen() ? old : submissions()),
+		{},
+	);
 
-	console.log(prints())
+	console.log(prints());
 
 	const [selectedProblem, setSelectedProblem] = createSignal<Problem>(
 		Object.values(problems())[0],
 	);
-	createEffect(() => console.log(problems()))
+	createEffect(() => console.log(problems()));
 
 	function onProblemSelect(problem: Problem | null) {
 		if (!problem) {
@@ -126,7 +138,7 @@ function InContestPage() {
 				setSelectedProblem(firstProblem);
 			} else {
 				setSelectedTab(segment);
-	
+
 				if (segment === "problems") {
 					if (wildParts.length > 1) {
 						const problem_id = wildParts[1];
@@ -163,9 +175,9 @@ function InContestPage() {
 
 		if (!isLoggedIn() && selectedTab() === "print") {
 			setSelectedTab("problems");
-			setSelectedProblem(firstProblem)
+			setSelectedProblem(firstProblem);
 		}
-	})
+	});
 
 	function ProblemInfo(props: { problem: Problem }) {
 		return (
@@ -175,33 +187,39 @@ function InContestPage() {
 		);
 	}
 
-	async function postSubmission(contest_id: string, code: string, problem_id: string, language_id: string, session: string) {
-		const url = new URL(API_ROOT + SUBMISSIONS_URL(contest_id), BASE_URL)
-		url.searchParams.append('language_id', language_id)
-		url.searchParams.append('problem_id', problem_id)
-		
-		const formData = new FormData()
-		const codeBlob = new Blob([code], { type: 'text/plain' })
-		formData.append('file', codeBlob)
-		
+	async function postSubmission(
+		contest_id: string,
+		code: string,
+		problem_id: string,
+		language_id: string,
+		session: string,
+	) {
+		const url = new URL(API_ROOT + SUBMISSIONS_URL(contest_id), BASE_URL);
+		url.searchParams.append("language_id", language_id);
+		url.searchParams.append("problem_id", problem_id);
+
+		const formData = new FormData();
+		const codeBlob = new Blob([code], { type: "text/plain" });
+		formData.append("file", codeBlob);
+
 		return await fetch(url.toString(), {
 			method: "POST",
 			body: formData,
 			headers: {
-				'X-Session-Id': session
-			}
-		})
+				"X-Session-Id": session,
+			},
+		});
 	}
 
 	async function submitCode(code: string, language_id: string) {
-    await postSubmission(
-      urlParams.id!,
-      code,
-      selectedProblem().id,
-      language_id,
-      auth.session()!,
-    );
-  }
+		await postSubmission(
+			urlParams.id!,
+			code,
+			selectedProblem().id,
+			language_id,
+			auth.session()!,
+		);
+	}
 
 	return (
 		<div class="relative w-full h-full">
@@ -231,7 +249,7 @@ function InContestPage() {
 										onChange={onProblemSelect}
 										options={Object.values(problems())}
 										optionValue="id"
-  									optionTextValue="name"
+										optionTextValue="name"
 										itemComponent={(props) => (
 											<Select.Item item={props.item}>
 												<Select.ItemLabel class="px-2 hover:bg-black/20 outline-t border-t border-black/10 max-w-80 leading-7.5 box-border">
@@ -249,14 +267,16 @@ function InContestPage() {
 											<div class="ml-1">
 												<Select.Value<Problem>>
 													{(state) => {
-														console.log(state.selectedOption(), selectedProblem())
+														console.log(
+															state.selectedOption(),
+															selectedProblem(),
+														);
 														return (
-														<div class="flex flex-row flex-nowrap">
-															<ProblemInfo
-																problem={state.selectedOption()}
-															/>
-														</div>
-													)}}
+															<div class="flex flex-row flex-nowrap">
+																<ProblemInfo problem={state.selectedOption()} />
+															</div>
+														);
+													}}
 												</Select.Value>
 											</div>
 										</div>
@@ -282,8 +302,8 @@ function InContestPage() {
 								class="flex flex-row gap-1 justify-center items-center"
 							>
 								<FaSolidListSquares size="1rem" class="float-left" />
-									Submissions
-								</Tabs.Trigger>
+								Submissions
+							</Tabs.Trigger>
 							<Tabs.Trigger
 								disabled={!isLoggedIn()}
 								value="print"
@@ -295,13 +315,21 @@ function InContestPage() {
 						<Tabs.Content value="problems" class="grow w-full">
 							<BasePortalRoot>
 								<SplitPanel direction="horizontal" class="h-full" includeMargin>
-									<Panel> <ProblemViewer problemId={ () => selectedProblem().id } /> </Panel>
+									<Panel>
+										<ProblemViewer
+											problemId={() => selectedProblem().id}
+										/>
+									</Panel>
 									<SplitPanel direction="vertical">
 										<Panel>
-											<SubmissionEntries submissions={submissions}/>
+											<SubmissionEntries submissions={submissions} />
 										</Panel>
 										<Panel>
-											<SubmissionEditor onSubmit={submitCode} availableLanguages={() => Object.keys(languages())} disableSubmission={!isLoggedIn()}/>
+											<SubmissionEditor
+												onSubmit={submitCode}
+												availableLanguages={() => Object.keys(languages())}
+												disableSubmission={!isLoggedIn()}
+											/>
 										</Panel>
 									</SplitPanel>
 								</SplitPanel>
@@ -315,7 +343,7 @@ function InContestPage() {
 											<div class="absolute z-10 h-full w-full bg-sky-200/50" />
 										</Show>
 										<div class="relative z-0">
-											<SubmissionEntries submissions={frozenSubmissions}/>
+											<SubmissionEntries submissions={frozenSubmissions} />
 										</div>
 									</div>
 								</div>
@@ -330,12 +358,12 @@ function InContestPage() {
 									<Panel>
 										<AppEditor>
 											<AppEditor.Toolbar class="border-b border-gray-300">
-												<div class="grow"/>
+												<div class="grow" />
 
-												<SubmitPrintButton disable={false}/>
+												<SubmitPrintButton disable={false} />
 											</AppEditor.Toolbar>
 											<div class="h-full w-full overflow-auto">
-												<AppEditor.Editor class="h-full"/>	
+												<AppEditor.Editor class="h-full" />
 											</div>
 										</AppEditor>
 									</Panel>
@@ -344,10 +372,14 @@ function InContestPage() {
 							<Show when={isStaff()}>
 								<SplitPanel direction="horizontal" class="h-full">
 									<Panel>
-										<StaffPrintSelect selectedPrintId={selectedPrint} setSelectedPrintId={setSelectedPrint} prints={prints} />
+										<StaffPrintSelect
+											selectedPrintId={selectedPrint}
+											setSelectedPrintId={setSelectedPrint}
+											prints={prints}
+										/>
 									</Panel>
 									<Panel>
-										<StaffPrintViewer print={selectedPrint}/>
+										<StaffPrintViewer print={selectedPrint} />
 									</Panel>
 								</SplitPanel>
 							</Show>

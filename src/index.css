@@ -53,6 +53,5 @@ body,
 }
 
 @utility column-auto-fit-* {
-	grid-template-columns: repeat(auto-fit, --spacing(--value(integer)))
+	grid-template-columns: repeat(auto-fit, --spacing(--value(integer)));
 }
-

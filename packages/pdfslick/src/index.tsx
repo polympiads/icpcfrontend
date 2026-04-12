@@ -6,9 +6,9 @@ import { PdfViewerToolbar } from "./PdfViewerToolbar";
 import { PdfViewerViewer } from "./PdfViewerViewer";
 
 export const PDFViewer = Object.assign(PdfViewerRoot, {
-  Toolbar: PdfViewerToolbar,
-  Thumbsbar: PdfViewerThumbsbar,
-  Viewer: PdfViewerViewer,
-  Loading: PdfViewerLoading,
-  Error: PdfViewerError
-})
+	Toolbar: PdfViewerToolbar,
+	Thumbsbar: PdfViewerThumbsbar,
+	Viewer: PdfViewerViewer,
+	Loading: PdfViewerLoading,
+	Error: PdfViewerError,
+});

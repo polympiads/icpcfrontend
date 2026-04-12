@@ -343,4 +343,3 @@ function LanguageSelect(props: LanguageSelectProps) {
 		</>
 	);
 }
-

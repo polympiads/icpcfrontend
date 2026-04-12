@@ -22,38 +22,42 @@ import scala from "devicon/icons/scala/scala-original.svg?raw";
 import { createMemo, splitProps } from "solid-js";
 
 const languageIdToName: Record<string, string> = {
-  ada: "Ada",
-  c: "C",
-  cpp: "C++",
-  csharp: "C#",
-  go: "Go",
-  haskell: "Haskell",
-  java: "Java",
-  javascript: "JavaScript",
-  kotlin: "Kotlin",
-  objectivec: "Objective-C",
-  pascal: "Pascal",
-  php: "PHP",
-  prolog: "Prolog",
-  python2: "Python 2",
-  python3: "Python 3",
-  ruby: "Ruby",
-  rust: "Rust",
-  scala: "Scala",
+	ada: "Ada",
+	c: "C",
+	cpp: "C++",
+	csharp: "C#",
+	go: "Go",
+	haskell: "Haskell",
+	java: "Java",
+	javascript: "JavaScript",
+	kotlin: "Kotlin",
+	objectivec: "Objective-C",
+	pascal: "Pascal",
+	php: "PHP",
+	prolog: "Prolog",
+	python2: "Python 2",
+	python3: "Python 3",
+	ruby: "Ruby",
+	rust: "Rust",
+	scala: "Scala",
 };
 
-export function LanguageEntry(props: PolymorphicProps<"div", { language: string }>) {
-  return (
-    <div
-      class={clsx(
-        "h-8 flex flex-row items-center py-1 px-2 duration-75 overflow-hidden",
-        props.class,
-      )}
-    >
-      <LanguageIcon language={props.language} class="h-full aspect-square" />
-      <div class="py-1 pl-1 font-medium"> {languageIdToName[props.language]} </div>
-    </div>
-  );
+export function LanguageEntry(
+	props: PolymorphicProps<"div", { language: string }>,
+) {
+	return (
+		<div
+			class={clsx(
+				"h-8 flex flex-row items-center py-1 px-2 duration-75 overflow-hidden",
+				props.class,
+			)}
+		>
+			<LanguageIcon language={props.language} class="h-full aspect-square" />
+			<div class="py-1 pl-1 font-medium">
+				{languageIdToName[props.language]}
+			</div>
+		</div>
+	);
 }
 
 export const pascalSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
@@ -64,48 +68,48 @@ export const pascalSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6
 const FALLBACK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="100%" height="100%" fill="#ccc" /><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="12" fill="#333">?</text></svg>`;
 
 const ICON_MAP: Record<string, string> = {
-  ada,
-  c,
-  cpp,
-  csharp,
-  go,
-  haskell,
-  java,
-  javascript,
-  kotlin,
-  objectivec,
-  pascal,
-  php,
-  prolog,
-  python2: python,
-  python3: python,
-  ruby,
-  rust,
-  scala,
+	ada,
+	c,
+	cpp,
+	csharp,
+	go,
+	haskell,
+	java,
+	javascript,
+	kotlin,
+	objectivec,
+	pascal,
+	php,
+	prolog,
+	python2: python,
+	python3: python,
+	ruby,
+	rust,
+	scala,
 };
 
 type LanguageIconProps = {
-  language: string;
-  size?: number;
-  class?: string;
+	language: string;
+	size?: number;
+	class?: string;
 };
 
 export function LanguageIcon(props: LanguageIconProps) {
-  const [local, rest] = splitProps(props, ["language", "size", "class"]);
+	const [local, rest] = splitProps(props, ["language", "size", "class"]);
 
-  const svg = createMemo(() => {
-    const langKey = local.language.toLowerCase().trim();
-    return ICON_MAP[langKey] ?? FALLBACK_SVG;
-  });
+	const svg = createMemo(() => {
+		const langKey = local.language.toLowerCase().trim();
+		return ICON_MAP[langKey] ?? FALLBACK_SVG;
+	});
 
-  return (
-    <div
-      class={clsx(
-        local.class,
-        "h-full aspect-square [&_svg]:w-full [&_svg]:h-full",
-      )}
-      innerHTML={svg()}
-      {...rest}
-    />
-  );
+	return (
+		<div
+			class={clsx(
+				local.class,
+				"h-full aspect-square [&_svg]:w-full [&_svg]:h-full",
+			)}
+			innerHTML={svg()}
+			{...rest}
+		/>
+	);
 }
