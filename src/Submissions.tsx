@@ -590,7 +590,7 @@ export function SubmissionView(props: { submission_id: string }) {
                     <CopyButton />
                     <LanguageEntry language={submission().language_id} />
                   </AppEditor.Toolbar>
-                  <div class="relative w-full z-0 max-h-60 overflow-auto">
+                  <div class="grow z-0 overflow-auto">
                     <AppEditor.Editor />
                   </div>
                 </AppEditor>
