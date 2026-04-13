@@ -5,6 +5,9 @@ import type { Accessor } from "solid-js";
 import { PDFViewer } from "../packages/pdfslick/src";
 import { LoadingAnimation } from "./LoadingAnimation";
 import { useStatement } from "./worker/hooks/useProblems";
+import type { Submission } from "./worker/types/data/Submission";
+import { sortRecordValues } from "./utils";
+import type { JudgementType } from "./worker/types/data/JudgementTypes";
 
 export function ProblemViewer(props: { problemId: Accessor<string> }) {
   const [statement, statementActions] = useStatement(props.problemId);
@@ -47,4 +50,60 @@ export function ProblemViewer(props: { problemId: Accessor<string> }) {
       </PDFViewer.Error>
     </PDFViewer>
   );
+}
+
+export type ProblemStatus = {
+  solved: boolean,
+  failed_count: number,
+  penalty_count: number
+}
+
+type ProblemStatusForUser = Record<string, ProblemStatus>
+type ProblemStatusForAllUser = Record<string, ProblemStatusForUser>
+
+export function computeProblemStatusForAllUser(
+  submissions: Record<string, Submission>, 
+  judgement_types: Record<string, JudgementType>
+): ProblemStatusForAllUser {
+  const sortedSubmissions = sortRecordValues(submissions, (v) => v.id)
+
+  let user_map: Record<string, ProblemStatusForUser> = {}
+  for(const submission of sortedSubmissions) {
+    const user_id = submission.account_id
+    if (user_id === undefined) {
+      continue;
+    }
+    const problem_id = submission.problem_id;
+
+    if (!(user_id in user_map)) {
+      user_map[user_id] = {}
+    }
+    if (!(problem_id in user_map[user_id])) {
+      user_map[user_id][problem_id] = { failed_count: 0, solved: false, penalty_count: 0 }
+    } else if (user_map[user_id][problem_id].solved) {
+      continue;
+    }
+
+    const judgement_type_id = submission.judgement_type_id;
+    if (judgement_type_id === undefined) {
+      continue;
+    }
+
+    if (!(judgement_type_id in judgement_types)) {
+      continue;
+    }
+    const judgement_type = judgement_types[judgement_type_id]
+    
+    if (judgement_type.solved) {
+      user_map[user_id][problem_id].solved = true
+    } else {
+      user_map[user_id][problem_id].failed_count += 1;
+    }
+
+    if (judgement_type.penalty) {
+      user_map[user_id][problem_id].penalty_count += 1
+    }
+  }
+
+  return user_map
 }

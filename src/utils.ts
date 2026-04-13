@@ -1,6 +1,6 @@
 export function sortRecordValues<T extends Record<string, any>>(
   record: T,
-  key: (v: T) => any,
+  key: (v: T[keyof T]) => any,
   direction: "asc" | "desc" = "asc",
 ): T[keyof T][] {
   const values = Object.values(record);

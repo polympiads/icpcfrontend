@@ -4,10 +4,11 @@ import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
 import { type Dayjs } from "dayjs";
 import dayjs from './dayjs'
 import type { Duration } from "dayjs/plugin/duration";
-import { ArrowLeft, ChevronDown, Plus, Printer } from "lucide-solid";
+import { ArrowLeft, Check, ChevronDown, Plus, Printer, X } from "lucide-solid";
 import { BsExclamationCircle } from "solid-icons/bs";
 import { FaRegularCalendarAlt, FaSolidListSquares } from "solid-icons/fa";
 import {
+  type Accessor,
   createEffect,
   createMemo,
   createSignal,
@@ -31,7 +32,7 @@ import {
   StaffPrintViewer,
   SubmitPrintButton,
 } from "./Prints";
-import { ProblemViewer } from "./Problems";
+import { computeProblemStatusForAllUser, ProblemViewer, type ProblemStatus } from "./Problems";
 import { Panel, SplitPanel } from "./SplitPanel";
 import {
   SubmissionEditor,
@@ -50,6 +51,8 @@ import { useSubmissions } from "./worker/hooks/useSubmissions";
 import { useAccounts } from "./worker/hooks/useUsers";
 import type { Problem } from "./worker/types/data/Problems";
 import type { Submission } from "./worker/types/data/Submission";
+import { useJudgementTypes } from "./worker/hooks/useJudgementTypes";
+import clsx from "clsx";
 
 function ContestSelectionPage() {
   return (
@@ -68,13 +71,92 @@ function ContestSelectionPage() {
   );
 }
 
-function ProblemInfo(props: { problem: Problem }) {
-    return (
-      <>
-        {props.problem.label} - {props.problem.name}
-      </>
-    );
+function ProblemInfo(props: { problem: Problem, status: Accessor<ProblemStatus | undefined>, penalty_time: Accessor<Duration | undefined> }) {
+  function formatTime(time: Dayjs | Duration) {
+    let string = "";
+    if (dayjs.isDayjs(time)) {
+      if (time.hour() > 0) {
+        string += `${time.hour()}h`;
+      }
+      if (time.minute() > 0) {
+        string += `${time.minute()}m`;
+      }
+      if (time.second() > 0) {
+        string += `${time.minute()}s`;
+      }
+    } else {
+      if (time.hours() > 0) {
+        string += `${time.hours()}h`;
+      }
+      if (time.minutes() > 0) {
+        string += `${time.minutes()}m`;
+      }
+      if (time.seconds() > 0) {
+        string += `${time.seconds()}s`;
+      }
+    }
+
+    if (string.length === 0) {
+      string = "0m";
+    }
+
+    return string;
   }
+
+  const penaltyTime = createMemo(() => {
+    const penalty_time = props.penalty_time()
+    const status = props.status()
+    if (!penalty_time || !status) {
+      return;
+    }
+
+    return dayjs.duration(penalty_time.asMilliseconds() * status.penalty_count)
+  })
+
+  const isFailing = createMemo(() => {
+    const status = props.status()
+    if (!status) {
+      return false
+    }
+
+    return status.failed_count > 0 && !status.solved
+  })
+
+  const style = createMemo(() => clsx(
+    "flex flex-row items-center flex-nowrap p-1", 
+    props.status()?.solved && "bg-linear-to-r from-transparent to-green-200 hover:to-green-300",
+    isFailing() && "bg-linear-to-r from-transparent to-red-200 hover:to-red-300"
+  ))
+  
+  return (
+    <>
+      <div class={style()}>
+        <div class="flex flex-row shrink-0 mr-1">
+          {props.problem.label} - 
+        </div>
+
+        <PingPongScroller hoverOnly>
+          <div>
+            {props.problem.name}
+          </div>
+        </PingPongScroller>
+
+        <div class="flex items-center justify-center shrink-0 flex-nowrap mx-1">
+          <Show when={props.status()?.solved}>
+            <Check class="w-8"/>
+          </Show>
+          <Show when={isFailing()}>
+            E <X size="0.7rem"/> { props.status()?.failed_count }
+          </Show>
+        </div>
+        <div class="text-gray-500 shrink-0 min-w-12">
+          <span class="flex flex-row flex-nowrap items-center shrink-0 text-sm font-medium leading-none">E { props.status()?.failed_count ?? 0 } </span>
+          <span class="flex flex-row flex-nowrap items-center shrink-0 text-sm font-medium leading-none">P { formatTime(penaltyTime() ?? dayjs.duration(0)) }</span>
+        </div>
+      </div>
+    </>
+  );
+}
 
 function InContestPage() {
   const urlParams = useParams();
@@ -104,6 +186,7 @@ function InContestPage() {
   const prints = usePrints();
   const contest = useContest();
   const contestState = useContestState();
+  const judgementTypes = useJudgementTypes()
   const isFrozen = createMemo(() => {
     const nowVal = now();
     const contestVal = contest();
@@ -116,6 +199,8 @@ function InContestPage() {
 
     return nowVal.diff(contestVal.scoreboard_freeze_time) > 0;
   });
+  const problemStatus = createMemo(() => computeProblemStatusForAllUser(submissions(), judgementTypes()))
+  createEffect(() => console.log(problemStatus()))
 
   const frozenSubmissions = createMemo<Record<string, Submission>>(
     (old) => (isFrozen() ? old : submissions()),
@@ -306,6 +391,18 @@ function InContestPage() {
     );
   });
 
+  function getProblemStatus(id: string) {
+    if (id === undefined)
+      return
+
+    const whoamiVal = auth.whoami()
+    const problemStatusVal = problemStatus()
+    if (whoamiVal.is_authenticated && problemStatusVal)
+      if (whoamiVal.id in problemStatusVal)
+        if (id in problemStatusVal[whoamiVal.id])
+          return problemStatusVal[whoamiVal.id][id]
+  }
+
   return (
     <div class="relative w-full h-full flex flex-col z-0">
       <div class="relative h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row items-center z-10">
@@ -335,8 +432,8 @@ function InContestPage() {
           value={selectedTab()}
           onChange={setSelectedTab}
         >
-          <Tabs.List class="*:bg-white *:border *:border-black/10 *:p-1 *:ui-highlighted:shadow-md *:opacity-75 *:ui-highlighted:opacity-100 *:ui-highlighted:z-10 *:ui-disabled:hover:border-black/10 *:ui-highlighted:hover:border-black/10 *:ui-highlighted:scale-105 *:ui-highlighted:cursor-auto *:cursor-pointer *:rounded-lg *:min-w-30 *:hover:opacity-100 *:hover:border-black/30 *:duration-75 *:ui-disabled:opacity-50 px-2.5 pt-2 gap-2 flex flex-row">
-            <Tabs.Trigger value="problems">
+          <Tabs.List class="*:bg-white *:border *:border-black/10 *:ui-highlighted:shadow-md *:opacity-75 *:ui-highlighted:opacity-100 *:ui-highlighted:z-10 *:ui-disabled:hover:border-black/10 *:ui-highlighted:hover:border-black/10 *:ui-highlighted:scale-105 *:ui-highlighted:cursor-auto *:cursor-pointer *:rounded-lg *:min-w-30 *:hover:opacity-100 *:hover:border-black/30 *:duration-75 *:ui-disabled:opacity-50 *:overflow-hidden px-2.5 pt-2 gap-2 flex flex-row">
+            <Tabs.Trigger value="problems" class="pl-1 rounded-lg ui-selected:border-black/20!" style={{overflow: "hidden"}}>
               <Show when={problems() !== undefined}>
                 <Select
                   value={selectedProblem()}
@@ -346,31 +443,32 @@ function InContestPage() {
                   optionTextValue="name"
                   itemComponent={(props) => (
                     <Select.Item item={props.item}>
-                      <Select.ItemLabel class="px-2 hover:bg-black/20 outline-t border-t border-black/10 max-w-80 leading-7.5 box-border">
-                        <ProblemInfo problem={props.item.rawValue} />
+                      <Select.ItemLabel class="outline-t border-t border-black/10 max-w-80 leading-7.5 box-border cursor-pointer">
+                        <ProblemInfo problem={props.item.rawValue} status={() => getProblemStatus(props.item.rawValue.id)} penalty_time={() => contest()?.penalty_time} />
                       </Select.ItemLabel>
                     </Select.Item>
                   )}
                 >
-                  <div class="flex flex-row flex-nowrap items-center">
-                    <Select.Trigger class="flex flex-row flex-nowrap items-center hover:bg-black/20 rounded-full border border-black/20 cursor-pointer">
-                      <Select.Icon class="">
-                        <ChevronDown size="1.4rem" />
-                      </Select.Icon>
-                    </Select.Trigger>
-                    <div class="ml-1">
-                      <Select.Value<Problem>>
-                        {(state) => (
-                          <div class="flex flex-row flex-nowrap">
-                            <ProblemInfo problem={state.selectedOption()} />
-                          </div>
-                        )}
-                      </Select.Value>
+                  <div class="flex items-center overflow-hidden">
+                    <div class="shrink-0 mr-1">
+                      <Select.Trigger class="flex flex-row flex-nowrap items-center hover:bg-black/20 rounded-full border border-black/20 cursor-pointer">
+                        <Select.Icon>
+                          <ChevronDown size="1.4rem" />
+                        </Select.Icon>
+                      </Select.Trigger>
                     </div>
+                    
+                    <Select.Value<Problem>>
+                      {(state) => (
+                        <div class="grow flex flex-row flex-nowrap">
+                          <ProblemInfo problem={state.selectedOption()} status={() => getProblemStatus(state.selectedOption().id)} penalty_time={() => contest()?.penalty_time}/>
+                        </div>
+                      )}
+                    </Select.Value>
                   </div>
                   <Select.Portal>
-                    <Select.Content class="bg-white border border-black/20 rounded-md shadow-lg">
-                      <div class="max-h-ui-popup-h max-w-ui-popup-w overflow-x-auto">
+                    <Select.Content class="bg-white border border-black/10 rounded-md shadow-lg">
+                      <div class="max-h-ui-popup-h max-w-ui-popup-w overflow-x-auto rounded-md">
                         <Select.Listbox class="flex flex-col flex-wrap max-h-ui-popup-h" />
                       </div>
                     </Select.Content>
@@ -380,14 +478,14 @@ function InContestPage() {
             </Tabs.Trigger>
             <Tabs.Trigger
               value="scoreboard"
-              class="flex flex-row gap-1 justify-center items-center"
+              class="flex flex-row gap-1 justify-center items-center p-1"
             >
               <FaRegularCalendarAlt size="1rem" class="float-left" />
               Scoreboard
             </Tabs.Trigger>
             <Tabs.Trigger
               value="submissions"
-              class="flex flex-row gap-1 justify-center items-center"
+              class="flex flex-row gap-1 justify-center items-center p-1"
             >
               <FaSolidListSquares size="1rem" class="float-left" />
               Submissions
@@ -395,7 +493,7 @@ function InContestPage() {
             <Tabs.Trigger
               disabled={!canParticipate()}
               value="print"
-              class="flex flex-row gap-1 justify-center items-center"
+              class="flex flex-row gap-1 justify-center items-center p-1"
             >
               <Printer size="1rem" /> Print
             </Tabs.Trigger>
