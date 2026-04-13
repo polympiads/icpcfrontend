@@ -37,7 +37,7 @@ import { useAuth } from "./worker/context/AuthContext";
 import { useContest } from "./worker/hooks/useContest";
 import { useJudgementTypes } from "./worker/hooks/useJudgementTypes";
 import { useProblem } from "./worker/hooks/useProblems";
-import { useAccount, useAccounts, useTeam } from "./worker/hooks/useUsers";
+import { useAccount } from "./worker/hooks/useUsers";
 import type { Contest } from "./worker/types/data/Contest";
 import type { JudgementType } from "./worker/types/data/JudgementTypes";
 import type { Submission } from "./worker/types/data/Submission";

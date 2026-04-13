@@ -2,7 +2,7 @@ import { dictsEqual } from "./List";
 
 export type Account = {
   id: string;
-  name: string;
+  username: string;
   type: "team" | "judge";
 };
 
@@ -20,7 +20,7 @@ export function accountEquals(
   if (j1 === undefined && j2 === undefined) return true;
   if (j1 === undefined || j2 === undefined) return false;
 
-  return j1.id == j2.id && j1.name == j2.name && j1.type == j2.type;
+  return j1.id == j2.id && j1.username == j2.username && j1.type == j2.type;
 }
 export function accountDictsEquals(
   j1: { [key: string]: Account },
