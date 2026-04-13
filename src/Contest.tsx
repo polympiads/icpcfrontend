@@ -8,7 +8,6 @@ import { AiFillFileUnknown } from "solid-icons/ai";
 import { BsExclamationCircle, BsPauseCircle } from "solid-icons/bs";
 import { FaSolidFlagCheckered } from "solid-icons/fa";
 import {
-  createEffect,
   createMemo,
   ErrorBoundary,
   For,
