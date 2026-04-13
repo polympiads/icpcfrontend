@@ -36,6 +36,11 @@ export function UserLoginWidget() {
     whoami().is_authenticated ? (whoami() as WhoAmI_Auth) : undefined,
   );
 
+  const isStaff = createMemo(() => {
+    const accountVal = userInfo()
+    return accountVal !== undefined && accountVal.is_staff
+  })
+
   function onError() {
     setLoginFailedReason("An error occured during login.");
   }
@@ -79,7 +84,15 @@ export function UserLoginWidget() {
 
   return (
     <Popover>
-      <Popover.Trigger class="relative h-14 w-14 border border-black/10 rounded-md cursor-pointer">
+      <Popover.Trigger class="relative h-14 w-14 border border-black/10 rounded-md cursor-pointer" classList={{ "border-2": isStaff(), "border-purple-400": isStaff() }}>
+        <Show when={isStaff()}>
+          <div class="absolute bottom-0 w-full flex justify-center translate-y-1/2 z-20">
+            <div class="font-bold text-xs py-0.5 px-1.5 bg-purple-400 rounded-full text-white scale-90">
+              Staff
+            </div>
+          </div>
+        </Show>
+        
         <Show when={loginFailedReason() !== undefined}>
           <div class="absolute w-full h-full bg-red-200/70 rounded-md z-10 p-2 text-red-500">
             <BsExclamationCircle class="w-full h-full" />
