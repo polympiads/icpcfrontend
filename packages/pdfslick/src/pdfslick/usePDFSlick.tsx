@@ -98,20 +98,27 @@ export const usePDFSlick: TUsePDFSlick = (url, options) => {
   });
   createEffect(() => {
     const instance = pdfSlick();
+
+    if (!instance) return;
+
     const urlValue = url();
+    console.log(urlValue);
 
     //console.log(instance, urlValue)
-
-    if (!instance || !urlValue) return;
-
     setIsDocumentLoaded(false);
     setError(null);
 
-    //console.log("Loading document")
-    instance.loadDocument(urlValue, options).then(() => {
-      //console.log("Done")
-      setIsDocumentLoaded(true);
-    });
+    if (urlValue) {
+      //console.log("Loading document")
+      instance.loadDocument(urlValue, options).then(() => {
+        //console.log("Done")
+        setIsDocumentLoaded(true);
+      });
+    } else {
+      console.log('a')
+      instance.clearDocument()
+    }
+
   });
 
   return {

@@ -797,6 +797,34 @@ export class PDFSlick {
   getPageView(ix: number) {
     return this.viewer.getPageView(ix) as PDFPageView;
   }
+  
+  async clearDocument() {
+    this.#currentLoadingTask?.destroy();
+    this.#currentLoadingTask = undefined;
+
+    this.document?.cleanup();
+    this.viewer?.cleanup();
+    this.unbindEvents();
+
+    this.viewer.setDocument(null as unknown as PDFDocumentProxy);
+    this.linkService.setDocument(null as unknown as PDFDocumentProxy);
+    this.thumbnailViewer?.setDocument(null as unknown as PDFDocumentProxy);
+
+    if (this.url && typeof this.url === "string") {
+      try { URL.revokeObjectURL(this.url); } catch (_) {}
+    }
+
+    this.document = null;
+    this.url = undefined;
+    this.filename = "";
+
+    this.store.setState({
+      isDocumentLoaded: false,
+      numPages: 0,
+      pageNumber: 1,
+      filename: "",
+    });
+  }
 
   /**
    * Add event listener on the pdfViewer eventBus
