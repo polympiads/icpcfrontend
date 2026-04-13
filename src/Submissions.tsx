@@ -353,7 +353,7 @@ function SubmissionEntryWithCode(props: {
       <Accordion.Header class="relative z-10">
         <Accordion.Trigger class="w-full group">
           <SubmissionEntry
-            index={props.index() + 1}
+            index={props.index()}
             submission={props.submission}
             doNotShowUser={props.doNotShowUser}
           />
@@ -467,7 +467,6 @@ export function SubmissionEntries(
 
     return sortRecordValues(submissionsToShow, (v) => Number(v.id), "desc");
   });
-  //console.log(sortedSubmissions());
 
   const finalStyle = clsx(
     "relative h-full overflow-x-hidden *:not-last:mb-3 overflow-auto grow",
