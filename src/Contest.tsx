@@ -1,6 +1,7 @@
 import { Button } from "@kobalte/core/button";
 import { A } from "@solidjs/router";
-import dayjs, { type Dayjs, duration } from "dayjs";
+import { type Dayjs } from "dayjs";
+import dayjs from './dayjs'
 import type { Duration } from "dayjs/plugin/duration";
 import { ArrowLeft, Hourglass, Plus, RotateCw } from "lucide-solid";
 import { AiFillFileUnknown } from "solid-icons/ai";
@@ -19,9 +20,7 @@ import { LoadingAnimation } from "./LoadingAnimation";
 import { useNow } from "./Now";
 import { useContestState } from "./worker/hooks/useContest";
 import { useContests } from "./worker/hooks/useContests";
-import type { Contest } from "./worker/types/data/Contest";
-
-dayjs.extend(duration);
+import type { Contest, ContestState } from "./worker/types/data/Contest";
 
 export function ContestSelect() {
   const { contests, contestsActions } = useContests();

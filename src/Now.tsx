@@ -1,5 +1,5 @@
 import type { Dayjs } from "dayjs";
-import dayjs from "dayjs";
+import dayjs from "./dayjs";
 import {
   type Accessor,
   createContext,

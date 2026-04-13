@@ -1,7 +1,4 @@
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-
-dayjs.extend(duration);
+import dayjs from "../../../dayjs";
 
 export function parseTime(time: string) {
   return dayjs(time);

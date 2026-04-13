@@ -1,7 +1,8 @@
 import { Select } from "@kobalte/core/select";
 import { Tabs } from "@kobalte/core/tabs";
 import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
-import dayjs, { type Dayjs, duration } from "dayjs";
+import { type Dayjs } from "dayjs";
+import dayjs from './dayjs'
 import type { Duration } from "dayjs/plugin/duration";
 import { ArrowLeft, ChevronDown, Plus, Printer } from "lucide-solid";
 import { BsExclamationCircle } from "solid-icons/bs";
@@ -49,8 +50,6 @@ import { useSubmissions } from "./worker/hooks/useSubmissions";
 import { useAccounts } from "./worker/hooks/useUsers";
 import type { Problem } from "./worker/types/data/Problems";
 import type { Submission } from "./worker/types/data/Submission";
-
-dayjs.extend(duration);
 
 function ContestSelectionPage() {
   return (
