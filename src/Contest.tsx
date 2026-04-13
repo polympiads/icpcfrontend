@@ -28,18 +28,18 @@ export function ContestSelect() {
 
   return (
     <ErrorBoundary
-      fallback={
+      fallback={(_, reset) => (
         <div class="w-full h-full flex flex-col items-center justify-center">
           <BsExclamationCircle size="3em" />
           <div class="text-xl font-medium mb-3"> Something went wrong. </div>
           <Button
             class="border border-black/10 p-2 rounded-md flex flex-row items-center hover:bg-gray-100"
-            onClick={() => contestsActions.refetch()}
+            onClick={() => {contestsActions.refetch(); reset()}}
           >
             <RotateCw size="1em" /> <div class="ml-1">Retry</div>
           </Button>
         </div>
-      }
+      )}
     >
       <Suspense
         fallback={
