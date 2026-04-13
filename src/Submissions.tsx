@@ -171,18 +171,47 @@ const bg_map: Record<Status, string> = {
 };
 
 function AccountInfo(props: { account_id: string }) {
+  const { whoami } = useAuth()
   const account = useAccount(props.account_id);
-  createEffect(() => console.log(account()));
+
+  const isCurrentUser = createMemo(() => {
+    const whoamiVal = whoami()
+    if (whoamiVal === undefined || !whoamiVal.is_authenticated) {
+      return false
+    }
+
+    return whoamiVal.id == props.account_id
+  })
+  const isJudge = createMemo(() => {
+    const accountVal = account()
+    return accountVal !== undefined && accountVal.type === "judge"
+  })
 
   return (
     <>
-      <FaSolidUser size="1.5rem" class="opacity-40 shrink-0" />
+      <div class="relative h-9 aspect-square p-1 bg-white rounded-full border border-black/10 flex items-center justify-center" classList={{ "border-2": isJudge(), "border-purple-400": isJudge() }}>
+        <FaSolidUser size="1.3rem" class="opacity-40 shrink-0" />
 
-      <PingPongScroller hoverOnly class="mx-1 text-lg">
+        <Show when={isJudge()}>
+          <div class="absolute bottom-px right-0 translate-1/4 text-xs font-bold bg-purple-400 w-3 h-3 leading-none rounded-full text-white">
+            <div class="scale-90">
+              J
+            </div>
+          </div>
+        </Show>
+      </div>
+
+      <PingPongScroller hoverOnly class="mx-1 text-lg leading-4">
         {account()?.username !== undefined
           ? account()?.username
           : "[Unknown team]"}
       </PingPongScroller>
+
+      <Show when={isCurrentUser()}>
+        <div class="font-bold text-xs border border-black/30 py-0.5 px-1.5 rounded-full bg-white mr-1">
+          You
+        </div>
+      </Show>
     </>
   );
 }
