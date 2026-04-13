@@ -37,7 +37,7 @@ import { useAuth } from "./worker/context/AuthContext";
 import { useContest } from "./worker/hooks/useContest";
 import { useJudgementTypes } from "./worker/hooks/useJudgementTypes";
 import { useProblem } from "./worker/hooks/useProblems";
-import { useTeam } from "./worker/hooks/useUsers";
+import { useAccount, useAccounts, useTeam } from "./worker/hooks/useUsers";
 import type { Contest } from "./worker/types/data/Contest";
 import type { JudgementType } from "./worker/types/data/JudgementTypes";
 import type { Submission } from "./worker/types/data/Submission";
@@ -170,15 +170,16 @@ const bg_map: Record<Status, string> = {
     "bg-linear-to-r from-gray-50 to-gray-100 hover:from-gray-200 hover:to-gray-300",
 };
 
-function UserInfo(props: { team_id: string }) {
-  const team = useTeam(props.team_id);
+function AccountInfo(props: { account_id: string }) {
+  const account = useAccount(props.account_id)
+  createEffect(() => console.log(account()))
 
   return (
     <>
-      <FaSolidUser size="1.5rem" class="opacity-40" />
+      <FaSolidUser size="1.5rem" class="opacity-40 shrink-0" />
 
-      <PingPongScroller hoverOnly>
-        {team()?.name ?? "[Unknown team]"}
+      <PingPongScroller hoverOnly class="mx-1 text-lg">
+        {account()?.username !== undefined ? account()?.username : "[Unknown team]"}
       </PingPongScroller>
     </>
   );
@@ -232,7 +233,7 @@ function SubmissionStatusIcon(props: { status: Status }) {
   );
 }
 
-function SubmissionEntry(props: { index: number; submission: Submission }) {
+function SubmissionEntry(props: { index: number; submission: Submission, doNotShowUser?: boolean }) {
   const judgments = useJudgementTypes();
   const judgment = createMemo(() =>
     props.submission.judgement_type_id
@@ -248,7 +249,7 @@ function SubmissionEntry(props: { index: number; submission: Submission }) {
     const [local, other] = splitProps(props, ["problem_id"]);
     const problem = useProblem(local.problem_id);
 
-    return <div {...other}>P {problem()?.label}</div>;
+    return <div {...other}>P.{problem()?.label}</div>;
   }
 
   return (
@@ -264,12 +265,12 @@ function SubmissionEntry(props: { index: number; submission: Submission }) {
         />
         <LanguageIcon language={props.submission.language_id} class="p-1" />
 
-        <Show when={props.submission.team_id !== undefined}>
+        <Show when={props.submission.account_id !== undefined && !props.doNotShowUser}>
           <div class="h-full flex flex-row *:not-last:mr-2 items-center @max-3xs/submissionEntry:hidden shrink overflow-x-hidden">
             {/* Separator */}
             <div class="h-4/5 w-px bg-black/10"></div>
 
-            <UserInfo team_id={props.submission.team_id!} />
+            <AccountInfo account_id={props.submission.account_id!} />
           </div>
         </Show>
 
@@ -293,6 +294,7 @@ function SubmissionEntry(props: { index: number; submission: Submission }) {
 function SubmissionEntryWithCode(props: {
   submission: Submission;
   index: Accessor<number>;
+  doNotShowUser?: boolean 
 }) {
   const { whoami } = useAuth();
 
@@ -312,6 +314,7 @@ function SubmissionEntryWithCode(props: {
           <SubmissionEntry
             index={props.index() + 1}
             submission={props.submission}
+            doNotShowUser={props.doNotShowUser}
           />
         </Accordion.Trigger>
       </Accordion.Header>
@@ -453,6 +456,7 @@ export function SubmissionEntries(
                   <SubmissionEntryWithCode
                     submission={item}
                     index={() => sortedSubmissions().length - index()}
+                    doNotShowUser={props.thisUserOnly}
                   />
                 )}
               </For>
@@ -547,10 +551,10 @@ export function SubmissionView(props: { submission_id: string }) {
         </div>
         <div class="flex flex-col ml-2">
           <div class="text-3xl">{contest()?.name}</div>
-          <div class="flex flex-row">
-            <Show when={submission()?.team_id !== undefined}>
-              <div class="max-w-40">
-                <UserInfo team_id={submission()!.team_id!} />
+          <div class="flex flex-row flex-nowrap">
+            <Show when={submission()?.account_id !== undefined}>
+              <div class="max-w-40 flex flex-row items-center">
+                <AccountInfo account_id={submission()!.account_id!} />
               </div>
             </Show>
             <Show when={status() !== undefined}>
