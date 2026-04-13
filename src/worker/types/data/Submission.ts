@@ -43,7 +43,6 @@ export function submissionEquals(
   s1: Submission | undefined,
   s2: Submission | undefined,
 ) {
-  // console.log("TEST EQUALITY", s1, s2)
   if (s1 === undefined && s2 === undefined) return true;
   if (s1 === undefined || s2 === undefined) return false;
 

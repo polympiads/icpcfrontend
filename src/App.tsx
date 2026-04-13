@@ -125,7 +125,6 @@ function InContestPage() {
   const [selectedProblem, setSelectedProblem] = createSignal<Problem>(
     Object.values(problems())[0],
   );
-  createEffect(() => console.log(problems()));
 
   function onProblemSelect(problem: Problem | null) {
     if (!problem) {
@@ -145,7 +144,6 @@ function InContestPage() {
 
     const wildParts = wild.split("/");
     const segment = wildParts[0];
-    console.log(segment);
 
     const firstProblem = Object.values(problems())[0];
     if (firstProblem === undefined) {
@@ -362,17 +360,11 @@ function InContestPage() {
                     </Select.Trigger>
                     <div class="ml-1">
                       <Select.Value<Problem>>
-                        {(state) => {
-                          console.log(
-                            state.selectedOption(),
-                            selectedProblem(),
-                          );
-                          return (
-                            <div class="flex flex-row flex-nowrap">
-                              <ProblemInfo problem={state.selectedOption()} />
-                            </div>
-                          );
-                        }}
+                        {(state) => (
+                          <div class="flex flex-row flex-nowrap">
+                            <ProblemInfo problem={state.selectedOption()} />
+                          </div>
+                        )}
                       </Select.Value>
                     </div>
                   </div>

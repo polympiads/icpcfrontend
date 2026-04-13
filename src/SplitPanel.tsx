@@ -62,7 +62,6 @@ function BaseSplitPanel(props: PolymorphicProps<"div", BaseSplitPanelProps>) {
   });
 
   onCleanup(() => {
-    //console.log("destroy")
     resolvedChildrenDivs.length = 0;
     gutters.forEach((gutter) => {
       gutter._dispose();

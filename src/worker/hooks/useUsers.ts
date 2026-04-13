@@ -70,12 +70,9 @@ export function useMyAccount() {
   return createMemo<Account | undefined>(
     () => {
       const _whoami = whoami();
-      console.log("I AM", _whoami);
       if (!_whoami.is_authenticated) {
         return undefined;
       }
-
-      console.log("ALL ACCOUNTS", feed().accounts);
 
       return feed().accounts[_whoami.id];
     },

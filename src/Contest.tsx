@@ -182,8 +182,6 @@ function ContestOverlayStatus(props: { contest: Contest, contestState: Accessor<
       () => remainingTime() !== undefined && remainingTime()! < 0,
     );
 
-    createEffect(() => console.log(props.contestState()));
-
     return (
       <Switch>
         <Match

@@ -43,7 +43,6 @@ export function useStatement(problemId: Accessor<string>) {
       _problemId: problemId(),
     }),
     async ({ problem, session }) => {
-      console.log(problem);
       if (problem === undefined) return undefined;
 
       const response = await fetch(apiEndpoint(problem.statement[0].href), {

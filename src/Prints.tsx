@@ -266,7 +266,6 @@ export function PrintEntries(
   const sortedPrints = createMemo(() =>
     sortRecordValues(props.prints(), (v) => Number(v.id), "desc"),
   );
-  //console.log(sortedSubmissions());
 
   const finalStyle = clsx(
     "relative h-full overflow-x-hidden *:not-last:mb-3 overflow-auto grow",
@@ -395,8 +394,6 @@ export function StaffPrintSelect(
     }
   });
 
-  //console.log(sortedSubmissions());
-
   const finalStyle = clsx(
     "relative h-full overflow-x-hidden *:not-last:mb-3 overflow-auto grow",
     props.class,
@@ -461,8 +458,6 @@ export function StaffPrintViewer(props: {
       if (!print) return;
       if (!print.pdf_href) return;
 
-      console.log(print.pdf_href);
-
       return await fetch("/api" + print.pdf_href, {
         headers: {
           "X-Session-Id": params.session,
@@ -472,8 +467,6 @@ export function StaffPrintViewer(props: {
         .then((blob) => blob.arrayBuffer());
     },
   );
-
-  createEffect(() => console.log(printPdfData()));
 
   return (
     <PDFViewer

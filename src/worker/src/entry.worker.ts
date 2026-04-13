@@ -24,7 +24,6 @@ self.onconnect = (event: MessageEvent) => {
     port.start();
 
     port.onmessage = async (event: MessageEvent<WorkerIncoming>) => {
-      //console.log(event.data)
       let didAnswer: boolean = false;
       const broadcast = (message: WorkerOutgoing) => {
         const payload: FullWorkerOutgoing = {
