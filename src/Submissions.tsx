@@ -235,6 +235,15 @@ function SubmissionStatusIcon(props: { status: Status }) {
   );
 }
 
+function ProblemLabel(
+  props: OverrideComponentProps<"div", { problem_id: string }>,
+) {
+  const [local, other] = splitProps(props, ["problem_id"]);
+  const problem = useProblem(local.problem_id);
+
+  return <div {...other}>P.{problem()?.label}</div>;
+}
+
 function SubmissionEntry(props: {
   index: number;
   submission: Submission;
@@ -248,15 +257,6 @@ function SubmissionEntry(props: {
   );
 
   const status = createMemo(() => computeStatus(props.submission, judgment()));
-
-  function ProblemLabel(
-    props: OverrideComponentProps<"div", { problem_id: string }>,
-  ) {
-    const [local, other] = splitProps(props, ["problem_id"]);
-    const problem = useProblem(local.problem_id);
-
-    return <div {...other}>P.{problem()?.label}</div>;
-  }
 
   return (
     <div class="relative h-12 w-full group @container/submissionEntry rounded-md overflow-hidden">
@@ -478,6 +478,25 @@ export function SubmissionEntries(
   );
 }
 
+function SubmissionStatuMessage(props: {
+  status: Status;
+  judgment: Accessor<JudgementType | undefined>;
+}) {
+  const message_map: Record<Status, string> = {
+    accepted: "Passed",
+    failed: "An error has occured. Contact assistance.",
+    reject: "Rejected",
+    running: "Running...",
+    waiting: "Waiting...",
+  };
+
+  if (props.status === "reject") {
+    return props.judgment()?.name ?? message_map[props.status];
+  } else {
+    return message_map[props.status];
+  }
+}
+
 export function SubmissionView(props: { submission_id: string }) {
   const { session } = useAuth();
   const contest = useContest();
@@ -533,25 +552,6 @@ export function SubmissionView(props: { submission_id: string }) {
     waiting:
       "bg-linear-to-r from-gray-50 to-gray-100 hover:from-gray-200 hover:to-gray-300",
   };
-
-  function SubmissionStatuMessage(props: {
-    status: Status;
-    judgment: Accessor<JudgementType | undefined>;
-  }) {
-    const message_map: Record<Status, string> = {
-      accepted: "Passed",
-      failed: "An error has occured. Contact assistance.",
-      reject: "Rejected",
-      running: "Running...",
-      waiting: "Waiting...",
-    };
-
-    if (props.status === "reject") {
-      return props.judgment()?.name ?? message_map[props.status];
-    } else {
-      return message_map[props.status];
-    }
-  }
 
   return (
     <div class="flex flex-col w-full h-full">

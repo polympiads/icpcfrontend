@@ -68,6 +68,14 @@ function ContestSelectionPage() {
   );
 }
 
+function ProblemInfo(props: { problem: Problem }) {
+    return (
+      <>
+        {props.problem.label} - {props.problem.name}
+      </>
+    );
+  }
+
 function InContestPage() {
   const urlParams = useParams();
   const navigate = useNavigate();
@@ -192,14 +200,6 @@ function InContestPage() {
       setSelectedProblem(firstProblem);
     }
   });
-
-  function ProblemInfo(props: { problem: Problem }) {
-    return (
-      <>
-        {props.problem.label} - {props.problem.name}
-      </>
-    );
-  }
 
   async function postSubmission(
     contest_id: string,

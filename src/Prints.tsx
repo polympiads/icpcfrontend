@@ -144,26 +144,26 @@ const bg_map: Record<Status, string> = {
     "bg-linear-to-r from-gray-50 to-gray-100 hover:from-gray-200 hover:to-gray-300",
 };
 
-function PrintEntry(props: { index: number; print: Print }) {
-  function PrintStatusIcon(props: { status: Status }) {
-    return (
-      <Switch>
-        <Match when={props.status === "done"}>
-          <Check class="stroke-gray-400" size="1.5rem" />
-        </Match>
-        <Match when={props.status === "compiling" || props.status === "ready"}>
-          <BiRegularPrinter size="1.5rem" class="animate-pulse" />
-        </Match>
-        <Match when={props.status === "failure" || props.status === "error"}>
-          <VsWarning class="stroke-red-500" size="1.5rem" />
-        </Match>
-        <Match when={props.status === "pending"}>
-          <LoadingAnimation.ThreePulsingDots />
-        </Match>
-      </Switch>
-    );
-  }
+function PrintStatusIcon(props: { status: Status }) {
+  return (
+    <Switch>
+      <Match when={props.status === "done"}>
+        <Check class="stroke-gray-400" size="1.5rem" />
+      </Match>
+      <Match when={props.status === "compiling" || props.status === "ready"}>
+        <BiRegularPrinter size="1.5rem" class="animate-pulse" />
+      </Match>
+      <Match when={props.status === "failure" || props.status === "error"}>
+        <VsWarning class="stroke-red-500" size="1.5rem" />
+      </Match>
+      <Match when={props.status === "pending"}>
+        <LoadingAnimation.ThreePulsingDots />
+      </Match>
+    </Switch>
+  );
+}
 
+function PrintEntry(props: { index: number; print: Print }) {
   return (
     <div class="relative h-12 w-full group @container/submissionEntry rounded-md overflow-hidden">
       <div class="absolute w-full h-full z-0">

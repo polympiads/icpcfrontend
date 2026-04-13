@@ -15,6 +15,7 @@ import {
   Match,
   Suspense,
   Switch,
+  type Accessor,
 } from "solid-js";
 import { LoadingAnimation } from "./LoadingAnimation";
 import { useNow } from "./Now";
@@ -133,119 +134,117 @@ function ContestSelectionCard(props: { contest: Contest }) {
   );
 }
 
+function ContestOverlayStatus(props: { contest: Contest, contestState: Accessor<ContestState|undefined> }) {
+  const { now } = useNow();
+
+  const HALF_HOUR_THRESHOLD_MS = 1800000;
+
+  function formatRemainingTime(time: Duration) {
+    let string = "";
+    const parts_with_unit_map: [number, string, boolean][] = [
+      [time.hours(), "h", false],
+      [time.minutes(), "m", true],
+      [time.seconds(), "", true],
+    ];
+
+    let b = false;
+    for (const part of parts_with_unit_map) {
+      if (part[0] > 0 || b || part[2]) {
+        const part_str = b
+          ? part[0].toString().padStart(2, "0")
+          : part[0].toString();
+
+        string += `${part_str}${part[1]}`;
+        b = true;
+      }
+    }
+
+    if (string.length === 0) {
+      string = "0m";
+    }
+
+    return string;
+  }
+
+  if (props.contest.start_time) {
+    const remainingTime = createMemo(() => {
+      const contestStateVal = props.contestState();
+      if (contestStateVal === undefined) {
+        return;
+      }
+      if (contestStateVal.started === null) {
+        return;
+      }
+
+      return contestStateVal.started.add(props.contest.duration).diff(now());
+    });
+    const isFinished = createMemo(
+      () => remainingTime() !== undefined && remainingTime()! < 0,
+    );
+
+    createEffect(() => console.log(props.contestState()));
+
+    return (
+      <Switch>
+        <Match
+          when={
+            now().diff(props.contest.start_time) < -HALF_HOUR_THRESHOLD_MS
+          }
+        >
+          <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-white">
+            Scheduled for {props.contest.start_time?.format("HH:mm")}
+          </div>
+        </Match>
+        <Match when={now().diff(props.contest.start_time) < 0}>
+          <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-medium">
+            Starts in
+            {formatRemainingTime(
+              dayjs.duration(props.contest.start_time.diff(now())),
+            )}
+          </div>
+        </Match>
+        <Match when={isFinished()}>
+          <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-slate-700 text-white flex flex-row items-center">
+            <FaSolidFlagCheckered />
+            <div class="font-medium ml-0.5">Finished</div>
+          </div>
+        </Match>
+        <Match
+          when={now().diff(props.contest.start_time) >= 0 && !isFinished()}
+        >
+          <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-medium">
+            Starting...
+          </div>
+        </Match>
+      </Switch>
+    );
+  } else if (props.contest.countdown_pause_time) {
+    return (
+      <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-yellow-300 text-yellow-800 flex flex-row items-center">
+        <BsPauseCircle /> <div class="font-medium ml-0.5">Paused</div>
+      </div>
+    );
+  } else {
+    return <> Not yet scheduled </>;
+  }
+}
+
+function OverlayInfo(props: { contest: Contest }) {
+  return (
+    <>
+      <div class="w-80 h-50 flex items-center justify-center border border-black/10 rounded-md shadow-md">
+        <AiFillFileUnknown size="3em" class="opacity-50" />
+      </div>
+      <div class="text-3xl font-semibold my-3">
+        {props.contest?.formal_name}
+      </div>
+    </>
+  );
+}
+
 export function ContestPageOverlay(props: { contest: Contest | undefined }) {
   const { now } = useNow();
   const contestState = useContestState();
-
-  function ContestOverlayStatus(props: { contest: Contest }) {
-    const { now } = useNow();
-
-    const HALF_HOUR_THRESHOLD_MS = 1800000;
-
-    function formatRemainingTime(time: Duration) {
-      let string = "";
-      const parts_with_unit_map: [number, string, boolean][] = [
-        [time.hours(), "h", false],
-        [time.minutes(), "m", true],
-        [time.seconds(), "", true],
-      ];
-
-      let b = false;
-      for (const part of parts_with_unit_map) {
-        if (part[0] > 0 || b || part[2]) {
-          const part_str = b
-            ? part[0].toString().padStart(2, "0")
-            : part[0].toString();
-
-          string += `${part_str}${part[1]}`;
-          b = true;
-        }
-      }
-
-      if (string.length === 0) {
-        string = "0m";
-      }
-
-      return string;
-    }
-
-    if (props.contest.start_time) {
-      const remainingTime = createMemo(() => {
-        const contestStateVal = contestState();
-        if (contestStateVal === undefined) {
-          return;
-        }
-        if (contestStateVal.started === null) {
-          return;
-        }
-
-        return contestStateVal.started.add(props.contest.duration).diff(now());
-      });
-      const isFinished = createMemo(
-        () => remainingTime() !== undefined && remainingTime()! < 0,
-      );
-
-      createEffect(() => console.log(contestState()));
-
-      return (
-        <Switch>
-          <Match
-            when={
-              now().diff(props.contest.start_time) < -HALF_HOUR_THRESHOLD_MS
-            }
-          >
-            <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-white">
-              Scheduled for {props.contest.start_time?.format("HH:mm")}
-            </div>
-          </Match>
-          <Match when={now().diff(props.contest.start_time) < 0}>
-            <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-medium">
-              Starts in
-              {formatRemainingTime(
-                dayjs.duration(props.contest.start_time.diff(now())),
-              )}
-            </div>
-          </Match>
-          <Match when={isFinished()}>
-            <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-slate-700 text-white flex flex-row items-center">
-              <FaSolidFlagCheckered />
-              <div class="font-medium ml-0.5">Finished</div>
-            </div>
-          </Match>
-          <Match
-            when={now().diff(props.contest.start_time) >= 0 && !isFinished()}
-          >
-            <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-medium">
-              Starting...
-            </div>
-          </Match>
-        </Switch>
-      );
-    } else if (props.contest.countdown_pause_time) {
-      return (
-        <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-yellow-300 text-yellow-800 flex flex-row items-center">
-          <BsPauseCircle /> <div class="font-medium ml-0.5">Paused</div>
-        </div>
-      );
-    } else {
-      return <> Not yet scheduled </>;
-    }
-  }
-
-  console.log(props.contest);
-
-  function OverlayInfo(props: { contest: Contest }) {
-    return (
-      <>
-        <div class="w-80 h-50 flex items-center justify-center border border-black/10 rounded-md shadow-md">
-          <AiFillFileUnknown size="3em" class="opacity-50" />
-        </div>
-        <div class="text-3xl font-semibold my-3">
-          {props.contest?.formal_name}
-        </div>
-      </>
-    );
-  }
 
   const isInProgress = () => {
     const contestVal = props.contest;
@@ -288,7 +287,7 @@ export function ContestPageOverlay(props: { contest: Contest | undefined }) {
           <OverlayInfo contest={props.contest!} />
 
           {/** biome-ignore lint/style/noNonNullAssertion: contest can't be undefined because of the requirement of the Match */}
-          <ContestOverlayStatus contest={props.contest!} />
+          <ContestOverlayStatus contest={props.contest!} contestState={contestState}/>
         </Match>
       </Switch>
     </div>
