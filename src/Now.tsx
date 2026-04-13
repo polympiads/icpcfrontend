@@ -1,13 +1,13 @@
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import {
+  type Accessor,
   createContext,
   createSignal,
   onCleanup,
   onMount,
-  useContext,
-  type Accessor,
   type ParentProps,
+  useContext,
 } from "solid-js";
 
 export type NowContextProps = {

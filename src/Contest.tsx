@@ -16,10 +16,10 @@ import {
   Switch,
 } from "solid-js";
 import { LoadingAnimation } from "./LoadingAnimation";
-import { useContests } from "./worker/hooks/useContests";
-import type { Contest } from "./worker/types/data/Contest";
 import { useNow } from "./Now";
 import { useContestState } from "./worker/hooks/useContest";
+import { useContests } from "./worker/hooks/useContests";
+import type { Contest } from "./worker/types/data/Contest";
 
 dayjs.extend(duration);
 

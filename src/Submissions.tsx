@@ -4,6 +4,7 @@ import { Button } from "@kobalte/core/button";
 import { A } from "@solidjs/router";
 import clsx from "clsx";
 import { Check, LoaderCircle, Upload, X } from "lucide-solid";
+import { AiFillFileUnknown } from "solid-icons/ai";
 import { FaSolidUser, FaSolidWarning } from "solid-icons/fa";
 import { OcLinkexternal2 } from "solid-icons/oc";
 import { VsWarning } from "solid-icons/vs";
@@ -32,19 +33,18 @@ import { AppEditor, useAppEditorContext } from "./Editor";
 import { LanguageEntry, LanguageIcon } from "./Languages";
 import { LoadingAnimation } from "./LoadingAnimation";
 import PingPongScroller from "./PingPongScroller";
+import { ProblemViewer } from "./Problems";
+import { Panel, SplitPanel } from "./SplitPanel";
 import { sortRecordValues } from "./utils";
 import { useAuth } from "./worker/context/AuthContext";
 import { useContest } from "./worker/hooks/useContest";
 import { useJudgementTypes } from "./worker/hooks/useJudgementTypes";
 import { useProblem } from "./worker/hooks/useProblems";
+import { useSubmission } from "./worker/hooks/useSubmissions";
 import { useAccount } from "./worker/hooks/useUsers";
 import type { Contest } from "./worker/types/data/Contest";
 import type { JudgementType } from "./worker/types/data/JudgementTypes";
 import type { Submission } from "./worker/types/data/Submission";
-import { useSubmission } from "./worker/hooks/useSubmissions";
-import { Panel, SplitPanel } from "./SplitPanel";
-import { ProblemViewer } from "./Problems";
-import { AiFillFileUnknown } from "solid-icons/ai";
 
 export async function postSubmission(
   contest_id: string,
