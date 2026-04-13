@@ -596,6 +596,32 @@ function ContestSubmissionViewPage() {
   );
 }
 
+function PageNotFound() {
+  return (
+    <div class="w-full h-full flex flex-col">
+      <div class="h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row">
+        <img src="/hc2_icon.png" class="h-14 w-14 object-cover" />
+
+        <div class="grow" />
+
+        <UserLoginWidget />
+      </div>
+      <div class="grow w-full overflow-auto flex flex-col items-center justify-center">
+        <div class="text-7xl font-bold mb-3"> 404 </div>
+        <div class="text-xl font-medium mb-3"> Page not found. </div>
+        <A href="/">
+          <div class="border border-black/10 p-2 rounded-md flex flex-row flex-nowrap items-center group/return_button overflow-hidden cursor-pointer">
+            <ArrowLeft size="1rem" />
+            <div class="w-0 group-hover/return_button:w-30 text-nowrap duration-75">
+              <div class="ml-2">Return to menu</div>
+            </div>
+          </div>
+        </A>
+      </div>
+    </div>
+  )
+}
+
 function RouteFeedWrapper(props: ParentProps) {
   const urlParams = useParams();
   if (!urlParams.id) {
@@ -630,6 +656,7 @@ function App() {
                 )}
               />
             </Route>
+            <Route path="*404" component={PageNotFound} />
           </Router>
         </AuthProvider>
       </WorkerProvider>
