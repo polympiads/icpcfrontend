@@ -64,7 +64,7 @@ export type PDFException =
   | InvalidPDFException
   | RenderingCancelledException;
 
-import pdfjsworker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import pdfjsworker from "pdfjs-dist/build/pdf.worker.min.mjs?worker&url";
 import "./styles/pdf_viewer.css";
 import "pdfjs-dist/web/pdf_viewer.css";
 
