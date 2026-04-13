@@ -60,7 +60,7 @@ async function getPrintCode(
   session: string,
 ) {
   const url = new URL(
-    API_ROOT + PRINT_URL(contest_id, print_id) + "code",
+    API_ROOT + PRINT_URL(contest_id, print_id) + "download/code/",
     BASE_URL,
   );
 
@@ -208,7 +208,7 @@ function PrintCodeView(props: { print: Print }) {
       throw "Try to access session without session or contest providers";
 
     const response = await getPrintCode(
-      params.session,
+      params.contest.id,
       props.print.id,
       params.session,
     );
@@ -317,7 +317,7 @@ function AccountInfo(props: { account_id: string }) {
       <FaSolidUser size="1.5rem" class="opacity-40" />
 
       <PingPongScroller hoverOnly>
-        {account()?.name ?? "[Unknown team]"}
+        {account()?.username ?? "[Unknown team]"}
       </PingPongScroller>
     </>
   );
@@ -343,8 +343,8 @@ function StaffPrintEntry(props: { index: Accessor<number>; print_id: string }) {
       <div class="absolute w-full h-full z-0">
         <div class={clsx("w-full h-full", bg_map[print().status])} />
       </div>
-      <div class="relative h-full flex flex-row *:not-last:mr-2 items-center bg-linear-to-r px-3 rounded-md py-1 duration-150 transition-all cursor-pointer border border-black/10 z-10">
-        <div class="text-gray-400"> {`Print #${props.index()}`} </div>
+      <div class="relative h-full flex flex-row flex-nowrap *:not-last:mr-2 items-center bg-linear-to-r px-3 rounded-md py-1 duration-150 transition-all cursor-pointer border border-black/10 z-10">
+        <div class="text-gray-400 shrink-0"> {`Print #${props.index()}`} </div>
 
         <AccountInfo account_id={print().owner_id} />
 
@@ -382,6 +382,15 @@ export function StaffPrintSelect(
 
     return sortRecordValues(printsReadyRecord, (v) => Number(v.id), "desc");
   });
+
+  createEffect(() => {
+    if (props.selectedPrintId() !== undefined) {
+      if (!sortedPrints().map(p => p.id).includes(props.selectedPrintId()!)) {
+        props.setSelectedPrintId()
+      }
+    }
+  })
+
   //console.log(sortedSubmissions());
 
   const finalStyle = clsx(
@@ -415,10 +424,13 @@ export function StaffPrintSelect(
               <For each={sortedPrints()}>
                 {(item, index) => (
                   <RadioGroup.Item value={item.id}>
-                    <StaffPrintEntry
-                      print_id={item.id}
-                      index={() => sortedPrints().length - index()}
-                    />
+                    <RadioGroup.ItemInput />
+                    <RadioGroup.ItemControl>
+                      <StaffPrintEntry
+                        print_id={item.id}
+                        index={() => sortedPrints().length - index()}
+                      />
+                    </RadioGroup.ItemControl>
                   </RadioGroup.Item>
                 )}
               </For>
@@ -434,21 +446,29 @@ export function StaffPrintViewer(props: {
   print: Accessor<string | undefined>;
 }) {
   const prints = usePrints();
+  const { session } = useAuth()
 
   const [printPdfData, printPdfAction] = createResource(
-    () => ({ prints: prints(), print_id: props.print() }),
+    () => ({ prints: prints(), print_id: props.print(), session: session() }),
     async (params) => {
-      if (!params.print_id) return;
+      if (!params.print_id || !params.session) return;
 
       const print = params.prints[params.print_id];
-
+      if (!print) return;
       if (!print.pdf_href) return;
 
-      return await fetch(print.pdf_href)
+      console.log(print.pdf_href)
+
+      return await fetch("/api" + print.pdf_href, {
+        headers: {
+        "X-Session-Id": params.session,
+      }},)
         .then((response) => response.blob())
         .then((blob) => blob.arrayBuffer());
     },
   );
+
+  createEffect(() => console.log(printPdfData()))
 
   return (
     <PDFViewer
