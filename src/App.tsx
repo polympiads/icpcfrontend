@@ -1,8 +1,8 @@
 import { Select } from "@kobalte/core/select";
 import { Tabs } from "@kobalte/core/tabs";
 import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
-import dayjs, { duration } from "dayjs";
-import { ArrowLeft, ChevronDown, Printer } from "lucide-solid";
+import dayjs, { Dayjs, duration } from "dayjs";
+import { ArrowLeft, ChevronDown, Plus, Printer } from "lucide-solid";
 import { BsExclamationCircle } from "solid-icons/bs";
 import {
   FaRegularCalendarAlt,
@@ -14,6 +14,7 @@ import {
   createSignal,
   ErrorBoundary,
   Match,
+  on,
   onMount,
   type ParentProps,
   Show,
@@ -48,6 +49,9 @@ import { useSubmissions } from "./worker/hooks/useSubmissions";
 import type { Problem } from "./worker/types/data/Problems";
 import type { Submission } from "./worker/types/data/Submission";
 import { NowProvider, useNow } from "./Now";
+import { useAccounts } from "./worker/hooks/useUsers";
+import type { Duration } from "dayjs/plugin/duration";
+import PingPongScroller from "./PingPongScroller";
 
 dayjs.extend(duration);
 
@@ -61,7 +65,7 @@ function ContestSelectionPage() {
 
         <UserLoginWidget />
       </div>
-      <div class="grow w-full overflow-hidden">
+      <div class="grow w-full overflow-auto">
         <ContestSelect />
       </div>
     </div>
@@ -76,7 +80,12 @@ function InContestPage() {
 
   const languages = useLanguages();
   const auth = useAuth();
-  const isLoggedIn = () => auth.whoami().is_authenticated;
+  
+  const allowedAccounts = useAccounts()
+  const canParticipate = () => {
+    const whoamiVal = auth.whoami()
+    return whoamiVal.is_authenticated && allowedAccounts()[whoamiVal.id] !== undefined
+  };
   const isStaff = () => {
     const whoamiVal = auth.whoami();
     return whoamiVal.is_authenticated && whoamiVal.is_staff;
@@ -87,6 +96,7 @@ function InContestPage() {
   const submissions = useSubmissions();
   const prints = usePrints();
   const contest = useContest();
+  const contestState = useContestState();
   const isFrozen = createMemo(() => {
     const nowVal = now();
     const contestVal = contest();
@@ -139,7 +149,7 @@ function InContestPage() {
       setSelectedTab("problems");
       setSelectedProblem(firstProblem);
     } else if (TABS.includes(segment)) {
-      if (segment === "print" && !isLoggedIn()) {
+      if (segment === "print" && !canParticipate()) {
         setSelectedProblem(firstProblem);
       } else {
         setSelectedTab(segment);
@@ -178,7 +188,7 @@ function InContestPage() {
       throw "Error no problems available for that contest";
     }
 
-    if (!isLoggedIn() && selectedTab() === "print") {
+    if (!canParticipate() && selectedTab() === "print") {
       setSelectedTab("problems");
       setSelectedProblem(firstProblem);
     }
@@ -226,10 +236,97 @@ function InContestPage() {
     );
   }
 
+  function formatRemainingTime(time: Duration) {
+    let string = "";
+    const parts_with_unit_map: [number, string, boolean][] = [
+      [time.hours(), "h", false],
+      [time.minutes(), "m", true],
+      [time.seconds(), "", true],
+    ];
+
+    let b = false;
+    for (const part of parts_with_unit_map) {
+      if (part[0] > 0 || b || part[2]) {
+        const part_str = b
+          ? part[0].toString().padStart(2, "0")
+          : part[0].toString();
+
+        string += `${part_str}${part[1]}`;
+        b = true;
+      }
+    }
+
+    if (string.length === 0) {
+      string = "0m";
+    }
+
+    return string;
+  }
+
+  function formatTime(time: Dayjs | Duration) {
+    let string = "";
+    if (dayjs.isDayjs(time)) {
+      if (time.hour() > 0) {
+        string += `${time.hour()}h`;
+      }
+      if (time.minute() > 0) {
+        string += `${time.minute()}m`;
+      }
+      if (time.second() > 0) {
+        string += `${time.minute()}s`;
+      }
+    } else {
+      if (time.hours() > 0) {
+        string += `${time.hours()}h`;
+      }
+      if (time.minutes() > 0) {
+        string += `${time.minutes()}m`;
+      }
+      if (time.seconds() > 0) {
+        string += `${time.seconds()}s`;
+      }
+    }
+
+    if (string.length === 0) {
+      string = "0m";
+    }
+
+    return string;
+  }
+
+  const remainingTime = createMemo(() => {
+    const contestStateVal = contestState()
+    const contestVal = contest()
+    if (contestStateVal === undefined || contestVal === undefined) {
+      return
+    }
+    if (contestStateVal.started === null) {
+      return
+    }
+
+    return dayjs.duration(contestStateVal.started.add(contestVal.duration).diff(now()))
+  });
+
   return (
       <div class="relative w-full h-full flex flex-col z-0">
-        <div class="relative h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row z-10">
+        <div class="relative h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row items-center z-10">
 		      <img src="/hc2_icon.png" class="h-14 w-14 object-cover"/>
+
+          <div class="flex flex-col mx-2">
+            <div class="text-2xl font-medium max-50">
+              <PingPongScroller>
+                { contest()?.name }
+              </PingPongScroller>
+            </div>
+            <div class="flex flex-row items-center">
+              <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-bold w-fit">
+                {formatRemainingTime(remainingTime()!)} remaining
+              </div>
+              <div class="mx-0.5 opacity-50">·</div>
+              <Plus size="0.9rem"/>
+              { formatTime(contest()!.penalty_time) }
+            </div>
+          </div>
 
           <div class="grow" />
 
@@ -241,7 +338,7 @@ function InContestPage() {
             value={selectedTab()}
             onChange={setSelectedTab}
           >
-            <Tabs.List class="*:bg-white *:border *:border-black/10 *:p-1 *:ui-highlighted:shadow-md *:opacity-75 *:ui-highlighted:opacity-100 *:ui-highlighted:z-10 *:ui-highlighted:hover:border-black/10 *:ui-highlighted:scale-105 *:ui-highlighted:cursor-auto *:cursor-pointer *:rounded-lg *:min-w-30 *:hover:opacity-100 *:hover:border-black/30 *:duration-75 *:ui-disabled:opacity-50 px-2.5 pt-2 gap-2 flex flex-row">
+            <Tabs.List class="*:bg-white *:border *:border-black/10 *:p-1 *:ui-highlighted:shadow-md *:opacity-75 *:ui-highlighted:opacity-100 *:ui-highlighted:z-10 *:ui-disabled:hover:border-black/10 *:ui-highlighted:hover:border-black/10 *:ui-highlighted:scale-105 *:ui-highlighted:cursor-auto *:cursor-pointer *:rounded-lg *:min-w-30 *:hover:opacity-100 *:hover:border-black/30 *:duration-75 *:ui-disabled:opacity-50 px-2.5 pt-2 gap-2 flex flex-row">
               <Tabs.Trigger value="problems">
                 <Show when={problems() !== undefined}>
                   <Select
@@ -305,7 +402,7 @@ function InContestPage() {
                 Submissions
               </Tabs.Trigger>
               <Tabs.Trigger
-                disabled={!isLoggedIn()}
+                disabled={!canParticipate()}
                 value="print"
                 class="flex flex-row gap-1 justify-center items-center"
               >
@@ -322,13 +419,13 @@ function InContestPage() {
                   </Panel>
                   <SplitPanel direction="vertical">
                     <Panel>
-                      <SubmissionEntries submissions={submissions} />
+                      <SubmissionEntries submissions={submissions} thisUserOnly/>
                     </Panel>
                     <Panel>
                       <SubmissionEditor
                         onSubmit={submitCode}
                         availableLanguages={() => Object.keys(languages())}
-                        disableSubmission={!isLoggedIn()}
+                        disableSubmission={!canParticipate()}
                       />
                     </Panel>
                   </SplitPanel>
@@ -459,6 +556,11 @@ function ContestSubmissionViewPage() {
       navigate("/404");
     }
   });
+  createEffect(on(whoami, (whoamiVal) => {
+    if (!whoamiVal.is_authenticated) {
+      navigate("/");
+    }
+  }, { defer: true }));
 
   return (
     <div class="w-full h-full flex flex-col">
@@ -495,15 +597,11 @@ function App() {
             <Route path="/contests/:id" component={RouteFeedWrapper}>
               <Route
                 path="/submissions/:submission_id"
-                component={ContestSubmissionViewPage}
+                component={() => <PageCrashHandler><ContestSubmissionViewPage /></PageCrashHandler>}
               />
               <Route
                 path="/*rest"
-                component={() => (
-                  <PageCrashHandler>
-                    <ContestPage />
-                  </PageCrashHandler>
-                )}
+                component={() => <PageCrashHandler><ContestPage /></PageCrashHandler> }
               />
             </Route>
           </Router>
