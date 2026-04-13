@@ -409,27 +409,40 @@ function InContestPage() {
             </Tabs.Trigger>
           </Tabs.List>
           <Tabs.Content value="problems" class="grow w-full">
-            <BasePortalRoot>
-              <SplitPanel direction="horizontal" class="h-full" includeMargin>
-                <Panel>
-                  <Show when={selectedProblem() !== undefined}>
-                    <ProblemViewer problemId={() => selectedProblem().id} />
-                  </Show>
-                </Panel>
-                <SplitPanel direction="vertical">
+            <Switch>
+              <Match when={canParticipate()}>
+                <BasePortalRoot>
+                  <SplitPanel direction="horizontal" class="h-full" includeMargin>
+                    <Panel>
+                      <Show when={selectedProblem() !== undefined}>
+                        <ProblemViewer problemId={() => selectedProblem().id} />
+                      </Show>
+                    </Panel>
+                    <SplitPanel direction="vertical">
+                      <Panel>
+                        <SubmissionEntries submissions={submissions} thisUserOnly />
+                      </Panel>
+                      <Panel>
+                        <SubmissionEditor
+                          onSubmit={submitCode}
+                          availableLanguages={() => Object.keys(languages())}
+                          disableSubmission={!canParticipate()}
+                        />
+                      </Panel>
+                    </SplitPanel>
+                  </SplitPanel>
+                </BasePortalRoot>
+              </Match>
+              <Match when={!canParticipate()}>
+                <div class="p-2.5 w-full h-full">
                   <Panel>
-                    <SubmissionEntries submissions={submissions} thisUserOnly />
+                    <Show when={selectedProblem() !== undefined}>
+                      <ProblemViewer problemId={() => selectedProblem().id} />
+                    </Show>
                   </Panel>
-                  <Panel>
-                    <SubmissionEditor
-                      onSubmit={submitCode}
-                      availableLanguages={() => Object.keys(languages())}
-                      disableSubmission={!canParticipate()}
-                    />
-                  </Panel>
-                </SplitPanel>
-              </SplitPanel>
-            </BasePortalRoot>
+                </div>
+              </Match>
+            </Switch>
           </Tabs.Content>
           <Tabs.Content value="submissions" class="h-full w-full p-3">
             <Panel>
