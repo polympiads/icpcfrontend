@@ -797,7 +797,7 @@ export class PDFSlick {
   getPageView(ix: number) {
     return this.viewer.getPageView(ix) as PDFPageView;
   }
-  
+
   async clearDocument() {
     this.#currentLoadingTask?.destroy();
     this.#currentLoadingTask = undefined;
@@ -811,7 +811,9 @@ export class PDFSlick {
     this.thumbnailViewer?.setDocument(null as unknown as PDFDocumentProxy);
 
     if (this.url && typeof this.url === "string") {
-      try { URL.revokeObjectURL(this.url); } catch (_) {}
+      try {
+        URL.revokeObjectURL(this.url);
+      } catch (_) {}
     }
 
     this.document = null;

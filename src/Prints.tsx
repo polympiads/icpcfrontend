@@ -385,11 +385,15 @@ export function StaffPrintSelect(
 
   createEffect(() => {
     if (props.selectedPrintId() !== undefined) {
-      if (!sortedPrints().map(p => p.id).includes(props.selectedPrintId()!)) {
-        props.setSelectedPrintId()
+      if (
+        !sortedPrints()
+          .map((p) => p.id)
+          .includes(props.selectedPrintId()!)
+      ) {
+        props.setSelectedPrintId();
       }
     }
-  })
+  });
 
   //console.log(sortedSubmissions());
 
@@ -446,7 +450,7 @@ export function StaffPrintViewer(props: {
   print: Accessor<string | undefined>;
 }) {
   const prints = usePrints();
-  const { session } = useAuth()
+  const { session } = useAuth();
 
   const [printPdfData, printPdfAction] = createResource(
     () => ({ prints: prints(), print_id: props.print(), session: session() }),
@@ -457,18 +461,19 @@ export function StaffPrintViewer(props: {
       if (!print) return;
       if (!print.pdf_href) return;
 
-      console.log(print.pdf_href)
+      console.log(print.pdf_href);
 
       return await fetch("/api" + print.pdf_href, {
         headers: {
-        "X-Session-Id": params.session,
-      }},)
+          "X-Session-Id": params.session,
+        },
+      })
         .then((response) => response.blob())
         .then((blob) => blob.arrayBuffer());
     },
   );
 
-  createEffect(() => console.log(printPdfData()))
+  createEffect(() => console.log(printPdfData()));
 
   return (
     <PDFViewer

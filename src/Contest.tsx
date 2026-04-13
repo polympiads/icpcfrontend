@@ -6,7 +6,15 @@ import { ArrowLeft, Hourglass, Plus, RotateCw } from "lucide-solid";
 import { AiFillFileUnknown } from "solid-icons/ai";
 import { BsExclamationCircle, BsPauseCircle } from "solid-icons/bs";
 import { FaSolidFlagCheckered } from "solid-icons/fa";
-import { createEffect, createMemo, ErrorBoundary, For, Match, Suspense, Switch } from "solid-js";
+import {
+  createEffect,
+  createMemo,
+  ErrorBoundary,
+  For,
+  Match,
+  Suspense,
+  Switch,
+} from "solid-js";
 import { LoadingAnimation } from "./LoadingAnimation";
 import { useContests } from "./worker/hooks/useContests";
 import type { Contest } from "./worker/types/data/Contest";
@@ -113,12 +121,12 @@ function ContestSelectionCard(props: { contest: Contest }) {
             <div class="flex flex-row items-center">
               <Hourglass size="0.9rem" />
               <div class="ml-0.5">
-                {formatRemainingTime(props.contest.duration)}{" "}
+                {formatRemainingTime(props.contest.duration)}
               </div>
             </div>
             <div class="mx-0.5 opacity-50">·</div>
-            <Plus size="0.9rem"/>
-            { formatRemainingTime(props.contest.penalty_time) }
+            <Plus size="0.9rem" />
+            {formatRemainingTime(props.contest.penalty_time)}
           </div>
         </div>
       </div>
@@ -128,12 +136,12 @@ function ContestSelectionCard(props: { contest: Contest }) {
 
 export function ContestPageOverlay(props: { contest: Contest | undefined }) {
   const { now } = useNow();
-  const contestState = useContestState()
+  const contestState = useContestState();
 
   function ContestOverlayStatus(props: { contest: Contest }) {
     const { now } = useNow();
 
-    const HALF_HOUR_THRESHOLD_MS = 1800000
+    const HALF_HOUR_THRESHOLD_MS = 1800000;
 
     function formatRemainingTime(time: Duration) {
       let string = "";
@@ -164,30 +172,39 @@ export function ContestPageOverlay(props: { contest: Contest | undefined }) {
 
     if (props.contest.start_time) {
       const remainingTime = createMemo(() => {
-        const contestStateVal = contestState()
+        const contestStateVal = contestState();
         if (contestStateVal === undefined) {
-          return
+          return;
         }
         if (contestStateVal.started === null) {
-          return
+          return;
         }
 
-        return contestStateVal.started.add(props.contest.duration).diff(now())
+        return contestStateVal.started.add(props.contest.duration).diff(now());
       });
-      const isFinished = createMemo(() => remainingTime() !== undefined && remainingTime()! < 0)
+      const isFinished = createMemo(
+        () => remainingTime() !== undefined && remainingTime()! < 0,
+      );
 
-      createEffect(() => console.log(contestState()))
+      createEffect(() => console.log(contestState()));
 
       return (
         <Switch>
-          <Match when={now().diff(props.contest.start_time) < -HALF_HOUR_THRESHOLD_MS}>
+          <Match
+            when={
+              now().diff(props.contest.start_time) < -HALF_HOUR_THRESHOLD_MS
+            }
+          >
             <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-white">
               Scheduled for {props.contest.start_time?.format("HH:mm")}
             </div>
           </Match>
           <Match when={now().diff(props.contest.start_time) < 0}>
             <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-medium">
-              Starts in {formatRemainingTime(dayjs.duration(props.contest.start_time.diff(now())))}
+              Starts in
+              {formatRemainingTime(
+                dayjs.duration(props.contest.start_time.diff(now())),
+              )}
             </div>
           </Match>
           <Match when={isFinished()}>
@@ -203,7 +220,6 @@ export function ContestPageOverlay(props: { contest: Contest | undefined }) {
               Starting...
             </div>
           </Match>
-          
         </Switch>
       );
     } else if (props.contest.countdown_pause_time) {
@@ -213,13 +229,11 @@ export function ContestPageOverlay(props: { contest: Contest | undefined }) {
         </div>
       );
     } else {
-      return (
-        <> Not yet scheduled </>
-      )
+      return <> Not yet scheduled </>;
     }
   }
 
-  console.log(props.contest)
+  console.log(props.contest);
 
   function OverlayInfo(props: { contest: Contest }) {
     return (
@@ -233,10 +247,10 @@ export function ContestPageOverlay(props: { contest: Contest | undefined }) {
       </>
     );
   }
-  
+
   const isInProgress = () => {
     const contestVal = props.contest;
-    const contestStateVal = contestState()
+    const contestStateVal = contestState();
     const nowVal = now();
 
     if (!contestVal || !contestStateVal) {

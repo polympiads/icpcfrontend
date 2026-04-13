@@ -4,10 +4,7 @@ import { A, Route, Router, useNavigate, useParams } from "@solidjs/router";
 import dayjs, { Dayjs, duration } from "dayjs";
 import { ArrowLeft, ChevronDown, Plus, Printer } from "lucide-solid";
 import { BsExclamationCircle } from "solid-icons/bs";
-import {
-  FaRegularCalendarAlt,
-  FaSolidListSquares,
-} from "solid-icons/fa";
+import { FaRegularCalendarAlt, FaSolidListSquares } from "solid-icons/fa";
 import {
   createEffect,
   createMemo,
@@ -59,8 +56,8 @@ function ContestSelectionPage() {
   return (
     <div class="w-full h-full flex flex-col">
       <div class="h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row">
-        <img src="/hc2_icon.png" class="h-14 w-14 object-cover"/>
-            
+        <img src="/hc2_icon.png" class="h-14 w-14 object-cover" />
+
         <div class="grow" />
 
         <UserLoginWidget />
@@ -80,11 +77,14 @@ function InContestPage() {
 
   const languages = useLanguages();
   const auth = useAuth();
-  
-  const allowedAccounts = useAccounts()
+
+  const allowedAccounts = useAccounts();
   const canParticipate = () => {
-    const whoamiVal = auth.whoami()
-    return whoamiVal.is_authenticated && allowedAccounts()[whoamiVal.id] !== undefined
+    const whoamiVal = auth.whoami();
+    return (
+      whoamiVal.is_authenticated &&
+      allowedAccounts()[whoamiVal.id] !== undefined
+    );
   };
   const isStaff = () => {
     const whoamiVal = auth.whoami();
@@ -295,206 +295,206 @@ function InContestPage() {
   }
 
   const remainingTime = createMemo(() => {
-    const contestStateVal = contestState()
-    const contestVal = contest()
+    const contestStateVal = contestState();
+    const contestVal = contest();
     if (contestStateVal === undefined || contestVal === undefined) {
-      return
+      return;
     }
     if (contestStateVal.started === null) {
-      return
+      return;
     }
 
-    return dayjs.duration(contestStateVal.started.add(contestVal.duration).diff(now()))
+    return dayjs.duration(
+      contestStateVal.started.add(contestVal.duration).diff(now()),
+    );
   });
 
   return (
-      <div class="relative w-full h-full flex flex-col z-0">
-        <div class="relative h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row items-center z-10">
-		      <img src="/hc2_icon.png" class="h-14 w-14 object-cover"/>
+    <div class="relative w-full h-full flex flex-col z-0">
+      <div class="relative h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row items-center z-10">
+        <img src="/hc2_icon.png" class="h-14 w-14 object-cover" />
 
-          <div class="flex flex-col mx-2">
-            <div class="text-2xl font-medium max-50">
-              <PingPongScroller>
-                { contest()?.name }
-              </PingPongScroller>
-            </div>
-            <div class="flex flex-row items-center">
-              <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-bold w-fit">
-                {formatRemainingTime(remainingTime()!)} remaining
-              </div>
-              <div class="mx-0.5 opacity-50">·</div>
-              <Plus size="0.9rem"/>
-              { formatTime(contest()!.penalty_time) }
-            </div>
+        <div class="flex flex-col mx-2">
+          <div class="text-2xl font-medium max-50">
+            <PingPongScroller>{contest()?.name}</PingPongScroller>
           </div>
-
-          <div class="grow" />
-
-          <UserLoginWidget />
+          <div class="flex flex-row items-center">
+            <div class="py-0.5 px-1.5 mx-0.5 outline outline-black/10 rounded-full text-sm bg-green-400 text-white font-bold w-fit">
+              {formatRemainingTime(remainingTime()!)} remaining
+            </div>
+            <div class="mx-0.5 opacity-50">·</div>
+            <Plus size="0.9rem" />
+            {formatTime(contest()!.penalty_time)}
+          </div>
         </div>
-        <div class="grow w-full overflow-hidden">
-          <Tabs
-            class="h-full flex flex-col"
-            value={selectedTab()}
-            onChange={setSelectedTab}
-          >
-            <Tabs.List class="*:bg-white *:border *:border-black/10 *:p-1 *:ui-highlighted:shadow-md *:opacity-75 *:ui-highlighted:opacity-100 *:ui-highlighted:z-10 *:ui-disabled:hover:border-black/10 *:ui-highlighted:hover:border-black/10 *:ui-highlighted:scale-105 *:ui-highlighted:cursor-auto *:cursor-pointer *:rounded-lg *:min-w-30 *:hover:opacity-100 *:hover:border-black/30 *:duration-75 *:ui-disabled:opacity-50 px-2.5 pt-2 gap-2 flex flex-row">
-              <Tabs.Trigger value="problems">
-                <Show when={problems() !== undefined}>
-                  <Select
-                    value={selectedProblem()}
-                    onChange={onProblemSelect}
-                    options={Object.values(problems())}
-                    optionValue="id"
-                    optionTextValue="name"
-                    itemComponent={(props) => (
-                      <Select.Item item={props.item}>
-                        <Select.ItemLabel class="px-2 hover:bg-black/20 outline-t border-t border-black/10 max-w-80 leading-7.5 box-border">
-                          <ProblemInfo problem={props.item.rawValue} />
-                        </Select.ItemLabel>
-                      </Select.Item>
-                    )}
-                  >
-                    <div class="flex flex-row flex-nowrap items-center">
-                      <Select.Trigger class="flex flex-row flex-nowrap items-center hover:bg-black/20 rounded-full border border-black/20 cursor-pointer">
-                        <Select.Icon class="">
-                          <ChevronDown size="1.4rem" />
-                        </Select.Icon>
-                      </Select.Trigger>
-                      <div class="ml-1">
-                        <Select.Value<Problem>>
-                          {(state) => {
-                            console.log(
-                              state.selectedOption(),
-                              selectedProblem(),
-                            );
-                            return (
-                              <div class="flex flex-row flex-nowrap">
-                                <ProblemInfo problem={state.selectedOption()} />
-                              </div>
-                            );
-                          }}
-                        </Select.Value>
-                      </div>
-                    </div>
-                    <Select.Portal>
-                      <Select.Content class="bg-white border border-black/20 rounded-md shadow-lg">
-                        <div class="max-h-ui-popup-h max-w-ui-popup-w overflow-x-auto">
-                          <Select.Listbox class="flex flex-col flex-wrap max-h-ui-popup-h" />
-                        </div>
-                      </Select.Content>
-                    </Select.Portal>
-                  </Select>
-                </Show>
-              </Tabs.Trigger>
-              <Tabs.Trigger
-                value="scoreboard"
-                class="flex flex-row gap-1 justify-center items-center"
-              >
-                <FaRegularCalendarAlt size="1rem" class="float-left" />
-                Scoreboard
-              </Tabs.Trigger>
-              <Tabs.Trigger
-                value="submissions"
-                class="flex flex-row gap-1 justify-center items-center"
-              >
-                <FaSolidListSquares size="1rem" class="float-left" />
-                Submissions
-              </Tabs.Trigger>
-              <Tabs.Trigger
-                disabled={!canParticipate()}
-                value="print"
-                class="flex flex-row gap-1 justify-center items-center"
-              >
-                <Printer size="1rem" /> Print
-              </Tabs.Trigger>
-            </Tabs.List>
-            <Tabs.Content value="problems" class="grow w-full">
-              <BasePortalRoot>
-                <SplitPanel direction="horizontal" class="h-full" includeMargin>
-                  <Panel>
-                    <Show when={selectedProblem() !== undefined}>
-                      <ProblemViewer problemId={() => selectedProblem().id} />
-                    </Show>
-                  </Panel>
-                  <SplitPanel direction="vertical">
-                    <Panel>
-                      <SubmissionEntries submissions={submissions} thisUserOnly/>
-                    </Panel>
-                    <Panel>
-                      <SubmissionEditor
-                        onSubmit={submitCode}
-                        availableLanguages={() => Object.keys(languages())}
-                        disableSubmission={!canParticipate()}
-                      />
-                    </Panel>
-                  </SplitPanel>
-                </SplitPanel>
-              </BasePortalRoot>
-            </Tabs.Content>
-            <Tabs.Content value="submissions" class="h-full w-full p-3">
-              <Panel>
-                <div class="h-full w-full overflow-auto">
-                  <div class="relative z-0">
-                    <Show when={isFrozen()}>
-                      <div class="absolute z-10 h-full w-full bg-sky-200/50" />
-                    </Show>
-                    <div class="relative z-0">
-                      <SubmissionEntries submissions={frozenSubmissions} />
+
+        <div class="grow" />
+
+        <UserLoginWidget />
+      </div>
+      <div class="grow w-full overflow-hidden">
+        <Tabs
+          class="h-full flex flex-col"
+          value={selectedTab()}
+          onChange={setSelectedTab}
+        >
+          <Tabs.List class="*:bg-white *:border *:border-black/10 *:p-1 *:ui-highlighted:shadow-md *:opacity-75 *:ui-highlighted:opacity-100 *:ui-highlighted:z-10 *:ui-disabled:hover:border-black/10 *:ui-highlighted:hover:border-black/10 *:ui-highlighted:scale-105 *:ui-highlighted:cursor-auto *:cursor-pointer *:rounded-lg *:min-w-30 *:hover:opacity-100 *:hover:border-black/30 *:duration-75 *:ui-disabled:opacity-50 px-2.5 pt-2 gap-2 flex flex-row">
+            <Tabs.Trigger value="problems">
+              <Show when={problems() !== undefined}>
+                <Select
+                  value={selectedProblem()}
+                  onChange={onProblemSelect}
+                  options={Object.values(problems())}
+                  optionValue="id"
+                  optionTextValue="name"
+                  itemComponent={(props) => (
+                    <Select.Item item={props.item}>
+                      <Select.ItemLabel class="px-2 hover:bg-black/20 outline-t border-t border-black/10 max-w-80 leading-7.5 box-border">
+                        <ProblemInfo problem={props.item.rawValue} />
+                      </Select.ItemLabel>
+                    </Select.Item>
+                  )}
+                >
+                  <div class="flex flex-row flex-nowrap items-center">
+                    <Select.Trigger class="flex flex-row flex-nowrap items-center hover:bg-black/20 rounded-full border border-black/20 cursor-pointer">
+                      <Select.Icon class="">
+                        <ChevronDown size="1.4rem" />
+                      </Select.Icon>
+                    </Select.Trigger>
+                    <div class="ml-1">
+                      <Select.Value<Problem>>
+                        {(state) => {
+                          console.log(
+                            state.selectedOption(),
+                            selectedProblem(),
+                          );
+                          return (
+                            <div class="flex flex-row flex-nowrap">
+                              <ProblemInfo problem={state.selectedOption()} />
+                            </div>
+                          );
+                        }}
+                      </Select.Value>
                     </div>
                   </div>
-                </div>
-              </Panel>
-            </Tabs.Content>
-            <Tabs.Content value="print" class="w-full h-full p-2.5">
-              <Show when={!isStaff()}>
-                <SplitPanel direction="horizontal" class="h-full">
-                  <Panel>
-                    <PrintEntries prints={prints} />
-                  </Panel>
-                  <Panel>
-                    <AppEditor>
-                      <AppEditor.Toolbar class="border-b border-gray-300">
-                        <div class="grow" />
-
-                        <SubmitPrintButton disable={false} />
-                      </AppEditor.Toolbar>
-                      <div class="h-full w-full overflow-auto">
-                        <AppEditor.Editor class="h-full" />
+                  <Select.Portal>
+                    <Select.Content class="bg-white border border-black/20 rounded-md shadow-lg">
+                      <div class="max-h-ui-popup-h max-w-ui-popup-w overflow-x-auto">
+                        <Select.Listbox class="flex flex-col flex-wrap max-h-ui-popup-h" />
                       </div>
-                    </AppEditor>
-                  </Panel>
-                </SplitPanel>
+                    </Select.Content>
+                  </Select.Portal>
+                </Select>
               </Show>
-              <Show when={isStaff()}>
-                <SplitPanel direction="horizontal" class="h-full">
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value="scoreboard"
+              class="flex flex-row gap-1 justify-center items-center"
+            >
+              <FaRegularCalendarAlt size="1rem" class="float-left" />
+              Scoreboard
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value="submissions"
+              class="flex flex-row gap-1 justify-center items-center"
+            >
+              <FaSolidListSquares size="1rem" class="float-left" />
+              Submissions
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              disabled={!canParticipate()}
+              value="print"
+              class="flex flex-row gap-1 justify-center items-center"
+            >
+              <Printer size="1rem" /> Print
+            </Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Content value="problems" class="grow w-full">
+            <BasePortalRoot>
+              <SplitPanel direction="horizontal" class="h-full" includeMargin>
+                <Panel>
+                  <Show when={selectedProblem() !== undefined}>
+                    <ProblemViewer problemId={() => selectedProblem().id} />
+                  </Show>
+                </Panel>
+                <SplitPanel direction="vertical">
                   <Panel>
-                    <StaffPrintSelect
-                      selectedPrintId={selectedPrint}
-                      setSelectedPrintId={setSelectedPrint}
-                      prints={prints}
+                    <SubmissionEntries submissions={submissions} thisUserOnly />
+                  </Panel>
+                  <Panel>
+                    <SubmissionEditor
+                      onSubmit={submitCode}
+                      availableLanguages={() => Object.keys(languages())}
+                      disableSubmission={!canParticipate()}
                     />
                   </Panel>
-                  <Panel>
-                    <StaffPrintViewer print={selectedPrint} />
-                  </Panel>
                 </SplitPanel>
-              </Show>
-            </Tabs.Content>
-          </Tabs>
-        </div>
+              </SplitPanel>
+            </BasePortalRoot>
+          </Tabs.Content>
+          <Tabs.Content value="submissions" class="h-full w-full p-3">
+            <Panel>
+              <div class="h-full w-full overflow-auto">
+                <div class="relative z-0">
+                  <Show when={isFrozen()}>
+                    <div class="absolute z-10 h-full w-full bg-sky-200/50" />
+                  </Show>
+                  <div class="relative z-0">
+                    <SubmissionEntries submissions={frozenSubmissions} />
+                  </div>
+                </div>
+              </div>
+            </Panel>
+          </Tabs.Content>
+          <Tabs.Content value="print" class="w-full h-full p-2.5">
+            <Show when={!isStaff()}>
+              <SplitPanel direction="horizontal" class="h-full">
+                <Panel>
+                  <PrintEntries prints={prints} />
+                </Panel>
+                <Panel>
+                  <AppEditor>
+                    <AppEditor.Toolbar class="border-b border-gray-300">
+                      <div class="grow" />
+
+                      <SubmitPrintButton disable={false} />
+                    </AppEditor.Toolbar>
+                    <div class="h-full w-full overflow-auto">
+                      <AppEditor.Editor class="h-full" />
+                    </div>
+                  </AppEditor>
+                </Panel>
+              </SplitPanel>
+            </Show>
+            <Show when={isStaff()}>
+              <SplitPanel direction="horizontal" class="h-full">
+                <Panel>
+                  <StaffPrintSelect
+                    selectedPrintId={selectedPrint}
+                    setSelectedPrintId={setSelectedPrint}
+                    prints={prints}
+                  />
+                </Panel>
+                <Panel>
+                  <StaffPrintViewer print={selectedPrint} />
+                </Panel>
+              </SplitPanel>
+            </Show>
+          </Tabs.Content>
+        </Tabs>
       </div>
+    </div>
   );
 }
 
 function ContestPage() {
   const { now } = useNow();
-  const contest = useContest()
-  const contestState = useContestState()
+  const contest = useContest();
+  const contestState = useContestState();
 
   const isInProgress = () => {
     const contestVal = contest();
-    const contestStateVal = contestState()
+    const contestStateVal = contestState();
     const nowVal = now();
 
     if (!contestVal || !contestStateVal) {
@@ -513,13 +513,13 @@ function ContestPage() {
   return (
     <Switch>
       <Match when={!isInProgress()}>
-        <ContestPageOverlay contest={contest()}/>
+        <ContestPageOverlay contest={contest()} />
       </Match>
       <Match when={isInProgress()}>
         <InContestPage />
       </Match>
     </Switch>
-  )
+  );
 }
 
 function PageCrashHandler(props: ParentProps) {
@@ -556,16 +556,22 @@ function ContestSubmissionViewPage() {
       navigate("/404");
     }
   });
-  createEffect(on(whoami, (whoamiVal) => {
-    if (!whoamiVal.is_authenticated) {
-      navigate("/");
-    }
-  }, { defer: true }));
+  createEffect(
+    on(
+      whoami,
+      (whoamiVal) => {
+        if (!whoamiVal.is_authenticated) {
+          navigate("/");
+        }
+      },
+      { defer: true },
+    ),
+  );
 
   return (
     <div class="w-full h-full flex flex-col">
       <div class="h-20 w-full p-3 border-b border-black/10 shadow-xl flex flex-row">
-        <img src="/hc2_icon.png" class="h-14 w-14 object-cover"/>
+        <img src="/hc2_icon.png" class="h-14 w-14 object-cover" />
 
         <div class="grow" />
 
@@ -597,11 +603,19 @@ function App() {
             <Route path="/contests/:id" component={RouteFeedWrapper}>
               <Route
                 path="/submissions/:submission_id"
-                component={() => <PageCrashHandler><ContestSubmissionViewPage /></PageCrashHandler>}
+                component={() => (
+                  <PageCrashHandler>
+                    <ContestSubmissionViewPage />
+                  </PageCrashHandler>
+                )}
               />
               <Route
                 path="/*rest"
-                component={() => <PageCrashHandler><ContestPage /></PageCrashHandler> }
+                component={() => (
+                  <PageCrashHandler>
+                    <ContestPage />
+                  </PageCrashHandler>
+                )}
               />
             </Route>
           </Router>

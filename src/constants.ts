@@ -1,4 +1,5 @@
-export const BASE_URL = window.location.protocol + "//" + window.location.hostname + '/';
+export const BASE_URL =
+  window.location.protocol + "//" + window.location.hostname + "/";
 
 export const CONTEST_URL_PATTERN = "/contests/:id/";
 export const CONTEST_URL = (id: string) => "/contests/" + id + "/";

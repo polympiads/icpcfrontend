@@ -171,15 +171,17 @@ const bg_map: Record<Status, string> = {
 };
 
 function AccountInfo(props: { account_id: string }) {
-  const account = useAccount(props.account_id)
-  createEffect(() => console.log(account()))
+  const account = useAccount(props.account_id);
+  createEffect(() => console.log(account()));
 
   return (
     <>
       <FaSolidUser size="1.5rem" class="opacity-40 shrink-0" />
 
       <PingPongScroller hoverOnly class="mx-1 text-lg">
-        {account()?.username !== undefined ? account()?.username : "[Unknown team]"}
+        {account()?.username !== undefined
+          ? account()?.username
+          : "[Unknown team]"}
       </PingPongScroller>
     </>
   );
@@ -233,7 +235,11 @@ function SubmissionStatusIcon(props: { status: Status }) {
   );
 }
 
-function SubmissionEntry(props: { index: number; submission: Submission, doNotShowUser?: boolean }) {
+function SubmissionEntry(props: {
+  index: number;
+  submission: Submission;
+  doNotShowUser?: boolean;
+}) {
   const judgments = useJudgementTypes();
   const judgment = createMemo(() =>
     props.submission.judgement_type_id
@@ -265,7 +271,11 @@ function SubmissionEntry(props: { index: number; submission: Submission, doNotSh
         />
         <LanguageIcon language={props.submission.language_id} class="p-1" />
 
-        <Show when={props.submission.account_id !== undefined && !props.doNotShowUser}>
+        <Show
+          when={
+            props.submission.account_id !== undefined && !props.doNotShowUser
+          }
+        >
           <div class="h-full flex flex-row *:not-last:mr-2 items-center @max-3xs/submissionEntry:hidden shrink overflow-x-hidden">
             {/* Separator */}
             <div class="h-4/5 w-px bg-black/10"></div>
@@ -294,7 +304,7 @@ function SubmissionEntry(props: { index: number; submission: Submission, doNotSh
 function SubmissionEntryWithCode(props: {
   submission: Submission;
   index: Accessor<number>;
-  doNotShowUser?: boolean 
+  doNotShowUser?: boolean;
 }) {
   const { whoami } = useAuth();
 
@@ -558,7 +568,12 @@ export function SubmissionView(props: { submission_id: string }) {
               </div>
             </Show>
             <Show when={status() !== undefined}>
-              <div class={clsx("rounded-full px-2 py-1 flex flex-nowrap items-center", bg_map[status()!])}>
+              <div
+                class={clsx(
+                  "rounded-full px-2 py-1 flex flex-nowrap items-center",
+                  bg_map[status()!],
+                )}
+              >
                 <SubmissionStatusIcon status={status()!} />
                 <SubmissionStatuMessage
                   status={status()!}

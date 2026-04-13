@@ -65,9 +65,7 @@ export function UserLoginWidget() {
   });
 
   function onLogin() {
-    getLoginTask().spawnTask(
-      login(usernameInput.value, passwordInput.value),
-    );
+    getLoginTask().spawnTask(login(usernameInput.value, passwordInput.value));
   }
 
   function resetResult() {

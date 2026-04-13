@@ -53,7 +53,10 @@ export function PdfViewerRoot(
 
   const [isThumbsbarOpen, setThumbsbarOpen] = createSignal(false);
   const isDocumentLoading = () =>
-    (!contextValue.isDocumentLoaded() && !(props.pdfSource.state === "ready" && props.pdfSource() === undefined)) ||
+    (!contextValue.isDocumentLoaded() &&
+      !(
+        props.pdfSource.state === "ready" && props.pdfSource() === undefined
+      )) ||
     props.pdfSource.state === "pending" ||
     props.pdfSource.state === "refreshing";
   const error = () => {

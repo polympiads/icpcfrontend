@@ -115,10 +115,8 @@ export const usePDFSlick: TUsePDFSlick = (url, options) => {
         setIsDocumentLoaded(true);
       });
     } else {
-      console.log('a')
-      instance.clearDocument()
+      instance.clearDocument();
     }
-
   });
 
   return {
