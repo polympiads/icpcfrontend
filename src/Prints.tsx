@@ -20,7 +20,7 @@ import {
   type Setter,
   Switch,
 } from "solid-js";
-import { CopyButton } from "./CopyButtons";
+import { FloatingCopyButton } from "./CopyButtons";
 import {
   API_ROOT,
   BASE_URL,
@@ -229,7 +229,7 @@ function PrintCodeView(props: { print: Print }) {
           <div class="relative w-full max-h-60 overflow-hidden">
             <AppEditor code={code()} readonly>
               <div class="absolute right-0 z-10 p-2 gap-2 flex flex-row-reverse">
-                <CopyButton />
+                <FloatingCopyButton />
               </div>
               <div class="relative w-full z-0 max-h-60 overflow-auto">
                 <AppEditor.Editor />

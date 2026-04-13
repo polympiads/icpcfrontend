@@ -4,7 +4,7 @@ import { BsCopy, BsExclamationTriangle } from "solid-icons/bs";
 import { createSignal, onCleanup } from "solid-js";
 import { useAppEditorContext } from "./Editor";
 
-export function CopyButton() {
+function CopyButton(props: { class: string }) {
   const { code } = useAppEditorContext();
 
   const [copied, setCopied] = createSignal(false);
@@ -45,7 +45,7 @@ export function CopyButton() {
 
   return (
     <Button
-      class="p-1 cursor-pointer flex flex-row justify-center items-center border border-black/10 bg-white hover:bg-gray-100 disabled:cursor-default rounded-md duration-50 shrink-0"
+      class={props.class}
       onClick={copyOnClipboard}
     >
       {copied() ? (
@@ -56,5 +56,17 @@ export function CopyButton() {
         <BsCopy size="1rem" />
       )}
     </Button>
+  );
+}
+
+export function SolidCopyButton() {
+  return (
+    <CopyButton class="cursor-pointer flex justify-center items-center bg-white hover:bg-gray-100 disabled:cursor-default duration-50 shrink-0 h-full aspect-square"/>
+  );
+}
+
+export function FloatingCopyButton() {
+  return (
+    <CopyButton class="p-1 cursor-pointer flex flex-row justify-center items-center border border-black/10 bg-white hover:bg-gray-100 disabled:cursor-default rounded-md duration-50 shrink-0"/>
   );
 }

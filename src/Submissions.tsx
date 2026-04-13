@@ -21,7 +21,7 @@ import {
   Switch,
   splitProps,
 } from "solid-js";
-import { CopyButton } from "./CopyButtons";
+import { FloatingCopyButton, SolidCopyButton } from "./CopyButtons";
 import {
   API_ROOT,
   BASE_URL,
@@ -138,6 +138,8 @@ export function SubmissionEditor(props: {
         <AppEditor.Toolbar class="border-b border-gray-300">
           {/* Space */}
           <div class="grow" />
+
+          <SolidCopyButton />
 
           <AppEditor.LanguageSelect
             availableLanguages={props.availableLanguages}
@@ -399,7 +401,7 @@ function SubmissionCodeView(props: { submission: Submission }) {
               readonly
             >
               <div class="absolute right-0 z-10 p-2 gap-2 flex flex-row-reverse">
-                <CopyButton />
+                <SolidCopyButton />
                 <A
                   href={SUBMISSION_URL(contest()!.id, props.submission.id)}
                   target="_blank"
@@ -635,7 +637,7 @@ export function SubmissionView(props: { submission_id: string }) {
                 >
                   <AppEditor.Toolbar class="bg-white border-b border-black/10">
                     <div class="grow" />
-                    <CopyButton />
+                    <FloatingCopyButton />
                     <LanguageEntry language={submission().language_id} />
                   </AppEditor.Toolbar>
                   <div class="grow z-0 overflow-auto">
