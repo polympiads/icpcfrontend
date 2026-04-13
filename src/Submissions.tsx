@@ -401,7 +401,7 @@ function SubmissionCodeView(props: { submission: Submission }) {
               readonly
             >
               <div class="absolute right-0 z-10 p-2 gap-2 flex flex-row-reverse">
-                <SolidCopyButton />
+                <FloatingCopyButton />
                 <A
                   href={SUBMISSION_URL(contest()!.id, props.submission.id)}
                   target="_blank"
