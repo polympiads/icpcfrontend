@@ -278,7 +278,7 @@ function LanguageSelect(props: LanguageSelectProps) {
   return (
     <>
       <Show when={language() === undefined}>
-        <div class="p-2 flex flex-row items-center gap-2 h-full">
+        <div class="p-2 flex flex-row items-center gap-2 h-full shrink-0">
           <div class="h-full aspect-square animate-pulse bg-gray-300 rounded-full" />
           <div class="h-1/2 w-15 aspect-square animate-pulse bg-gray-300 rounded-full" />
         </div>
